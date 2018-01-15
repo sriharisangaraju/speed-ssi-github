@@ -289,7 +289,8 @@ module speed_par
                    nsend,nrecv, nsend_jump, nrecv_jump, &
                    nnode_dom, nelem_dom, edgecut, &
                    nmat_nle, total_els, nvec, &
-                   nargs, ntime_err, n_test
+                   nargs, ntime_err, n_test, &
+                   num_testcase, label_testcase
                    
 ! 0/1 INTERGERS
       integer*4 :: file_mon_pgm, file_mon_lst, &
@@ -556,7 +557,10 @@ module speed_timeloop
                          testmode, ntime_err, time_error, debug, &
                          
                          !INSTABILITY CONTROL
-                         b_instabilitycontrol, instability_maxval
+                         b_instabilitycontrol, instability_maxval, &
+                         
+                         !TEST NOT-HONORING
+                         num_testcase, label_testcase
 
   use speed_exit_codes                         
 end module speed_timeloop

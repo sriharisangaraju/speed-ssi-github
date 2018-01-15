@@ -72,6 +72,7 @@
                              depth_search_mon_lst,n_lst, &
                              monfile_lst,dg_c,pen_c, scheme, order, stages, testmode, &
                              ntime_err, time_err, damping_type, &
+                             n_testcase, tag_testcase, &
                              b_failoncoeffs, b_setuponly, b_failCFL, b_instabilitycontrol, instability_maxval)
 
       use speed_exit_codes
@@ -93,7 +94,7 @@
       integer*4 :: ndt_monitor                
       integer*4 :: ndt_mon_pgm,n_pgm                                
       integer*4 :: monfile_pgm                                        
-      integer*4 :: n_lst, ntime_err, itime
+      integer*4 :: n_lst, ntime_err, itime, n_testcase, tag_testcase
       integer*4 :: monfile_lst, damping_type
       integer*4 :: file_row = 0
 
@@ -120,7 +121,8 @@
 
       im = 0;       is = 0;   itime = 0;
       n_pgm = 0;    monfile_pgm = 0                 
-      n_lst = 0;    monfile_lst = 0                 
+      n_lst = 0;    monfile_lst = 0       
+      n_testcase = 0;          
 
       time_err = 0      
 
@@ -235,6 +237,10 @@
            case('MLST')                        
             n_lst = 1                                
             read(inline(ileft:iright),*) depth_search_mon_lst,monfile_lst
+            
+           case('TESTCASE')
+            n_testcase = 1                                
+            read(inline(ileft:iright),*) tag_testcase
     
            !! New flags
 

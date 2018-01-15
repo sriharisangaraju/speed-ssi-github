@@ -137,7 +137,8 @@
       integer*4, dimension(:), allocatable     :: node_tra
       real*8, dimension(:), allocatable        :: dist_tra
       
-      
+! TEST NOT-HONORING
+      integer*4 :: check_not_hon       
 
 ! INSTABILITY CONTROL
        ! Set to TRUE when instability control is enabled and instability is detected.
@@ -390,14 +391,16 @@
             ! < BLOCK BY BLOCK                                 >
                           
               if (n_case.gt.0) then                                                        
-                if (val_case.eq.tag_mat(im)) then                                        
+                if (val_case.eq.tag_mat(im)) then    
+                        if (num_testcase .ne. 0) check_not_hon = 1;
+                                                   
                         call MAKE_ELTENSOR_FOR_CASES(tag_case, val_case,&                        
                                             nn, rho_el, lambda_el, mu_el, gamma_el,&        
                                             nnod_loc, zs_elev, zs_all, vs_tria, thick, &        
                                             con_nnz_loc, con_spx_loc, ie,&        
                                             sub_tag_all, zz_spx_loc, mpi_id, local_node_num, &
                                             damping_type, QS_nh, QP_nh, &
-                                            xx_spx_loc, yy_spx_loc,0)
+                                            xx_spx_loc, yy_spx_loc, check_not_hon,label_testcase)
 
                 endif        
              endif                
@@ -494,7 +497,7 @@
                                         con_nnz_loc, con_spx_loc, ie,&        
                                         sub_tag_all, zz_spx_loc, mpi_id, local_node_num, &
                                         damping_type, QS_nh, QP_nh, &
-                                        xx_spx_loc, yy_spx_loc,0)
+                                        xx_spx_loc, yy_spx_loc,0,label_testcase)
                         endif        
                  endif                
                  
@@ -1008,7 +1011,7 @@
                                                 con_nnz_loc, con_spx_loc, ie,&        
                                                 sub_tag_all, zz_spx_loc, mpi_id, local_node_num,&
                                                 damping_type, QS_nh, QP_nh,&
-                                                xx_spx_loc, yy_spx_loc,0)
+                                                xx_spx_loc, yy_spx_loc,0,label_testcase)
                                                 
                          endif        
                     endif                
@@ -1379,7 +1382,7 @@
                                                 con_nnz_loc, con_spx_loc, ie,&        
                                                 sub_tag_all, zz_spx_loc, mpi_id, local_node_num, &
                                                 damping_type, QS_nh, QP_nh, &
-                                                xx_spx_loc, yy_spx_loc,0)
+                                                xx_spx_loc, yy_spx_loc,0,label_testcase)
 
                   endif        
                 endif                

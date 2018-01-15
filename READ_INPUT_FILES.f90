@@ -77,6 +77,7 @@
                        file_mon_lst,dg_c,pen_c,&
                        rk_scheme, rk_order, rk_stages, testmode, ntime_err, time_error,&
                        damping_type, &
+                       num_testcase, label_testcase, &
                        b_failoncoeffs, b_setuponly, b_failCFL, b_instabilitycontrol, instability_maxval)
 
       if (mpi_id.eq.0) write(*,'(A)')'Read.'

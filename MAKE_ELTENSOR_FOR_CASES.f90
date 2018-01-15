@@ -39,7 +39,7 @@
 !> @param[in] mpi_id MPI process id 
 !> @param[in] local_n_num local node numeration
 !> @param[in] damping_tpe 1-Kosloff&Kosloff, 2-Standard Linear Solid
-!> @param[in] ierr 1-debug mode, 0-standard mode
+!> @param[in] check_case 1-debug mode, 0-standard mode
 !> @param[out] rho_el material density 
 !> @param[out] lambda_el Lame coefficient lambda
 !> @param[out] mu_el Lame coefficient mu
@@ -53,12 +53,12 @@
                                  cs_nnz_loc, cs_loc, ielem, &
                                  sub_tag_all, zs, mpi_id, local_n_num, &
                                  damping_type, qs, qp, &
-                                 xs, ys, ierr)
+                                 xs, ys, check_case, label_case)
  
       
       implicit none
                                                       
-      integer*4 :: tcase, ierr                
+      integer*4 :: tcase, check_case, label_case               
       integer*4 :: vcase, mpi_id        
       integer*4 :: nn
       integer*4 :: p, q, r, ic
@@ -81,23 +81,20 @@
       real*8, dimension(nn_loc) :: zs, xs, ys                
 
       real*8, dimension(nn,nn,nn) :: rho_el,lambda_el,mu_el,gamma_el
-          
+      
+      character*70 :: filename
+      character*5 :: filesuffix
+         
       
 !     STRESS CALCULATION
       
-      if (ierr .eq. 1) then
-          open(1000,file='RS_1.out',position='APPEND')
-!          open(1001,file='RS_2.out',position='APPEND')
-!          open(1002,file='RS_3.out',position='APPEND')
-!          open(1003,file='RS_4.out',position='APPEND')
-!          open(1004,file='RS_5.out',position='APPEND')
-!          open(1005,file='RS_6.out',position='APPEND')
-!          open(1006,file='RS_7.out',position='APPEND')
-!          open(1007,file='RS_8.out',position='APPEND')
-!          open(1008,file='RS_9.out',position='APPEND')
-!          open(1009,file='RS_10.out',position='APPEND')
-!          open(1010,file='RS_11.out',position='APPEND')
-          
+      if (check_case .eq. 1) then
+      
+          filesuffix = '.dat'
+          write(filename, '(A,I5.5,A5)') 'NHCheck', mpi_id, filesuffix
+          !write(*,*) mpi_id, ielem, filename
+          !read(*,*)
+          open(1000 + mpi_id,file=filename,position='APPEND')         
       endif
       
       do r = 1,nn
@@ -118,8 +115,8 @@
                         if (Depth .lt. 0.0d0) Depth = 0.0d0
 
                                VS  = 300.0 + 19.0 * sqrt(Depth)        !VS: S velocity in m/s
-                        VP  = 1450.0 + 1.2 * Depth                !VP: P velocity in m/s 
-                        rho = 2140.0 + 0.125 * Depth                !RHO: MASS DENSITY in kg/m^3
+                               VP  = 1450.0 + 1.2 * Depth                !VP: P velocity in m/s 
+                               rho = 2140.0 + 0.125 * Depth                !RHO: MASS DENSITY in kg/m^3
                                lambda = rho * (VP**2 - 2*VS**2)
                                mu = rho * VS**2
                         gamma = 6.2832E-02
@@ -219,35 +216,35 @@
                 
                         if (sub_tag_all(ic).eq.1) then
                                 rho = 2100
-                                       lambda = 4.557000E+09
-                                       mu = 8.400000E+07
+                                lambda = 4.557000E+09
+                                mu = 8.400000E+07
                                 gamma = 2.094395E-01
                         
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 2nd Layer
                         elseif (sub_tag_all(ic).eq.2) then
                                 rho = 2100
-                                       lambda = 6.289500E+09
-                                       mu = 2.572500E+08
+                                lambda = 6.289500E+09
+                                mu = 2.572500E+08
                                 gamma = 1.196797E-01 
                                 
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 3rd Layer
                         elseif (sub_tag_all(ic).eq.3) then
                                 rho = 2200
-                                       lambda = 1.189100E+10
-                                       mu = 9.295000E+08
+                                lambda = 1.189100E+10
+                                mu = 9.295000E+08
                                 gamma = 6.444293E-02
                         
                         ! + MATERIAL INTO THE BEDROCK 
                         elseif (sub_tag_all(ic).eq.4) then
                                 if (zs(ic).ge.-3000.0) then
-                                        VS  = 0.4100*(-zs(ic)) + 2190.0000        !VS: S velocity in m/s
-                                        VP  = 0.8100*(-zs(ic)) + 3690.0000        !VP: P velocity in m/s 
-                                        rho = 0.0680*(-zs(ic)) + 2532.0000        !RHO: MASS DENSITY in kg/m^3
-                                               lambda = rho * (VP**2 - 2*VS**2)
-                                               mu = rho * VS**2
-                                        gamma = 1.6111E-02
+                                    VS  = 0.4100*(-zs(ic)) + 2190.0000        !VS: S velocity in m/s
+                                    VP  = 0.8100*(-zs(ic)) + 3690.0000        !VP: P velocity in m/s 
+                                    rho = 0.0680*(-zs(ic)) + 2532.0000        !RHO: MASS DENSITY in kg/m^3
+                                    lambda = rho * (VP**2 - 2*VS**2)
+                                    mu = rho * VS**2
+                                    gamma = 1.6111E-02
                                 else
-                                        VS  = 0.0050*(-zs(ic)) + 3405.0000        !VS: S velocity in m/s
+                                    VS  = 0.0050*(-zs(ic)) + 3405.0000        !VS: S velocity in m/s
                                         VP  = 0.0050*(-zs(ic)) + 6105.0000        !VP: P velocity in m/s 
                                         rho = 0.0040*(-zs(ic)) + 2724.0000        !RHO: MASS DENSITY in kg/m^3
                                                lambda = rho * (VP**2 - 2*VS**2)
@@ -733,7 +730,7 @@
                               qs = 0.1*vs
                               gamma = (3.1415*(2/3))/qs          
                                               
-                              if (ierr .eq. 1)   write(1000,*) xs(ic),ys(ic),zs(ic), VS, VP                
+                              if (check_case .eq. 1)   write(1000,*) xs(ic),ys(ic),zs(ic), VS, VP                
                           else  
                              ! + MATERIAL INSIDE THE BEDROCK         
                              Depth_real = zs(ic)
@@ -745,7 +742,7 @@
                                     mu = rho * VS**2 
                                     qs = 0.1*vs                                
                                     gamma = (3.1415*(2.d0/3.d0))/qs       
-                              if (ierr .eq. 1)   write(1001,*) xs(ic),ys(ic),zs(ic), VS, VP                
+                              if (check_case .eq. 1)   write(1001,*) xs(ic),ys(ic),zs(ic), VS, VP                
                                                                                       
                              elseif (Depth_real .le. -500.d0 .and. Depth_real .ge. -1000.0d0) then                   
                                     VS = 1700.d0                                                                 
@@ -755,7 +752,7 @@
                                     mu = rho * VS**2 
                                     qs = 0.1*vs                                
                                     gamma = (3.1415*(2.d0/3.d0))/qs   
-                              if (ierr .eq. 1)   write(1002,*) xs(ic),ys(ic),zs(ic), VS, VP                
+                              if (check_case .eq. 1)   write(1002,*) xs(ic),ys(ic),zs(ic), VS, VP                
                                                                   
                              else
                                     VS = 2600.d0;
@@ -765,7 +762,7 @@
                                     mu = rho * VS**2 
                                     qs = 0.1*vs                                
                                     gamma = (3.1415*(2.d0/3.d0))/qs   
-                              if (ierr .eq. 1)   write(1003,*) xs(ic),ys(ic),zs(ic), VS, VP                
+                              if (check_case .eq. 1)   write(1003,*) xs(ic),ys(ic),zs(ic), VS, VP                
                                                                   
                              endif
                          endif             
@@ -998,7 +995,7 @@
                                 mu = rho * VS**2.d0;
                                 qs = 0.1d0*VS;
                                 gamma = 4.d0*datan(1.d0)/qs;
-                                if (ierr .eq. 1)   write(1000,*) xs(ic),ys(ic),zs(ic), VS, VP       
+                               ! if (check_case .eq. 1)   write(1000,*) xs(ic),ys(ic),zs(ic), VS, VP       
                              else
                                 VS = 1500
                                 VP  = 2600;
@@ -1093,7 +1090,7 @@
                                qs = 0.1d0*VS;
                                gamma = 4.d0*datan(1.d0)/qs;
                          endif                          
-                         if (ierr .eq. 1)   write(1000,*) xs(ic),ys(ic),zs(ic), VS, VP       
+                         !if (check_case .eq. 1)   write(1000,*) xs(ic),ys(ic),zs(ic), VS, VP       
 
 
 
@@ -1195,6 +1192,10 @@
 
                                 endif
                                 
+                                if (check_case .eq. 1)  &
+                                         write(1000+mpi_id,*) xs(ic),ys(ic),zs(ic), &
+                                                             VS, VP, rho, lambda, mu, &
+                                                             qp, qs, gamma, zs_elev(ic), zs_all(ic)                              
                                 !
                                 !-------------------------------------------------------------------
 
@@ -1215,17 +1216,7 @@
          enddo
       enddo
      
-      if (ierr .eq. 1)  close(1000)
-!      if (ierr .eq. 1)  close(1001)
-!      if (ierr .eq. 1)  close(1002)
-!      if (ierr .eq. 1)  close(1003)
-!      if (ierr .eq. 1)  close(1004)
-!      if (ierr .eq. 1)  close(1005)
-!      if (ierr .eq. 1)  close(1006)
-!      if (ierr .eq. 1)  close(1007)
-!      if (ierr .eq. 1)  close(1008)
-!      if (ierr .eq. 1)  close(1009)
-!      if (ierr .eq. 1)  close(1010)
+     if (check_case .eq. 1) close (1000+mpi_id)
 
      if (damping_type .eq. 2) then
        qs = 0; qp = 0;

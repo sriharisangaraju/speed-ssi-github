@@ -926,7 +926,7 @@
 !                             Istanbul - NOT honoring
 !*************************************************************************************************
 
-	elseif (tcase.eq.16 .or. tcase .eq. 20 .or. tcase .eq. 21) then									
+	elseif (tcase.eq. 16 .or. tcase .eq. 20 .or. tcase .eq. 21) then									
 		if (mpi_id.eq.0 .and. tcase .eq. 16) then	        
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 16: Istanbul - Turkey'	     				
