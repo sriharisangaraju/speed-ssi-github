@@ -37,10 +37,12 @@
             
 
 
-
+      use binarysearch
+      
       implicit none
       
-      integer*4 :: nb_fnc,id_fnc,i,nb_data_fnc
+      integer*4 :: nb_fnc,id_fnc,i,nb_data_fnc, idx !nb_timeval 
+      integer*4 :: ind_start, ind_end
       
       integer*4, dimension(nb_fnc) :: type_fnc
       integer*4, dimension(nb_fnc +1) :: ind_fnc
@@ -50,6 +52,8 @@
       real*8 :: amp, ps0, tplus, alpha,time,beta2,dist,vel
       
       real*8, dimension(nb_data_fnc) :: data_fnc
+      real*8, dimension(1) :: valmax
+!      real*8, dimension(:), allocatable :: timevalues, values
       
       GET_FUNC_VALUE = 0.0d0
 
@@ -83,14 +87,45 @@
                  * data_fnc(ind_fnc(id_fnc))*t_t0*t_t0)
       
          case(3)
-           do i = ind_fnc(id_fnc),ind_fnc(id_fnc+1) -3,2
-              t0 = data_fnc(i);    t1 = data_fnc(i +2)
-              v0 = data_fnc(i +1);  v1 = data_fnc(i +3)
-              if ((time.ge.t0) .and. (time.le.t1))  then
-                  GET_FUNC_VALUE = (v1 - v0) / (t1 - t0) * (time - t0)  + v0
-                  return
-              endif    
-           enddo
+           ind_start = ind_fnc(id_fnc); ind_end = ind_fnc(id_fnc+1)-3;
+
+           
+!           print*, ind_start, data_fnc(ind_start)
+!           print*, ind_end, data_fnc(ind_end-1)
+!           read*
+!           print*, data_fnc(ind_start:ind_end:2)
+!           read*
+           !valmax = maxval(data_fnc(ind_start:ind_end:2))
+           if (time >= data_fnc(ind_end-1)) then
+               v1 = data_fnc(ind_end + 2);
+               GET_FUNC_VALUE = v1;
+           else
+              idx = binarySearch_real(data_fnc(ind_start:ind_end:2), time)
+              t0 = data_fnc(2*idx-1);        t1 = data_fnc(2*idx+1)
+              v0 = data_fnc(2*idx);      v1 = data_fnc(2*idx+2)
+              
+              GET_FUNC_VALUE = (v1 - v0) / (t1 - t0) * (time - t0)  + v0
+
+           endif
+
+             
+                      
+!           do i = ind_fnc(id_fnc), ind_fnc(id_fnc+1) -3,2
+!              t0 = data_fnc(i);    t1 = data_fnc(i +2)
+!              v0 = data_fnc(i +1);  v1 = data_fnc(i +3)
+!              if ((time.ge.t0) .and. (time .le. t1))  then
+!              print*, i, t0, t1, v0, v1
+!              read*
+
+!                 GET_FUNC_VALUE = (v1 - v0) / (t1 - t0) * (time - t0)  + v0
+!                 val2 = (v1 - v0) / (t1 - t0) * (time - t0)  + v0
+!                 if (abs(val2-val1) .ne. 0) then 
+!                    print*, time, val1, val2 
+!                    read*
+!                 endif
+!                 return
+!              endif    
+!           enddo
 
          case(4)
            t_t0 = time - data_fnc(ind_fnc(id_fnc) +1)
