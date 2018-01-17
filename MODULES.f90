@@ -630,3 +630,55 @@ end subroutine Partition
 end module qsort_c_module
 
 
+
+module binarysearch
+
+implicit none
+public :: binarySearch_real
+
+contains
+   pure recursive function binarySearch_real(vec, scal, min, max) result (idx)
+    ! input parameters
+    real*8, intent(in)              :: vec(:)
+    real*8, intent(in)              :: scal
+    integer, optional, intent(in) :: min
+    integer, optional, intent(in) :: max
+
+    ! result
+    integer           :: idx
+
+    !locals
+    integer           :: i
+    
+    ! logic    
+    if(.not.present(min)) then
+       idx = binarySearch_real(vec,scal, 1, size(vec))
+    else
+
+       i = ishft(min+max, -1)
+       
+       !write(*,*) i, scal
+       !read(*,*)
+       !write(*,*) vec
+       !read(*,*)
+       
+       
+       if(scal >= vec(i) .and. scal < vec(i+1)) then
+          idx = i
+          
+       else if( scal < vec(i) ) then
+          idx = binarySearch_real(vec,scal, min, ishft(min+max, -1) - 1)
+          
+       elseif(scal > vec(i)) then
+          idx = binarySearch_real(vec,scal, ishft(min+max, -1) + 1, max)
+       end if
+    end if
+  end function binarySearch_real
+
+
+end module binarysearch
+
+
+
+
+
