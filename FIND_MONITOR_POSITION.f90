@@ -196,8 +196,8 @@
 
 		do i = 1,nmonitors_lst
 			call GET_NEAREST_NODE_PGM(nnod_loc, xx_spx_loc, yy_spx_loc, zz_spx_loc,&
-					          x_monitor_lst(i), y_monitor_lst(i), z_monitor_lst(i),&
-						  n_monitor_lst(i), dist_monitor_lst(i), depth_search_mon_lst)	
+					             x_monitor_lst(i), y_monitor_lst(i), z_monitor_lst(i),&
+						         n_monitor_lst(i), dist_monitor_lst(i), depth_search_mon_lst)	
               
 			call GET_PNT_POS_PGM(nelem_loc,&
 					 alfa11,alfa12,alfa13,alfa21,alfa22,alfa23,&

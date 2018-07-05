@@ -308,27 +308,53 @@
                                         
                   elseif (tcase.eq.7) then
                         !-------------------------------------------------------------------
-                               ! CASE 7: AQUILA NOT honoring 
+                        ! CASE 7: AQUILA NOT honoring (Smerzini & Villani 2012)
                         !
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN
                         
-                        Depth = zs_elev(ic)                        !D: depth in m              
-                        if ((Depth .ge. 0.0d0) .and. (zs_all(ic) .ge. 0.0d0)) then    
-                                 ! Option #1
-                                 VS  = 500.0d0 + 10.0d0*(Depth)**0.50  !VS: S velocity in m/s     
-                                 VP  =  sqrt(3.0)*VS         !VP: P velocity in m/s  (nu = 0.25)        
-                                 rho =  2000.0d0               !RHO: MASS DENSITY in kg/m^3                              
-                                                                
-                                 lambda = rho * (VP**2 - 2*VS**2)                   
-                                 mu = rho * VS**2                                   
-                                 gamma = 6.2832E-02 ! (Qs=Vs/10=50)                 
-                        else                                                    
-                                 ! + MATERIAL INSIDE THE BEDROCK (Vs=1500m/s)            
-                                 lambda = 1.2189E+10                                
-                                 mu = 6.0943E+09                                    
-                                 rho = 2600.0d0                                     
-                                 gamma = 3.1416E-02                                                                          
-                        endif                                                           
+                       ! Depth = zs_elev(ic)                        !D: depth in m              
+                       ! if ((Depth .ge. 0.0d0) .and. (zs_all(ic) .ge. 0.0d0)) then    
+                       !          ! Option #1
+                       !          VS  = 500.0d0 + 10.0d0*(Depth)**0.50  !VS: S velocity in m/s     
+                       !          VP  =  sqrt(3.0)*VS         !VP: P velocity in m/s  (nu = 0.25)        
+                       !          rho =  2000.0d0               !RHO: MASS DENSITY in kg/m^3                              
+                       !                                         
+                       !          lambda = rho * (VP**2 - 2*VS**2)                   
+                       !          mu = rho * VS**2                                   
+                       !          gamma = 6.2832E-02 ! (Qs=Vs/10=50)                 
+                       ! else                                                    
+                       !          ! + MATERIAL INSIDE THE BEDROCK (Vs=1500m/s)            
+                       !          lambda = 1.2189E+10                                
+                       !         mu = 6.0943E+09                                    
+                       !          rho = 2600.0d0                                     
+                       !          gamma = 3.1416E-02                                                                          
+                       ! endif              
+                        
+                  !-------------------------------------------------------------------
+               		! CASE 7: AQUILA NOT honoring (Evangelista et al. 2017)
+                  !
+            			! + MATERIAL INSIDE THE ALLUVIAL BASIN
+			
+		             	Depth = zs_elev(ic)			!D: depth in m              
+		           if ((Depth .ge. 0.0d0) .and. (zs_all(ic) .ge. 0.0d0)) then    
+				         ! Option #1
+			           VS  = 300.0d0 + 36.0d0*(Depth)**0.43  !VS: S velocity in m/s     
+				         VP  =  sqrt(4.57)*VS 	!VP: P velocity in m/s  (nu = 0.36)        
+				         rho =  1900.0d0       	!RHO: MASS DENSITY in kg/m^3               						 
+               	lambda = rho * (VP**2 - 2*VS**2)                   
+               	mu = rho * VS**2                                   
+				        gamma = 6.9813E-02 ! (Qs=Vs/10=30)                 
+			         else                                                    
+				        ! + MATERIAL INSIDE THE BEDROCK (Vs=1700m/s)            
+				        lambda = 1.0514E+10                                
+				        mu = 7.2250E+09                                    
+				        rho = 2500.0d0                                     
+				        gamma = 2.0944E-02                                 					 
+			         endif                    
+                               
+                                          
+                               
+                                                                            
                                         
     		  elseif (tcase.eq.8) then
                         !-------------------------------------------------------------------
@@ -378,9 +404,9 @@
                                                  
                                elseif ((Depth.gt.300.0d0).and.(Depth.le.700.0d0)) then  ! 300 < z < 700     
                                          rho =  2000.0d0                                                     
-                                         lambda = 3.0000E+09       !Vs = 1000 m/s      
+                                         lambda = 3.0000E+09      !Vs = 1000 m/s      
                                          mu = 2.0000E+09          !Vp = 1871 m/s      
-                                         gamma = 2.0944E-02 ! Qs = 100 (2 Hz)          
+                                         gamma = 2.0944E-02       ! Qs = 100 (2 Hz)          
                               
                                elseif ((Depth.gt.700.0d0)) then ! 700 < z < 1500    
                                          rho =  2300.0d0                                                                 
@@ -1093,7 +1119,47 @@
                          !if (check_case .eq. 1)   write(1000,*) xs(ic),ys(ic),zs(ic), VS, VP       
 
 
+                   elseif (tcase.eq.22) then
+                   !-------------------------------------------------------------------
+                   ! CASE 22: NORCIA
+                   !-------------------------------------------------------------------
+                    Depth = zs_elev(ic)   
+					
+                    if ((Depth .ge. 0.0d0).and.(zs_all(ic) .ge. 0.0d0)) then                                    
+                   !   ! + MATERIAL INSIDE THE BASIN 
+                   !! NEWER VS-RULE
+				          if (Depth .le. 150) then
+						    VS = 281.64 + (2.0000*(548.33-281.64))/(1.0000+(15.0000/(Depth+0.1000))**1.2900)
+						  else
+							VS = 975
+						  endif						  
+                          VP  = 1.855 * VS
+                          rho = 1900 + VS / 1700 * 600                              
+                          lambda = rho * (VP**2 - 2*VS**2)                                                    
+                          mu = rho * VS**2                                          
+                          qs = 50
+                          gamma = (3.1415*(2/3))/qs
+						  
+                    else
+                        ! + MATERIAL INSIDE THE BEDROCK - FIRST LAYER OF CRUSTAL MODEL
+                        ! Depth_real = zs(ic)
+                          VS = 1700
+                          VP  = 3160
+                          rho =  2500                             
+                          lambda = rho * (VP**2 - 2*VS**2)                                                    
+                          mu = rho * VS**2                                          
+                          qs = 200
+                          gamma = (3.1415*(2/3))/qs  
+                    endif
 
+					if (check_case .eq. 1)  &
+                        write(1000+mpi_id,*) xs(ic),ys(ic),zs(ic), &
+                        VS, VP, rho, lambda, mu, &
+                        qp, qs, gamma, zs_elev(ic), zs_all(ic)                              
+                    !
+                    !-------------------------------------------------------------------
+
+					 
                                                                 
 
                    elseif (tcase.eq.50) then
@@ -1192,15 +1258,8 @@
 
                                 endif
                                 
-                                if (check_case .eq. 1)  &
-                                         write(1000+mpi_id,*) xs(ic),ys(ic),zs(ic), &
-                                                             VS, VP, rho, lambda, mu, &
-                                                             qp, qs, gamma, zs_elev(ic), zs_all(ic)                              
-                                !
-                                !-------------------------------------------------------------------
-
+                                
                         endif
-
                rho_el(p,q,r) = rho
                lambda_el(p,q,r) = lambda
                mu_el(p,q,r) = mu

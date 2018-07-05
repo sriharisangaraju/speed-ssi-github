@@ -241,6 +241,25 @@
               endif    
            enddo
 
+ !          ind_start = ind_fnc(id_fnc); ind_end = ind_fnc(id_fnc+1)-3;
+
+           
+ !          if (time - dist/vel >= data_fnc(ind_end-1)) then
+ !              v1 = data_fnc(ind_end + 2);
+ !              GET_FUNC_VALUE = v1;
+ !          else
+ !             idx = binarySearch_real(data_fnc(ind_start:ind_end:2), time-dist/vel)
+ !             t0 = data_fnc(2*idx-1);        t1 = data_fnc(2*idx+1)
+ !             v0 = data_fnc(2*idx);      v1 = data_fnc(2*idx+2)
+ !             
+ !             GET_FUNC_VALUE = (v1 - v0) / (t1 - t0) * (time - t0)  + v0!
+ !
+ !          endif
+
+
+
+
+
 
          case(60,62)
            ! FUNCTION FOR G/G0

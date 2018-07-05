@@ -192,6 +192,7 @@
                    ! TIME SERIES
                  read(inline(5:),*) lab_fnc, type_fnc, ndat_fnc
                  nb_func_data = nb_func_data + 2*ndat_fnc
+                
                case(4) 
                  ! DERIVATIVE OF THE RICKER WAVELET
                  nb_func_data = nb_func_data + 2
