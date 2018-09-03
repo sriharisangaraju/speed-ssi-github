@@ -121,8 +121,8 @@
           if (anglesum.ge.tol) then
 
               node_sism = node_sism + 1
-                sour_ns(node_sism,i_sism) = loc_n_num(isn) 
-            dist_sour_ns(node_sism,i_sism) = sqrt((Xipo - xs(isn))**2 +(Yipo - ys(isn))**2 +(Zipo - zs(isn))**2)
+              sour_ns(node_sism,i_sism) = loc_n_num(isn) 
+              dist_sour_ns(node_sism,i_sism) = sqrt((Xipo - xs(isn))**2 +(Yipo - ys(isn))**2 +(Zipo - zs(isn))**2)
 
           endif
 

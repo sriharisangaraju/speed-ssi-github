@@ -474,7 +474,7 @@
                          val_sism(isism,15),val_sism(isism,16),val_sism(isism,17),&        
                          val_sism(isism,18),val_sism(isism,19),val_sism(isism,20),&        
                          val_sism(isism,21)
-         
+
 
            case('EXPL')                                                        
               iexpl = iexpl + 1                                                                

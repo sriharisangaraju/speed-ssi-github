@@ -193,7 +193,7 @@
 
            case('TIMEFIXE')                                
             read(inline(ileft:iright),*) time_step                                        
-            deltat_fixed = 'yes'                                                        
+            deltat_fixed = 'not'                                                        
 
            case('TMONITOR')                                        
             read(inline(ileft:iright),*) ndt_monitor                

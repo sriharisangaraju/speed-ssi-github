@@ -239,8 +239,8 @@
                                 '% of critical time step.'
                         write(*,'(A)')'This time step is excedingly lower the deltat CFL'
                         if (deltat_fixed.eq.'not') then  
-                                write(*,'(A)')'deltat chosen will be substituted with 1% of deltat CFL'
-                                time_step=time_step_cfl*0.01
+                                write(*,'(A)')'deltat chosen will be substituted with 10% of deltat CFL'
+                                time_step=time_step_cfl*0.1
                                 write(*,'(A,E12.4)')'deltat chosen :',time_step
                         endif
                 elseif (percent_deltat.le.25) then
@@ -255,8 +255,8 @@
                                 '% of critical time step.'
                         write(*,'(A)')'This could be not enough for the correct working of ABC'
                         if (deltat_fixed.eq.'not') then
-                                write(*,'(A)')'deltat chosen will be substituted with 25% of deltat CFL'
-                                time_step=time_step_cfl*0.25
+                                write(*,'(A)')'deltat chosen will be substituted with 20% of deltat CFL'
+                                time_step=time_step_cfl*0.2
                                 write(*,'(A,E12.4)')'deltat chosen :',time_step
                         endif
                 endif
@@ -265,8 +265,8 @@
                 time_step_cfl,' < deltat = ',time_step
                 write(*,'(A)')'The time advancing scheme will be unstable!'
                 if (deltat_fixed.eq.'not') then
-                        write(*,'(A)')'deltat chosen will be substituted with 25% of deltat CFL'
-                        time_step=time_step_cfl*0.25
+                        write(*,'(A)')'deltat chosen will be substituted with 20% of deltat CFL'
+                        time_step=time_step_cfl*0.2
                         write(*,'(A,E12.4)')'deltat chosen :',time_step
                 else
                     b_CFL_failure = .TRUE.
