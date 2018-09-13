@@ -1158,7 +1158,37 @@
                         qp, qs, gamma, zs_elev(ic), zs_all(ic)                              
                     !
                     !-------------------------------------------------------------------
+                                
+                   elseif (tcase.eq.30) then
 
+                        !-------------------------------------------------------------------
+                        ! CASE 30: Athens Parthenon -  NOT honoring
+                        !
+                        !-------------------------------------------------------------------
+                        ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 1st Layer
+                
+                        if (sub_tag_all(ic).eq.1) then
+                                rho = 2100
+                                lambda = 4.557000E+09
+                                mu = 8.400000E+07
+                                gamma = 2.094395E-01
+                        
+                        ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 2nd Layer
+                        elseif (sub_tag_all(ic).eq.2) then
+                                rho = 2100
+                                lambda = 6.289500E+09
+                                mu = 2.572500E+08
+                                gamma = 1.196797E-01 
+                                
+                        else 
+                                rho = 2200
+                                lambda = 1.394250E+09
+                                mu = 9.295000E+08
+                                gamma = 6.444293E-02
+                        endif
+                        
+                        !
+                        !-------------------------------------------------------------------
 					 
                                                                 
 

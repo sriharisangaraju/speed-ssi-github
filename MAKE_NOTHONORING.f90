@@ -1003,10 +1003,68 @@
 				
 
 !*************************************************************************************************
-!                             Atene - NOT honoring
+!                             Atene - Partenone
 !*************************************************************************************************
 
-	elseif (tcase.eq.20) then									
+	elseif (tcase.eq. 30) then									
+		if (mpi_id.eq.0) then									
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 30: Athens-Parthenon - multi not honoring'		
+			write(*,'(A)')'Reading Topography&Alluvial...'					
+		endif											
+								
+
+		sub_tag_all = 3								
+											
+		do j = 1,2										    
+			if (j.eq.1) then								
+				file_case_all ='ALL1.out'
+			else								
+				file_case_all ='ALL2.out'						
+			endif										
+	
+			zs_all = -1.0e+30
+
+			call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)
+
+			allocate(x_all(n_all), y_all(n_all), z_all(n_all))
+			allocate(node1_all(n_tria_all), node2_all(n_tria_all), node3_all(n_tria_all))
+			
+   		    call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
+					  x_all,y_all,z_all,&					
+					  node1_all,node2_all,node3_all,&			
+					  max_all_spacing)					
+
+			call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
+							   x_all, y_all, z_all, &					
+							   node1_all, node2_all, node3_all,&			
+				                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
+	                        			   nn_loc, xs_loc, ys_loc, zs_loc, &	
+							   zs_all, vcase, max_all_spacing, tolerance)		
+
+			call MAKE_SUBTAG_ALLUVIAL(nn_loc, zs_all, j, sub_tag_all, xs_loc)				
+
+			deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
+			
+			if (mpi_id.eq.0) then	
+				write(*,'(A)')	
+				write(*,'(A,I8)') 'ALLUVIAL Layer # ',j	
+			endif
+
+		enddo !do j = 1,3 	
+
+                !do i = 1, nn_loc
+                !   write(*,*) zs_loc(i), sub_tag_all(i)
+                !enddo
+                !read(*,*)   
+                   
+                                   
+		if (mpi_id.eq.0) then
+			write(*,'(A)') 'Done'
+			write(*,'(A)')	
+		endif
+
+								
 									
 
 !*************************************************************************************************
