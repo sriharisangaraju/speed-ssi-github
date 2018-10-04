@@ -139,8 +139,11 @@
                                      yb = (val_sism(isism,5) + val_sism(isism,8) + val_sism(isism,11))/3.d0;
                                      zb = (val_sism(isism,6) + val_sism(isism,9) + val_sism(isism,12))/3.d0;
                                      dist_b = dsqrt((val_sism(isism,1)-xb)**2.d0+(val_sism(isism,2)-yb)**2.d0+(val_sism(isism,3)-zb)**2.d0);
-                                     check_dist_ns(h,1) = (val_sism(isism,19) * dist_sour_ns(ip,isism)) / dist_b;
-                                     
+                                     if (dabs(dist_b) .le. 1.e-6) then
+                                        check_dist_ns(h,1) =  val_sism(isism,19)
+                                     else
+                                        check_dist_ns(h,1) = (val_sism(isism,19) * dist_sour_ns(ip,isism)) / dist_b;
+                                     endif
                                      
                                  endif
 

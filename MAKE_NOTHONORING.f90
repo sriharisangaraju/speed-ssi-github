@@ -52,7 +52,7 @@
 !                                (FILE -> 'XYZ.out')
 !                                       z_elev 
 !                     +--------------------x----------------------+  +
-!		      |    - vvvvvvvvvvvvvv|vvvvvvvvvvvvvv-       |  | zz_spx_elevation (depth) == zs_elev
+!		              |    - vvvvvvvvvvvvvv|vvvvvvvvvvvvvv-       |  | zz_spx_elevation (depth) == zs_elev
 !                     |     --vvvvvvvvvvvvv| z_spx vvvvv--        |  |
 !                     |        ---vvvvvvvv x vvvvvvvv---          |  +
 !                     |           -----vvvv|vvvv-----             |  | zz_spx_alluvial  (all_depth) == zs_all
@@ -1036,11 +1036,11 @@
 					  max_all_spacing)					
 
 			call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-							   x_all, y_all, z_all, &					
-							   node1_all, node2_all, node3_all,&			
-				                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-	                        			   nn_loc, xs_loc, ys_loc, zs_loc, &	
-							   zs_all, vcase, max_all_spacing, tolerance)		
+							                  x_all, y_all, z_all, &					
+							                  node1_all, node2_all, node3_all,&			
+				                              cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
+	                        			      nn_loc, xs_loc, ys_loc, zs_loc, &	
+							                  zs_all, vcase, max_all_spacing, tolerance)		
 
 			call MAKE_SUBTAG_ALLUVIAL(nn_loc, zs_all, j, sub_tag_all, xs_loc)				
 
