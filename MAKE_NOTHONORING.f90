@@ -106,15 +106,15 @@
 !*************************************************************************************************
 !                                   GRENOBLE - honoring
 !*************************************************************************************************
-        ncase = 1					
+    ncase = 1					
         
         						
-        tcase = tag_case !tag_case(ncase)										
-        vcase = val_case !val_case(ncase,1)		   
+    tcase = tag_case !tag_case(ncase)										
+    vcase = val_case !val_case(ncase,1)		   
 
 
 
-      if (tcase.eq.1) then										
+    if (tcase.eq.1) then										
 
 	 if (mpi_id.eq.0) then									
 	     write(*,'(A)')									
@@ -158,13 +158,64 @@
 !                                   GRENOBLE - NOT honoring
 !*************************************************************************************************
 
-	elseif (tcase.eq.2) then									
-		if (mpi_id.eq.0) then									
+	elseif (tcase .eq. 2 .or. tcase .eq. 3 .or. tcase .eq. 4 .or. tcase .eq. 6 &
+	        .or. tcase .eq. 7 .or. tcase .eq. 8 .or. tcase .eq. 11 .or. tcase .eq. 12 &
+	        .or. tcase .eq. 13 .or. tcase .eq. 14 .or. tcase .eq. 15 .or. tcase .eq. 22  &
+	        .or. tcase .eq. 40) then									
+		if (mpi_id.eq. 0 .and. tcase .eq. 2) then									
 			write(*,'(A)')									
-			write(*,'(A)')'CASE 2: GRENOBLE not honoring'					
-			write(*,'(A)')'Reading Topography&Alluvial...'					
+			write(*,'(A)')'CASE 2: GRENOBLE'					
+			
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 3) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 3: GUBBIO'	      				
+
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 4) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 4: SULMONA'	    				
+								
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 6) then							
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 6: FRIULI'	        			
+								
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 7) then		
+	        write(*,'(A)')									
+			write(*,'(A)')'CASE 7: AQUILA'	     				
+
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 8) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 8: SANTIAGO'	     				
+
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 11) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 11: CHRISTCHURCH'               			
+
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 12) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 12: PO PLAIN'               			
+
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 13) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 13: PO PLAIN-BEDROCK'               			
+
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 14) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 14: WELLINGTON'	     				
+
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 15) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 15: MARSICA'	     				
+
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 22) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 22: NORCIA'	
+	 
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 40) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 40: KUTCH'	     				
 		endif											
 
+		if(mpi_id .eq. 0) write(*,'(A)')'Reading Topography&Alluvial...'
 		file_case_xyz ='XYZ.out'								
 		file_case_all ='ALL.out'								
 
@@ -191,19 +242,19 @@
 				  max_all_spacing)					
 
 		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-						   x_all, y_all, z_all, &					
-						   node1_all, node2_all, node3_all,&			
-			                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        			   nn_loc, xs_loc, ys_loc, zs_loc, &					
-						   zs_all, vcase, max_all_spacing, tolerance)		
+						                  x_all, y_all, z_all, &					
+						                  node1_all, node2_all, node3_all,&			
+			                              cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
+                        			      nn_loc, xs_loc, ys_loc, zs_loc, &					
+						                  zs_all, vcase, max_all_spacing, tolerance)		
 
 		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
-	   				        x_elev, y_elev, z_elev, &				
-						node1_elev, node2_elev, node3_elev,&			
-                                                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
-                                                nn_loc, xs_loc, ys_loc, zs_loc, &
-				                zs_elev, zs_all, &					
-						vcase, max_elev_spacing, tolerance)			
+	   				                   x_elev, y_elev, z_elev, &				
+						               node1_elev, node2_elev, node3_elev,&			
+                                       cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
+                                       nn_loc, xs_loc, ys_loc, zs_loc, &
+				                       zs_elev, zs_all, &					
+						               vcase, max_elev_spacing, tolerance)			
 
 
 
@@ -216,133 +267,8 @@
 		endif                                                                                   
 
 
-!*************************************************************************************************
-!                                   GUBBIO - NOT honoring
-!*************************************************************************************************
-
-	elseif (tcase.eq.3) then									
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')									
-			write(*,'(A)')'CASE 3: GUBBIO not honoring'	      				
-			write(*,'(A)')'Reading Topography&Alluvial...'					
-		endif											
-
-		file_case_xyz ='XYZ.out'								
-		file_case_all ='ALL.out'								
-		!allocate(zs_elev(nn_loc))									
-		!allocate(zs_all(nn_loc))									
-
-								
-		zs_elev = -1.0e+30								
-		zs_all = -1.0e+30								
-
-		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)				
-		call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)					
-
-		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev))					
-		allocate(node1_elev(n_tria_elev), node2_elev(n_tria_elev), node3_elev(n_tria_elev))
-
-		allocate(x_all(n_all),y_all(n_all),z_all(n_all))					
-		allocate(node1_all(n_tria_all),node2_all(n_tria_all),node3_all(n_tria_all))
-
-		call READ_FILEXYZ(file_case_xyz,n_elev,n_tria_elev,&					
-				  x_elev,y_elev,z_elev,&				
-				  node1_elev,node2_elev,node3_elev,&			
-				  max_elev_spacing)
-				  					
-		call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
-				  x_all,y_all,z_all,&					
-				  node1_all,node2_all,node3_all,&			
-				  max_all_spacing)					
 
 
-
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-						   x_all, y_all, z_all, &					
-						   node1_all, node2_all, node3_all,&			
-			                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        			   nn_loc, xs_loc, ys_loc, zs_loc, &	
-						   zs_all, vcase, max_all_spacing, tolerance)		
-
-		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
-	   				        x_elev, y_elev, z_elev, &				
-						node1_elev, node2_elev, node3_elev,&			
-                                                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
-                                                nn_loc, xs_loc, ys_loc, zs_loc, &
-				                zs_elev, zs_all, &					
-						vcase, max_elev_spacing, tolerance)			
-
-
-
-		deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)	
-		deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
-		
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')'Done'								
-			write(*,'(A)')									
-		endif                                                                                   
-
-
-!*************************************************************************************************
-!                                   SULMONA - NOT honoring
-!*************************************************************************************************
-
-	elseif (tcase.eq.4) then									
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')									
-			write(*,'(A)')'CASE 4: SULMONA not honoring'	    				
-			write(*,'(A)')'Reading Topography&Alluvial...'					
-		endif											
-		file_case_xyz ='XYZ.out'								
-		file_case_all ='ALL.out'								
-			
-		zs_elev = -1.0e+30								
-		zs_all = -1.0e+30								
-
-		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)				
-		call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)					
-
-		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev))					
-		allocate(node1_elev(n_tria_elev), node2_elev(n_tria_elev), node3_elev(n_tria_elev))
-
-		allocate(x_all(n_all),y_all(n_all),z_all(n_all))					
-		allocate(node1_all(n_tria_all),node2_all(n_tria_all),node3_all(n_tria_all))
-
-		call READ_FILEXYZ(file_case_xyz,n_elev,n_tria_elev,&					
-				  x_elev,y_elev,z_elev,&				
-				  node1_elev,node2_elev,node3_elev,&			
-				  max_elev_spacing)
-				  					
-		call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
-				  x_all,y_all,z_all,&					
-				  node1_all,node2_all,node3_all,&			
-				  max_all_spacing)					
-
-
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-						   x_all, y_all, z_all, &					
-						   node1_all, node2_all, node3_all,&			
-			                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        			   nn_loc, xs_loc, ys_loc, zs_loc, &
-						   zs_all, vcase, max_all_spacing, tolerance)		
-
-		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
-	   				        x_elev, y_elev, z_elev, &				
-						node1_elev, node2_elev, node3_elev,&			
-                                                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
-                                                nn_loc, xs_loc, ys_loc, zs_loc, &
-				                zs_elev, zs_all, &					
-						vcase, max_elev_spacing, tolerance)			
-
-
-
-		deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)	
-		deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
-
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')'Done'								
-			write(*,'(A)')									
-		endif                                                                                   
 
 !*************************************************************************************************
 !                             VOLVI CASHIMA BENCHMARK - NOT honoring
@@ -351,15 +277,14 @@
 	elseif (tcase.eq. 5 .or. tcase .eq. 50) then									
 		if (mpi_id.eq.0 .and. tcase .eq. 5) then									
 			write(*,'(A)')									
-			write(*,'(A)')'CASE 5: VOLVI for CASHIMA benchmark - multi not honoring'		
-			write(*,'(A)')'Reading Topography&Alluvial...'					
+			write(*,'(A)')'CASE 5: VOLVI for CASHIMA benchmark'		
+
 		elseif (mpi_id.eq.0 .and. tcase .eq. 50) then									
 			write(*,'(A)')									
-			write(*,'(A)')'CASE 50: PLANE-WAVE benchmark - multi not honoring'		
-			write(*,'(A)')'Reading Topography&Alluvial...'					
+			write(*,'(A)')'CASE 50: PLANE-WAVE benchmark'		
 		endif											
 								
-
+     	write(*,'(A)')'Reading Topography&Alluvial...'					
 		sub_tag_all = 4								
 											
 		do j = 1,3										    
@@ -378,16 +303,16 @@
 			allocate(x_all(n_all), y_all(n_all), z_all(n_all))
 			allocate(node1_all(n_tria_all), node2_all(n_tria_all), node3_all(n_tria_all))
 			
-   		        call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
-					  x_all,y_all,z_all,&					
-					  node1_all,node2_all,node3_all,&			
-					  max_all_spacing)					
+   		    call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
+			          		  x_all,y_all,z_all,&					
+					          node1_all,node2_all,node3_all,&			
+					          max_all_spacing)					
 
 			call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
 							   x_all, y_all, z_all, &					
 							   node1_all, node2_all, node3_all,&			
-				                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-	                        			   nn_loc, xs_loc, ys_loc, zs_loc, &	
+				               cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
+	                           nn_loc, xs_loc, ys_loc, zs_loc, &	
 							   zs_all, vcase, max_all_spacing, tolerance)		
 
 			call MAKE_SUBTAG_ALLUVIAL(nn_loc, zs_all, j, sub_tag_all, xs_loc)				
@@ -399,550 +324,33 @@
 				write(*,'(A,I8)') 'ALLUVIAL Layer # ',j	
 			endif
 
-		enddo !do j = 1,3 	
-
-                !do i = 1, nn_loc
-                !   write(*,*) zs_loc(i), sub_tag_all(i)
-                !enddo
-                !read(*,*)   
-                   
+		enddo      
                                    
 		if (mpi_id.eq.0) then
 			write(*,'(A)') 'Done'
 			write(*,'(A)')	
 		endif
 
-!*************************************************************************************************
-!                             FRIULI - NOT honoring
-!*************************************************************************************************
-
-	elseif (tcase.eq.6) then									
-		if (mpi_id.eq.0) then								    	
-			write(*,'(A)')									
-			write(*,'(A)')'CASE 6: FRIULI not honoring'	        			
-			write(*,'(A)')'Reading Topography&Alluvial...'					
-		endif											
-
-		file_case_xyz ='XYZ.out'								
-		file_case_all ='ALL.out'								
-			
-		zs_elev = -1.0e+30								
-		zs_all = -1.0e+30								
-
-		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)				
-		call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)					
-
-		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev))					
-		allocate(node1_elev(n_tria_elev), node2_elev(n_tria_elev), node3_elev(n_tria_elev))
-
-		allocate(x_all(n_all),y_all(n_all),z_all(n_all))					
-		allocate(node1_all(n_tria_all),node2_all(n_tria_all),node3_all(n_tria_all))
-
-		call READ_FILEXYZ(file_case_xyz,n_elev,n_tria_elev,&					
-				  x_elev,y_elev,z_elev,&				
-				  node1_elev,node2_elev,node3_elev,&			
-				  max_elev_spacing)
-				  					
-		call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
-				  x_all,y_all,z_all,&					
-				  node1_all,node2_all,node3_all,&			
-				  max_all_spacing)					
-
-
-
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-						   x_all, y_all, z_all, &					
-						   node1_all, node2_all, node3_all,&			
-			                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        			   nn_loc, xs_loc, ys_loc, zs_loc, &	
-						   zs_all, vcase, max_all_spacing, tolerance)		
-
-		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
-	   				        x_elev, y_elev, z_elev, &				
-						node1_elev, node2_elev, node3_elev,&			
-                                                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
-                                                nn_loc, xs_loc, ys_loc, zs_loc, &
-				                zs_elev, zs_all, &					
-						vcase, max_elev_spacing, tolerance)			
-
-
-
-		deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)	
-		deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
-
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')'Done'								
-			write(*,'(A)')									
-		endif                                                                                   
-			
-			
-!*************************************************************************************************
-!                             L'AQUILA - NOT honoring
-!*************************************************************************************************
-
-	elseif (tcase.eq.7) then									
-		if (mpi_id.eq.0) then								        
-			write(*,'(A)')									
-			write(*,'(A)')'CASE 7: AQUILA  not honoring'	     				
-			write(*,'(A)')'Reading Topography&Alluvial...'					
-		endif											
-
-		file_case_xyz ='XYZ.out'								
-		file_case_all ='ALL.out'								
-								
-		zs_elev = -1.0e+30								
-		zs_all = -1.0e+30								
-
-		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)				
-		call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)					
-
-		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev))					
-		allocate(node1_elev(n_tria_elev), node2_elev(n_tria_elev), node3_elev(n_tria_elev))
-
-		allocate(x_all(n_all),y_all(n_all),z_all(n_all))					
-		allocate(node1_all(n_tria_all),node2_all(n_tria_all),node3_all(n_tria_all))
-
-		call READ_FILEXYZ(file_case_xyz,n_elev,n_tria_elev,&					
-				  x_elev,y_elev,z_elev,&				
-				  node1_elev,node2_elev,node3_elev,&			
-				  max_elev_spacing)
-				  					
-		call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
-				  x_all,y_all,z_all,&					
-				  node1_all,node2_all,node3_all,&			
-				  max_all_spacing)					
-
-
-
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-						   x_all, y_all, z_all, &					
-						   node1_all, node2_all, node3_all,&			
-			                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        			   nn_loc, xs_loc, ys_loc, zs_loc, &	
-						   zs_all, vcase, max_all_spacing, tolerance)		
-
-		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
-	   				        x_elev, y_elev, z_elev, &				
-						node1_elev, node2_elev, node3_elev,&			
-                                                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
-                                                nn_loc, xs_loc, ys_loc, zs_loc, &	
-				                zs_elev, zs_all, &					
-						vcase, max_elev_spacing, tolerance)			
-
-
-
-		deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)
-		deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
-
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')'Done'								
-			write(*,'(A)')									
-		endif                                                                                   
-
-!*************************************************************************************************
-!                             SANTIAGO - NOT honoring
-!*************************************************************************************************
-
-	elseif (tcase.eq.8) then									
-		if (mpi_id.eq.0) then								        
-			write(*,'(A)')									
-			write(*,'(A)')'CASE 8: SANTIAGO not honoring'	     				
-			write(*,'(A)')'Reading Topography&Alluvial...'					
-		endif											
-
-		file_case_xyz ='XYZ.out'								
-		file_case_all ='ALL.out'								
-								
-		zs_elev = -1.0e+30								
-		zs_all = -1.0e+30								
-
-		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)				
-		call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)					
-
-		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev))					
-		allocate(node1_elev(n_tria_elev), node2_elev(n_tria_elev), node3_elev(n_tria_elev))
-
-		allocate(x_all(n_all),y_all(n_all),z_all(n_all))					
-		allocate(node1_all(n_tria_all),node2_all(n_tria_all),node3_all(n_tria_all))
-
-		call READ_FILEXYZ(file_case_xyz,n_elev,n_tria_elev,&					
-				  x_elev,y_elev,z_elev,&				
-				  node1_elev,node2_elev,node3_elev,&			
-				  max_elev_spacing)
-				  					
-		call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
-				  x_all,y_all,z_all,&					
-				  node1_all,node2_all,node3_all,&			
-				  max_all_spacing)					
-
-
-
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-						   x_all, y_all, z_all, &					
-						   node1_all, node2_all, node3_all,&			
-			                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        			   nn_loc, xs_loc, ys_loc, zs_loc, &	
-						   zs_all, vcase, max_all_spacing, tolerance)		
-
-		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
-	   				        x_elev, y_elev, z_elev, &				
-						node1_elev, node2_elev, node3_elev,&			
-                                                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
-                                                nn_loc, xs_loc, ys_loc, zs_loc, &	
-				                zs_elev, zs_all, &					
-						vcase, max_elev_spacing, tolerance)			
-
-
-
-		deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)
-		deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
-
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')'Done'								
-			write(*,'(A)')									
-		endif                
-
-!*************************************************************************************************
-!                             CHRISTCHURCH INGV - NOT honoring
-!*************************************************************************************************
-
-	elseif (tcase.eq.11) then									
-		if (mpi_id.eq.0) then								        
-			write(*,'(A)')									
-			write(*,'(A)')'CASE 11: CHRISTCHURCH NEW'               			
-			write(*,'(A)')'Reading Topography&Alluvial...'					
-		endif											
-
-
-		file_case_xyz ='XYZ.out'								
-		file_case_all ='ALL.out'								
-								
-		zs_elev = -1.0e+30								
-		zs_all = -1.0e+30								
-
-		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)				
-		call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)					
-
-		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev))					
-		allocate(node1_elev(n_tria_elev), node2_elev(n_tria_elev), node3_elev(n_tria_elev))
-
-		allocate(x_all(n_all),y_all(n_all),z_all(n_all))					
-		allocate(node1_all(n_tria_all),node2_all(n_tria_all),node3_all(n_tria_all))
-
-		call READ_FILEXYZ(file_case_xyz,n_elev,n_tria_elev,&					
-				  x_elev,y_elev,z_elev,&				
-				  node1_elev,node2_elev,node3_elev,&			
-				  max_elev_spacing)
-				  					
-		call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
-				  x_all,y_all,z_all,&					
-				  node1_all,node2_all,node3_all,&			
-				  max_all_spacing)					
-
-
-
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-						   x_all, y_all, z_all, &					
-						   node1_all, node2_all, node3_all,&			
-			                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        			   nn_loc, xs_loc, ys_loc, zs_loc, &
-						   zs_all, vcase, max_all_spacing, tolerance)		
-
-		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
-	   				        x_elev, y_elev, z_elev, &				
-						node1_elev, node2_elev, node3_elev,&			
-                                                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
-                                                nn_loc, xs_loc, ys_loc, zs_loc, &
-				                zs_elev, zs_all, &					
-						vcase, max_elev_spacing, tolerance)			
-
-
-
-		deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)
-		deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
-
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')'Done'								
-			write(*,'(A)')									
-		endif                                                                                   
-
-!*************************************************************************************************
-!                             PO-PLAIN - NOT honoring
-!*************************************************************************************************
-
-	elseif (tcase.eq.12) then									
-		if (mpi_id.eq.0) then								        
-			write(*,'(A)')									
-			write(*,'(A)')'CASE 12: PO PLAIN(NEW MODEL)'               			
-			write(*,'(A)')'Reading Topography&Alluvial...'					
-		endif											
-
-
-		file_case_xyz ='XYZ.out'								
-		file_case_all ='ALL.out'								
-								
-		zs_elev = -1.0e+30								
-		zs_all = -1.0e+30								
-
-		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)				
-		call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)					
-
-		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev))					
-		allocate(node1_elev(n_tria_elev), node2_elev(n_tria_elev), node3_elev(n_tria_elev))
-
-		allocate(x_all(n_all),y_all(n_all),z_all(n_all))					
-		allocate(node1_all(n_tria_all),node2_all(n_tria_all),node3_all(n_tria_all))
-
-		call READ_FILEXYZ(file_case_xyz,n_elev,n_tria_elev,&					
-				  x_elev,y_elev,z_elev,&				
-				  node1_elev,node2_elev,node3_elev,&			
-				  max_elev_spacing)
-				  					
-		call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
-				  x_all,y_all,z_all,&					
-				  node1_all,node2_all,node3_all,&			
-				  max_all_spacing)					
-
-
-
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-						   x_all, y_all, z_all, &					
-						   node1_all, node2_all, node3_all,&			
-			                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        			   nn_loc, xs_loc, ys_loc, zs_loc, &
-						   zs_all, vcase, max_all_spacing, tolerance)		
-
-		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
-	   				        x_elev, y_elev, z_elev, &				
-						node1_elev, node2_elev, node3_elev,&			
-                                                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
-                                                nn_loc, xs_loc, ys_loc, zs_loc, &
-				                zs_elev, zs_all, &					
-						vcase, max_elev_spacing, tolerance)			
-
-
-
-		deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)
-		deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
-
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')'Done'								
-			write(*,'(A)')									
-		endif                                                                                   
 		
 !*************************************************************************************************
-!                             PO-PLAIN - NOT honoring
-!*************************************************************************************************
-
-	elseif (tcase.eq.13) then									
-		if (mpi_id.eq.0) then								        
-			write(*,'(A)')									
-			write(*,'(A)')'CASE 13: PO PLAIN-BEDROCK(NEW MODEL)'               			
-			write(*,'(A)')'Reading Topography&Alluvial...'					
-		endif											
-
-
-		file_case_xyz ='XYZ.out'								
-		file_case_all ='ALL.out'								
-								
-		zs_elev = -1.0e+30								
-		zs_all = -1.0e+30								
-
-		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)				
-		call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)					
-
-		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev))					
-		allocate(node1_elev(n_tria_elev), node2_elev(n_tria_elev), node3_elev(n_tria_elev))
-
-		allocate(x_all(n_all),y_all(n_all),z_all(n_all))					
-		allocate(node1_all(n_tria_all),node2_all(n_tria_all),node3_all(n_tria_all))
-
-		call READ_FILEXYZ(file_case_xyz,n_elev,n_tria_elev,&					
-				  x_elev,y_elev,z_elev,&				
-				  node1_elev,node2_elev,node3_elev,&			
-				  max_elev_spacing)
-				  					
-		call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
-				  x_all,y_all,z_all,&					
-				  node1_all,node2_all,node3_all,&			
-				  max_all_spacing)					
-
-
-
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-						   x_all, y_all, z_all, &					
-						   node1_all, node2_all, node3_all,&			
-			                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        			   nn_loc, xs_loc, ys_loc, zs_loc, &
-						   zs_all, vcase, max_all_spacing, tolerance)		
-
-		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
-	   				        x_elev, y_elev, z_elev, &				
-						node1_elev, node2_elev, node3_elev,&			
-                                                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
-                                                nn_loc, xs_loc, ys_loc, zs_loc, &
-				                zs_elev, zs_all, &					
-						vcase, max_elev_spacing, tolerance)			
-
-
-
-		deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)
-		deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
-
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')'Done'								
-			write(*,'(A)')									
-		endif                                                                          
-		
-!*************************************************************************************************
-!                             Wellington - NOT honoring
-!*************************************************************************************************
-
-	elseif (tcase.eq.14) then									
-		if (mpi_id.eq.0) then								        
-			write(*,'(A)')									
-			write(*,'(A)')'CASE 14: Wellington not honoring'	     				
-			write(*,'(A)')'Reading Topography&Alluvial...'					
-		endif											
-
-		file_case_xyz ='XYZ.out'								
-		file_case_all ='ALL.out'								
-								
-		zs_elev = -1.0e+30								
-		zs_all = -1.0e+30								
-
-		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)				
-		call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)					
-
-		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev))					
-		allocate(node1_elev(n_tria_elev), node2_elev(n_tria_elev), node3_elev(n_tria_elev))
-
-		allocate(x_all(n_all),y_all(n_all),z_all(n_all))					
-		allocate(node1_all(n_tria_all),node2_all(n_tria_all),node3_all(n_tria_all))
-
-		call READ_FILEXYZ(file_case_xyz,n_elev,n_tria_elev,&					
-				  x_elev,y_elev,z_elev,&				
-				  node1_elev,node2_elev,node3_elev,&			
-				  max_elev_spacing)
-				  					
-		call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
-				  x_all,y_all,z_all,&					
-				  node1_all,node2_all,node3_all,&			
-				  max_all_spacing)					
-
-
-
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-						   x_all, y_all, z_all, &					
-						   node1_all, node2_all, node3_all,&			
-			                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        			   nn_loc, xs_loc, ys_loc, zs_loc, &	
-						   zs_all, vcase, max_all_spacing, tolerance)		
-
-		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
-	   				        x_elev, y_elev, z_elev, &				
-						node1_elev, node2_elev, node3_elev,&			
-                                                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
-                                                nn_loc, xs_loc, ys_loc, zs_loc, &	
-				                zs_elev, zs_all, &					
-						vcase, max_elev_spacing, tolerance)			
-
-
-
-		deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)
-		deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
-
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')'Done'								
-			write(*,'(A)')									
-		endif            
-
-!*************************************************************************************************
-!                             Marsica - NOT honoring
-!*************************************************************************************************
-
-	elseif (tcase.eq.15) then									
-		if (mpi_id.eq.0) then								        
-			write(*,'(A)')									
-			write(*,'(A)')'CASE 15: Marsica - Fucino'	     				
-			write(*,'(A)')'Reading Topography&Alluvial...'					
-		endif											
-
-		file_case_xyz ='XYZ.out'								
-		file_case_all ='ALL.out'								
-								
-		zs_elev = -1.0e+30								
-		zs_all = -1.0e+30								
-
-		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)				
-		call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)					
-
-		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev))					
-		allocate(node1_elev(n_tria_elev), node2_elev(n_tria_elev), node3_elev(n_tria_elev))
-
-		allocate(x_all(n_all),y_all(n_all),z_all(n_all))					
-		allocate(node1_all(n_tria_all),node2_all(n_tria_all),node3_all(n_tria_all))
-
-		call READ_FILEXYZ(file_case_xyz,n_elev,n_tria_elev,&					
-				  x_elev,y_elev,z_elev,&				
-				  node1_elev,node2_elev,node3_elev,&			
-				  max_elev_spacing)
-				  					
-		call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
-				  x_all,y_all,z_all,&					
-				  node1_all,node2_all,node3_all,&			
-				  max_all_spacing)					
-
-
-
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-						   x_all, y_all, z_all, &					
-						   node1_all, node2_all, node3_all,&			
-			                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        			   nn_loc, xs_loc, ys_loc, zs_loc, &	
-						   zs_all, vcase, max_all_spacing, tolerance)		
-
-		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
-	   				        x_elev, y_elev, z_elev, &				
-						node1_elev, node2_elev, node3_elev,&			
-                                                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
-                                                nn_loc, xs_loc, ys_loc, zs_loc, &	
-				                zs_elev, zs_all, &					
-						vcase, max_elev_spacing, tolerance)			
-
-
-
-		deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)
-		deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
-
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')'Done'								
-			write(*,'(A)')									
-		endif            
-		
-		
-		
-!*************************************************************************************************
-!                             Istanbul - NOT honoring
+!                             XYZ map - ALL map - VS30 map
 !*************************************************************************************************
 
 	elseif (tcase.eq. 16 .or. tcase .eq. 20 .or. tcase .eq. 21) then									
 		if (mpi_id.eq.0 .and. tcase .eq. 16) then	        
 			write(*,'(A)')									
-			write(*,'(A)')'CASE 16: Istanbul - Turkey'	     				
-			write(*,'(A)')'Reading Topography&Alluvial...'					
+			write(*,'(A)')'CASE 16: ISTANBUL'	     				
 		endif
 	        if (mpi_id.eq.0 .and. tcase .eq. 20) then        
 			write(*,'(A)')									
-			write(*,'(A)')'CASE 20: Atene '	     				
-			write(*,'(A)')'Reading Topography&Alluvial...'					
+			write(*,'(A)')'CASE 20: ATHENS'	     				
 		endif													
 	        if (mpi_id.eq.0 .and. tcase .eq. 21) then        
 			write(*,'(A)')									
-			write(*,'(A)')'CASE 20: Beijing '	     				
-			write(*,'(A)')'Reading Topography&Alluvial...'					
+			write(*,'(A)')'CASE 20: BEIJING '	     				
 		endif													
-
+    
+    	write(*,'(A)')'Reading Topography&Alluvial...'					
 
 		file_case_xyz ='XYZ.out'								
 		if(tcase .eq. 21)  file_case_all ='ALL.out'
@@ -972,24 +380,25 @@
 				  node1_all,node2_all,node3_all,&			
 				  max_all_spacing)					
 
-                call READ_FILEVS(file_case_vs, n_tria_elev, vs_elev, sedim)
+        
+        call READ_FILEVS(file_case_vs, n_tria_elev, vs_elev, sedim)
 
 
 
 		if(tcase .eq. 21) call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
 				                    		   x_all, y_all, z_all, &					
-						                   node1_all, node2_all, node3_all,&			
-			                                           cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        			                   nn_loc, xs_loc, ys_loc, zs_loc, &	
-						                   zs_all, vcase, max_all_spacing, tolerance)		
+						                       node1_all, node2_all, node3_all,&			
+			                                   cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
+                        		               nn_loc, xs_loc, ys_loc, zs_loc, &	
+						                       zs_all, vcase, max_all_spacing, tolerance)		
 
 		call GET_NODE_DEPTH_AND_VS(loc_n_num, n_elev, n_tria_elev, &					
 	   				        x_elev, y_elev, z_elev, vs_elev, sedim,&				
-						node1_elev, node2_elev, node3_elev,&			
-                                                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
-                                                nn_loc, xs_loc, ys_loc, zs_loc, &	
-				                zs_elev, zs_all, vs, thick, &					
-						vcase, max_elev_spacing, tolerance)			
+						    node1_elev, node2_elev, node3_elev,&			
+                            cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
+                            nn_loc, xs_loc, ys_loc, zs_loc, &	
+				            zs_elev, zs_all, vs, thick, &					
+						    vcase, max_elev_spacing, tolerance)			
          
 
 
@@ -1009,7 +418,7 @@
 	elseif (tcase.eq. 30) then									
 		if (mpi_id.eq.0) then									
 			write(*,'(A)')									
-			write(*,'(A)')'CASE 30: Athens-Parthenon - multi not honoring'		
+			write(*,'(A)')'CASE 30: ATHENS-PARTHENON'		
 			write(*,'(A)')'Reading Topography&Alluvial...'					
 		endif											
 								
@@ -1068,7 +477,7 @@
 									
 
 !*************************************************************************************************
-!                             TEST honoring
+!                             TEST honoring -- only topgraphy surface
 !*************************************************************************************************
 
 	elseif (tcase.eq.98) then									
@@ -1079,7 +488,6 @@
 		endif											
 
 		 file_case_xyz ='XYZ.out'								
-
 	  	 zs_elev = -1.0e+30								
 
 	
@@ -1098,8 +506,8 @@
 	 	 call GET_NODE_DEPTH_FROM_SIMPLE(loc_n_num, n_elev, n_tria_elev,&					
 						   x_elev, y_elev, z_elev,&				
 						   node1_elev, node2_elev, node3_elev,&			
-	               				   cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat,&			
-	               				   nn_loc, xs_loc, ys_loc, zs_loc,&					
+	               	       cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat,&			
+	               		   nn_loc, xs_loc, ys_loc, zs_loc,&					
 						   zs_elev, vcase, max_elev_spacing, tolerance)		
 
 	 	 deallocate(x_elev,y_elev,z_elev,node1_elev,node2_elev,node3_elev)	
@@ -1110,7 +518,7 @@
 		endif													
 
 !*************************************************************************************************
-!                             TEST - NOT honoring
+!                             TEST - NOT honoring - topo and alluvial surfaces
 !*************************************************************************************************
 
 	elseif (tcase.eq.99) then

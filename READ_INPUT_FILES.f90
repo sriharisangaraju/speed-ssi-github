@@ -337,8 +337,12 @@
                 write(*,'(A)')'ATHENS'                     
               case(21)
                 write(*,'(A)')'BEIJING'
+              case(22)
+                write(*,'(A)')'NORCIA'                
               case(30) 
-                write(*,'(A)')'ATHENS-Parthenon'                             
+                write(*,'(A)')'ATHENS-Parthenon'
+              case(40)
+                write(*,'(A)')'KUTCH BASIN, INDIA'                                            
               case(98,99)
                 write(*,'(A)')'TEST MODE'                                
               case default

@@ -70,7 +70,7 @@
       integer*4, dimension(nn_loc) :: sub_tag_all
       integer*4, dimension(0:cs_nnz_loc) :: cs_loc                
 
-      real*8 :: Depth, Depth_real, vs_all, vp_all, thickness, vs30
+      real*8 :: Depth, Depth_real, vs_all, vp_all, thickness, vs30, pig
       real*8 :: VS,VP,rho,lambda,mu,gamma,ni, qs,qp
       real*8 :: x1,y1,x2,y2,coef_a, coef_b, coef_c, numer, den, distance, f_distance
 
@@ -85,6 +85,8 @@
       character*70 :: filename
       character*5 :: filesuffix
          
+      
+      pig = 4.d0*datan(1.d0);
       
 !     STRESS CALCULATION
       
@@ -1190,7 +1192,57 @@
                         !
                         !-------------------------------------------------------------------
 					 
-                                                                
+                   elseif (tcase.eq.40) then
+                    !-------------------------------------------------------------------
+                    ! CASE 40: KUTCH  
+                    !-------------------------------------------------------------------
+                        
+                         Depth = zs_elev(ic)                       
+                         if ((Depth .ge. 0.0d0).and.(zs_all(ic) .ge. 0.0d0)) then                                    
+                              ! + MATERIAL INSIDE THE BASIN 
+                              VS = 1
+                              VP  = 1
+                              rho = 1                               
+                              lambda = rho * (VP**2 - 2*VS**2)                                                      
+                              mu = rho * VS**2                                      
+                              qs = 0.1*vs 
+                              gamma = (pig*(2.d0/3.d0))/qs          
+                                              
+                          else  
+                             ! + MATERIAL INSIDE THE BEDROCK         
+                             Depth_real = zs(ic)
+                             if (Depth_real .ge. -500.0d0) then
+                                    VS = 1                                                                 
+                                    VP  = 1                          
+                                    rho = 1                                         
+                                    lambda = rho * (VP**2 - 2*VS**2)                                                    
+                                    mu = rho * VS**2 
+                                    qs = 0.1*vs                                
+                                    gamma = (pig*(2.d0/3.d0))/qs       
+
+                                                                                      
+                             elseif (Depth_real .le. -500.d0 .and. Depth_real .ge. -1000.0d0) then                   
+                                    VS = 1                                                                 
+                                    VP  = 1                          
+                                    rho = 1                                         
+                                    lambda = rho * (VP**2 - 2*VS**2)                                                    
+                                    mu = rho * VS**2 
+                                    qs = 0.1*vs                                
+                                    gamma = (pig*(2.d0/3.d0))/qs   
+
+                                                                  
+                             else
+                                    VS = 1;
+                                    VP = 1;
+                                    rho = 1;
+                                    lambda = rho * (VP**2 - 2*VS**2)                                                    
+                                    mu = rho * VS**2 
+                                    qs = 0.1*vs                                
+                                    gamma = (pig*(2.d0/3.d0))/qs   
+
+                                                                  
+                             endif
+                         endif                                                                             
 
                    elseif (tcase.eq.50) then
 
