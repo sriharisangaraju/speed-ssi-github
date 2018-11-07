@@ -114,10 +114,10 @@
            t_t0 = time - t0_delay
 
            !val = amp * (1 - (1 + t_t0/TAU)*exp(-t_t0/TAU))
-           if (t_t0.lt.0.0d0) then
+           if (t_t0 .lt. 0.0d0) then
              GET_FUNC_VALUE_SISM = 0.0d0
-           elseif (t_t0.eq.0.0d0) then
-             GET_FUNC_VALUE_SISM = 0.5d0
+           !elseif (t_t0.eq.0.0d0) then
+           !  GET_FUNC_VALUE_SISM = 0.5d0
            else
              GET_FUNC_VALUE_SISM = amp * (1.0d0 - (1 + t_t0/TAU)*exp(-t_t0/TAU))
            endif         
