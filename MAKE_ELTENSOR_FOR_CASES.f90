@@ -1170,24 +1170,32 @@
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 1st Layer
                 
                         if (sub_tag_all(ic).eq.1) then
-                                rho = 2100
-                                lambda = 4.557000E+09
-                                mu = 8.400000E+07
-                                gamma = 2.094395E-01
-                        
+                                VS = 350.d0;
+                                VP  = 700.d0;
+                                rho = 1800.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = 0.05d0*VS;
+                                gamma = 4.d0*datan(1.d0)/qs;                        
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 2nd Layer
                         elseif (sub_tag_all(ic).eq.2) then
-                                rho = 2100
-                                lambda = 6.289500E+09
-                                mu = 2.572500E+08
-                                gamma = 1.196797E-01 
-                                
+                                VS = 700.d0;
+                                VP  = 1250.d0;
+                                rho = 2300.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = 0.05d0*VS;
+                                gamma = 4.d0*datan(1.d0)/qs;                                
                         else 
-                                rho = 2200
-                                lambda = 1.394250E+09
-                                mu = 9.295000E+08
-                                gamma = 6.444293E-02
+                                VS = 1500.d0;
+                                VP  = 2670.d0;
+                                rho = 2500.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = 0.05d0*VS;
+                                gamma = 4.d0*datan(1.d0)/qs;
                         endif
+
                         
                         !
                         !-------------------------------------------------------------------
