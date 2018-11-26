@@ -360,7 +360,7 @@
         
       if (tstart .gt. 0.0d0) then
           isnap = int(tstart/(deltat*trestart)); 
-          tstart = tstart + deltat;
+!          tstart = tstart + deltat;
          
          call READ_FILEOUT(file_outU0,isnap,mpi_id,3*nnod_loc,u0)
          call READ_FILEOUT(file_outU1,isnap,mpi_id,3*nnod_loc,u1)
@@ -836,8 +836,28 @@
             
                           
 !---------------------------------------------------------------------------
-!     EXCHANGE U1 & V1 VALUES
+!     EXCHANGE U0, U1 & V1 VALUES
 !---------------------------------------------------------------------------
+            if (restart .eq. 1) then 
+                do i = 1,nsend
+                   in = node_send(i)
+                   send_buffer(3*(i -1) +1) = u0(3*(in -1) +1)
+                   send_buffer(3*(i -1) +2) = u0(3*(in -1) +2)
+                   send_buffer(3*(i -1) +3) = u0(3*(in -1) +3)
+                enddo
+                
+                call EXCHANGE_DOUBLE(3*nsend,send_buffer,3*nrecv,recv_buffer,&
+                                     mpi_np,send_length,recv_length,&
+                                     mpi_comm,mpi_stat,mpi_ierr,mpi_id)
+                  
+                do i = 1,nrecv
+                   in = node_recv(i)
+                   u0(3*(in -1) +1) = recv_buffer(3*(i -1) +1) 
+                   u0(3*(in -1) +2) = recv_buffer(3*(i -1) +2)
+                   u0(3*(in -1) +3) = recv_buffer(3*(i -1) +3)
+                enddo
+            endif
+
             do i = 1,nsend
                in = node_send(i)
                send_buffer(3*(i -1) +1) = u1(3*(in -1) +1)
@@ -2027,6 +2047,8 @@
       if (nmonitors_lst .ge. 1) then
                         
         if (mod(its,ndt_mon_lst) .eq. 0  .and. count_monitor .gt. 0 ) then 
+         
+         
 
             call WRITE_OUTPUT(nmonitors_lst, mpi_id, el_monitor_lst, local_el_num, nelem_loc, &
                               con_spx_loc, con_nnz_loc, sdeg_mat, nmat, &
@@ -2035,7 +2057,8 @@
                               xr_monitor_lst, yr_monitor_lst, zr_monitor_lst, & 
                               tt1, deltat, deltat2, &
                               opt_out_var, count_monitor, monitor_file,debug, &
-                              mu_nle, gamma_nle, b_instabilitycontrol, instability_maxval, b_instability_abort)            
+                              mu_nle, gamma_nle, b_instabilitycontrol, instability_maxval, b_instability_abort)  
+                                        
          endif         
                         
       endif
