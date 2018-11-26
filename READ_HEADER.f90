@@ -64,7 +64,7 @@
                              time_step,start_time,stop_time,&
                              option_out_var,&          
                              option_out_data,option_out_form,&
-                             nsnapshots,t_snapshot,&
+                             trestart,&
                              ndt_monitor,&                
                              deltat_fixed,&                
                              depth_search_mon_pgm,ndt_mon_pgm,n_pgm,&        
@@ -85,7 +85,7 @@
       character*8 :: keyword
       character*3 :: deltat_fixed        
 
-      integer*4 :: nsnapshots, testmode
+      integer*4 :: testmode, trestart
       integer*4 :: option_out_data,option_out_form
       integer*4 :: status
       integer*4 :: ileft,iright, order, stages
@@ -106,7 +106,7 @@
       real*8 :: rotation_angle_mon_pgm                                
       real*8 :: depth_search_mon_lst
 
-      real*8, dimension(nsnapshots) :: t_snapshot
+
       real*8, dimension(ntime_err) :: time_err
 
       ! If .TRUE., fails when a mandatory argument is missing
@@ -187,9 +187,9 @@
            case('STOPTIME')
             read(inline(ileft:iright),*) stop_time
          
-           case('SNAPSHOT')
-            is = is +1
-            read(inline(ileft:iright),*) t_snapshot(is)
+           case('RESTART')
+            !is = is +1
+            read(inline(ileft:iright),*) trestart
 
            case('TIMEFIXE')                                
             read(inline(ileft:iright),*) time_step                                        
@@ -282,17 +282,17 @@
       
 ! Snapshots reordering
       
-      if (nsnapshots.gt.1) then
-         do i = 1,nsnapshots-1
-            do j = i+1, nsnapshots
-               if (t_snapshot(i).gt.t_snapshot(j)) then
-                  val = t_snapshot(i)
-                  t_snapshot(i) = t_snapshot(j)
-                  t_snapshot(j) = val
-               endif
-            enddo
-         enddo
-      endif
+!      if (nsnapshots.gt.1) then
+!         do i = 1,nsnapshots-1
+!            do j = i+1, nsnapshots
+!               if (t_snapshot(i).gt.t_snapshot(j)) then
+!                  val = t_snapshot(i)
+!                  t_snapshot(i) = t_snapshot(j)
+!                  t_snapshot(j) = val
+!               endif
+!            enddo
+!         enddo
+!      endif
       
       close(40)
       
