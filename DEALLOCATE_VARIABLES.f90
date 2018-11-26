@@ -52,7 +52,7 @@
       if (nmonitors_pgm.gt.0) deallocate(x_monitor_pgm,y_monitor_pgm,z_monitor_pgm,n_monitor_pgm)
       if (nmonitors_pgm.gt.0) deallocate(xr_monitor_pgm,yr_monitor_pgm,zr_monitor_pgm,el_monitor_pgm)
       if (nmonitors_pgm .gt.0) deallocate(max_u, max_v, max_a, max_o)
-      if (nsnaps.gt.0) deallocate(tsnap,itersnap)
+    !  if (nsnaps.gt.0) deallocate(tsnap,itersnap)
       if (nload_dirX_el.gt.0) deallocate (val_dirX_el,fun_dirX_el,tag_dirX_el)
       if (nload_dirY_el.gt.0) deallocate (val_dirY_el,fun_dirY_el,tag_dirY_el)
       if (nload_dirZ_el.gt.0) deallocate (val_dirZ_el,fun_dirZ_el,tag_dirZ_el)
