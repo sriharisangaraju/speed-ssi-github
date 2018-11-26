@@ -40,7 +40,7 @@
       
 
       do isn = 1, nn_s
-         if ((zz_elevation(isn) .ge. 0.0d0) .and. (sub_tag_all(isn) .eq. 4)) then
+         if (zz_elevation(isn) .ge. 0.0d0) then !.and. (sub_tag_all(isn) .eq. 4)) then
 
                 !if ((xx_s(isn) .ge. 685956).and.(xx_s(isn) .le. 701105)) then
                         sub_tag_all(isn) = j
