@@ -95,12 +95,13 @@ module str_mesh
    integer*4:: nofne        !< number of neighbouring elements
    integer*4:: proj_yn      !< 1 if the element project quad nodes 0 otherwise 
    real*8   :: nx,ny,nz     !< normal to the element
-   
+   integer*4::frac_yn
 
    real*8, dimension(nofqp**2) :: wx_pl  !< weights of the quadrature rule (x)
    real*8, dimension(nofqp**2) :: wy_pl  !< weights of the quadrature rule (y)
    real*8, dimension(nofqp**2) :: wz_pl  !< weights of the quadrature rule (z)
-
+   real*8 :: zn,zt
+   
  end type ELEMENT
 
 END MODULE str_mesh
@@ -239,7 +240,7 @@ module speed_par
 
 ! FILENAMES
       character*70 :: file_PG, file_MPGM, file_LS, file_MLST, &
-                      head_file, grid_file, mat_file, bkp_file, &
+                      head_file, grid_file, mat_file, bkp_file, head_file_frc, &
                       monitor_file, monitor_file_new, file_face, file_part, & 
                       file_mpi, mpi_file, file_mpi_new, &
                       filename
@@ -278,7 +279,7 @@ module speed_par
                    nfunc, nfunc_data, &
                    nmonitors_pgm, nmonitors_lst, &
                    num_pgm, num_lst, &
-                   nts, nsnaps, &
+                   nts, restart, trestart, &
                    ns, nn, nn2, nn3, &
                    nnode_dirX,nnode_dirY,nnode_dirZ, &
                    nnode_abc, nelem_abc, nnode_dg, nelem_dg, nelem_dg_glo, &
@@ -343,7 +344,7 @@ module speed_par
                  tag_dirX_el, tag_neuX_el, tag_dirY_el, tag_neuY_el, tag_dirZ_el, tag_neuZ_el, &
                  tag_neuN_el, &
                  tag_plaY_el, tag_plaX_el, tag_plaZ_el, &
-                 tag_abc_el, tag_dg_el, tag_dg_yn, &
+                 tag_abc_el, tag_dg_el, tag_dg_yn, tag_dg_frc, &
                  tag_sism_el, tag_expl_el, &  !tag_case         
                  tag_func, func_type, func_indx
       
@@ -440,7 +441,7 @@ module speed_par
               val_poiZ_el, val_forZ_el, val_plaX_el, val_plaY_el, val_plaZ_el, &
               val_pres_el, val_shea_el, val_forc_el, val_sism_el, val_expl_el, &
               val_traX_el, val_traY_el, val_traZ_el, &
-              val_mat_nle, prop_mat
+              val_mat_nle, prop_mat, val_dg_frc
 
               
 ! (MATRICES FOR) SEISMIC MOMENT OR EXPLOSIVE SOURCE                       
@@ -522,7 +523,7 @@ module speed_timeloop
                         
                          !TIME INTEGRATION
                          nts, deltat, tstart, tstop, &
-                         nsnaps, itersnap, initial_snap, &
+                         restart, trestart, initial_snap, &
                          rk_scheme, rk_order, rk_stages, & 
                         
                          !MPI

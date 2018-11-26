@@ -38,7 +38,7 @@
       integer*4 :: i,lname
       
       lname = len_trim(filename)
-      out_file = filename(1:lname) // '000000_0000.out'
+      out_file = filename(1:lname) // '000000_000000.out'
       
       if (procs .lt. 10) then
          write(out_file(lname+6:lname+6),'(i1)') procs
@@ -55,13 +55,17 @@
       endif
       
       if (counter .lt. 10) then
-         write(out_file(lname+11:lname+11),'(i1)') counter
-      else if (procs .lt. 100) then
-         write(out_file(lname+10:lname+11),'(i2)') counter
-      else if (procs .lt. 1000) then
-         write(out_file(lname+9:lname+11),'(i3)') counter    
+         write(out_file(lname+13:lname+13),'(i1)') counter
+      else if (counter .lt. 100) then
+         write(out_file(lname+12:lname+13),'(i2)') counter
+      else if (counter .lt. 1000) then
+         write(out_file(lname+11:lname+13),'(i3)') counter    
+      else if (counter .lt. 10000) then
+         write(out_file(lname+10:lname+13),'(i4)') counter    
+      else if (counter .lt. 100000) then
+         write(out_file(lname+9:lname+13),'(i5)') counter    
       else
-         write(out_file(lname+8:lname+11),'(i4)') counter
+         write(out_file(lname+8:lname+13),'(i6)') counter
       endif
       
       open(20+procs, file=out_file)

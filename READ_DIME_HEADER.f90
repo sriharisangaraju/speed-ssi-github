@@ -49,8 +49,8 @@
          
          keyword = input_line(1:8)
 
-         if (keyword(1:8).eq.'SNAPSHOT') then
-            nsnapshots = nsnapshots + 1
+         if (keyword(1:7).eq.'RESTART') then
+            nsnapshots = 1
          endif
          if (keyword(1:7).eq.'TIMEERR') then
             ntime_err = ntime_err + 1

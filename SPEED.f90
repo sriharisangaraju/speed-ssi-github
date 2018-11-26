@@ -293,27 +293,26 @@
 !     SETUP FOR SNAPSHOTS
 !**************************************************************************************      
       
-      if (nsnaps.gt.0) then
-        do i = 1, nsnaps
-          itersnap(i) = int((tsnap(i) - tstart) / deltat)
-          if (itersnap(i) .lt. 0) itersnap(i) = 0
-          if (itersnap(i) .gt. nts) itersnap(i) = nts
-        enddo
+!      if (nsnaps.gt.0) then
+!        do i = 1, nsnaps
+!          itersnap(i) = int((tsnap(i) - tstart) / deltat)
+!          if (itersnap(i) .lt. 0) itersnap(i) = 0
+!          if (itersnap(i) .gt. nts) itersnap(i) = nts
+!        enddo
         
-        initial_snap = 1  
-        if(tstart .gt. 0.d0) then
-           allocate(set_initial_snap(nsnaps))
-           set_initial_snap = tstart - tsnap 
+!        initial_snap = 1  
+!        if(tstart .gt. 0.d0) then
+!           allocate(set_initial_snap(nsnaps))
+!           set_initial_snap = tstart - tsnap 
            
-           do i = 2, nsnaps
-                   if(set_initial_snap(i) .lt. set_initial_snap(i-1) .and. set_initial_snap(i) .ge. 0) then
-                      initial_snap = i
-                   endif   
-           enddo        
-           deallocate(set_initial_snap)
-         endif          
-        
-      endif
+!           do i = 2, nsnaps
+!                   if(set_initial_snap(i) .lt. set_initial_snap(i-1) .and. set_initial_snap(i) .ge. 0) then
+!                      initial_snap = i
+!                   endif   
+!           enddo        
+!           deallocate(set_initial_snap)
+!         endif                 
+!      endif
 
 !**************************************************************************************      
 !    END SETUP 

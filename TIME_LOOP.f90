@@ -151,7 +151,7 @@
 
       if(mpi_id .eq. 0) start = MPI_WTIME()
 
-      isnap = 1      
+     
       allocate(func_value(nfunc))            
      
 !---------------------------------------------------------------------------
@@ -349,9 +349,9 @@
 !---------------------------------------------------------------------------
 !     STOP & GO <--->  READING BACKUP FILES (If present)
 !---------------------------------------------------------------------------
-
+     
      if(len_trim(bkp_file) .ne. 70) then                                                                                  
-        !file_outU0 = bkp_file(1:len_trim(bkp_file)) // '/U0_'
+        file_outU0 = bkp_file(1:len_trim(bkp_file)) // '/U0_'
         file_outU1 = bkp_file(1:len_trim(bkp_file)) // '/U1_'
         file_outV1 = bkp_file(1:len_trim(bkp_file)) // '/V1_'   
      else
@@ -359,9 +359,14 @@
      endif
         
       if (tstart .gt. 0.0d0) then
-         !call READ_FILEOUT(file_outU0,initial_snap,mpi_id,3*nnod_loc,u0)
-         call READ_FILEOUT(file_outU1,initial_snap,mpi_id,3*nnod_loc,u1)
-         call READ_FILEOUT(file_outV1,initial_snap,mpi_id,3*nnod_loc,v1)
+          isnap = int(tstart/(deltat*trestart)); 
+          tstart = tstart + deltat;
+         
+         call READ_FILEOUT(file_outU0,isnap,mpi_id,3*nnod_loc,u0)
+         call READ_FILEOUT(file_outU1,isnap,mpi_id,3*nnod_loc,u1)
+         call READ_FILEOUT(file_outV1,isnap,mpi_id,3*nnod_loc,v1)
+      else 
+         isnap = 1;   
       endif
 
 !---------------------------------------------------------------------------
@@ -2083,19 +2088,23 @@
 !---------------------------------------------------------------------------
 !     WRITE BACKUP FILES
 !---------------------------------------------------------------------------
+   
+    if(restart .eq. 1 .and. (dabs(tt2 - trestart*deltat*isnap) .le. 1.e-6)) then      
 
-    if ((nsnaps .gt. 0) .and. (isnap .le. nsnaps)) then
-            
-        if (its .ge. itersnap(isnap)) then
+!           write(*,*) dabs(tt2 - restart*deltat*isnap), tt2, restart, deltat, isnap
+!           read(*,*)
 
-           if (mpi_id.eq.0) write(*,*) 'Writing Backup files at TIME : ',tt2
+           if (mpi_id.eq.0) write(*,*) 'Writing Backup files at TIME : ', tt2
 
-               !call WRITE_FILEOUT(file_outU1,isnap,mpi_id,3*nnod_loc,u1)
-               !call WRITE_FILEOUT(file_outV1,isnap,mpi_id,3*nnod_loc,v1)
+    
+               call WRITE_FILEOUT_GRID(file_outU0,isnap,mpi_id,3*nnod_loc,u0,& 
+                                        xx_spx_loc,yy_spx_loc,zz_spx_loc,&
+                                        local_node_num)
 
                call WRITE_FILEOUT_GRID(file_outU1,isnap,mpi_id,3*nnod_loc,u1,& 
                                         xx_spx_loc,yy_spx_loc,zz_spx_loc,&
                                         local_node_num)
+                                        
                call WRITE_FILEOUT_GRID(file_outV1,isnap,mpi_id,3*nnod_loc,v1,& 
                                         xx_spx_loc,yy_spx_loc,zz_spx_loc,&
                                         local_node_num)
@@ -2103,7 +2112,6 @@
                
                isnap = isnap + 1
                
-        endif
     endif
 
 !---------------------------------------------------------------------------

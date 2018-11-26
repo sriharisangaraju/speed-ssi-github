@@ -46,14 +46,16 @@
        
       opt_out_var= 1;  opt_out_form = 1; opt_out_data = 1
       
+      restart = 0;
+      trestart = 0;
+      
+      call READ_DIME_HEADER(head_file,restart,ntime_err,debug) 
 
-      call READ_DIME_HEADER(head_file,nsnaps,ntime_err,debug) 
-
-      if (nsnaps.gt.0) allocate(tsnap(nsnaps),itersnap(nsnaps))
       if(ntime_err .ne. 0) allocate(time_error(ntime_err))
             
       tstart = 0.0
       tstop = 0.0
+
       
       ! Set default variables
       b_setuponly = b_setuponly_default
@@ -68,7 +70,7 @@
                        deltat,tstart,tstop,&
                        opt_out_var,& 
                        opt_out_data,opt_out_form,&
-                       nsnaps,tsnap,&
+                       trestart,&
                        ndt_mon_lst,&        
                        deltat_fixed,&        
                        depth_search_mon_pgm,ndt_mon_pgm,num_pgm,&
@@ -91,6 +93,14 @@
           endif
           write(*,*)
       endif
+      
+      
+      if(restart .eq. 1 .and. mpi_id .eq. 0) then 
+         write(*,*) 'Restart Active ...' 
+         write(*,*) 'Backup every ', trestart, ' time steps'          
+      endif
+
+      
       
       if (mpi_id.eq.0) then
          if(dg_c .eq. 1.d0)   write(*,'(A)') 'DG METHOD    : NIPG'
@@ -209,7 +219,7 @@
       if (nload_shea_el.gt.0) allocate (val_shea_el(nload_shea_el,10), fun_shea_el(nload_shea_el))
       
       if (nload_abc_el.gt.0) allocate (tag_abc_el(nload_abc_el))
-      if (nload_dg_el.gt.0) allocate (tag_dg_el(nload_dg_el), tag_dg_yn(nload_dg_el))
+      if (nload_dg_el.gt.0) allocate (tag_dg_el(nload_dg_el), tag_dg_yn(nload_dg_el), tag_dg_frc(nload_dg_el), val_dg_frc(nload_dg_el,2))
 
 
       if (nload_sism_el.gt.0) allocate (val_sism_el(nload_sism_el,21), &
@@ -250,12 +260,15 @@
                 nload_shea_el,val_shea_el,fun_shea_el,&
                 n_test,fun_test,& !val_fun_test,&
                 nload_abc_el,tag_abc_el,&
-                nload_dg_el,tag_dg_el,tag_dg_yn, &
+                nload_dg_el,tag_dg_el,tag_dg_yn,tag_dg_frc, val_dg_frc, &
                 nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el, &                 
                 nload_expl_el,val_expl_el,fun_expl_el,tag_expl_el, &                 
                 n_case,val_case,tag_case,tol_case, &                                 
                 nfunc,func_type,func_indx,func_data,tag_func,nfunc_data, &
                 fmax,fpeak)
+                
+
+                
                  
 
       if(fmax .eq. 0.d0) then

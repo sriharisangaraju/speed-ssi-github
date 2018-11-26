@@ -43,7 +43,7 @@
       integer*4 :: i,lname
       
       lname = len_trim(file_name)
-      out_file = file_name(1:lname) // '000000_0000.out'
+      out_file = file_name(1:lname) // '000000_000000.out'
       
       if (proc .lt. 10) then
          write(out_file(lname+6:lname+6),'(i1)') proc
@@ -60,20 +60,25 @@
       endif
       
       if (count .lt. 10) then
-         write(out_file(lname+11:lname+11),'(i1)') count
-      else if (proc .lt. 100) then
-         write(out_file(lname+10:lname+11),'(i2)') count
-      else if (proc .lt. 1000) then
-         write(out_file(lname+9:lname+11),'(i3)') count    
+         write(out_file(lname+13:lname+13),'(i1)') count
+      else if (count .lt. 100) then
+         write(out_file(lname+12:lname+13),'(i2)') count
+      else if (count .lt. 1000) then
+         write(out_file(lname+11:lname+13),'(i3)') count    
+      else if (count .lt. 10000) then
+         write(out_file(lname+10:lname+13),'(i4)') count    
+      else if (count .lt. 100000) then
+         write(out_file(lname+9:lname+13),'(i5)') count    
       else
-         write(out_file(lname+8:lname+11),'(i4)') count
+         write(out_file(lname+8:lname+13),'(i6)') count
       endif
                
       open(20+proc, file=out_file)
       
-      do i = 1,nv/3
-         write(20+proc,*) loc_n_num(i), xx(i), yy(i), zz(i), &
-                                        vec(3*(i-1)+1), vec(3*(i-1)+2),vec(3*(i-1)+3)
+      do i = 1,nv
+!         write(20+proc,*) loc_n_num(i), xx(i), yy(i), zz(i), &
+!                                        vec(3*(i-1)+1), vec(3*(i-1)+2),vec(3*(i-1)+3)
+         write(20+proc,*)  vec(i)
 
       enddo
       
