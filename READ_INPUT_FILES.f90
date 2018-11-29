@@ -354,6 +354,8 @@
                 write(*,'(A)')'NORCIA'                
               case(30) 
                 write(*,'(A)')'ATHENS-Parthenon'
+              case(31) 
+                write(*,'(A)')'GRONINGEN'                
               case(40)
                 write(*,'(A)')'KUTCH BASIN, INDIA'                                            
               case(98,99)

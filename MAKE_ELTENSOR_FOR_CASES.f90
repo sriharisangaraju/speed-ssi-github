@@ -1196,6 +1196,43 @@
                                 gamma = 4.d0*datan(1.d0)/qs;
                         endif
 
+
+                   elseif (tcase.eq.31) then
+
+                        !-------------------------------------------------------------------
+                        ! CASE 30: Groningen -  NOT honoring
+                        !
+                        !-------------------------------------------------------------------
+                        ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 1st Layer
+                
+                        if (sub_tag_all(ic).eq.1) then
+                                VS = 300.d0;
+                                VP  = 1800.d0;
+                                rho = 1960.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = 0.01d0*VS;
+                                gamma = 4.d0*datan(1.d0)/qs;                        
+                        ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 2nd Layer
+                        elseif (sub_tag_all(ic).eq.2) then
+                                VS = 500.d0;
+                                VP  = 2000.d0;
+                                rho = 1960.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = 0.05d0*VS;
+                                gamma = 4.d0*datan(1.d0)/qs;                                
+                        else 
+                                VS = 1955.d0;
+                                VP  = 3628.d0;
+                                rho = 2550.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = 0.05d0*VS;
+                                gamma = 4.d0*datan(1.d0)/qs;
+                        endif
+
+
                         
                         !
                         !-------------------------------------------------------------------
