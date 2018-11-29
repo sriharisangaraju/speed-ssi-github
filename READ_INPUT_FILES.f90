@@ -260,7 +260,7 @@
                 nload_shea_el,val_shea_el,fun_shea_el,&
                 n_test,fun_test,& !val_fun_test,&
                 nload_abc_el,tag_abc_el,&
-                nload_dg_el,tag_dg_el,tag_dg_yn,tag_dg_frc, val_dg_frc, &
+                nload_dg_el,tag_dg_el,tag_dg_yn, & !tag_dg_frc, val_dg_frc, &
                 nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el, &                 
                 nload_expl_el,val_expl_el,fun_expl_el,tag_expl_el, &                 
                 n_case,val_case,tag_case,tol_case, &                                 
