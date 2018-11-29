@@ -77,7 +77,7 @@
      integer*4 :: ncase,vcase,tcase						
      integer*4 :: n_elev,n_tria_elev						
      integer*4 :: start,finish							
-     integer*4 :: n_all,n_tria_all	
+     integer*4 :: n_all,n_tria_all, ival	
      integer*4 :: tag_case, val_case					
 
      integer*4, dimension (:), allocatable :: node1_all,node2_all,node3_all	
@@ -285,7 +285,8 @@
 		endif											
 								
      	write(*,'(A)')'Reading Topography&Alluvial...'					
-		sub_tag_all = 4								
+		sub_tag_all = 4	
+		ival = 4							
 											
 		do j = 1,3										    
 			if (j.eq.1) then								
@@ -315,7 +316,7 @@
 	                           nn_loc, xs_loc, ys_loc, zs_loc, &	
 							   zs_all, vcase, max_all_spacing, tolerance)		
 
-			call MAKE_SUBTAG_ALLUVIAL(nn_loc, zs_all, j, sub_tag_all, xs_loc)				
+			call MAKE_SUBTAG_ALLUVIAL(nn_loc, zs_all, j, sub_tag_all, xs_loc, ival)				
 
 			deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
 			
@@ -423,7 +424,8 @@
 		endif											
 								
 
-		sub_tag_all = 3								
+		sub_tag_all = 3		
+		ival = 3						
 											
 		do j = 1,2										    
 			if (j.eq.1) then								
@@ -451,7 +453,7 @@
 	                        			      nn_loc, xs_loc, ys_loc, zs_loc, &	
 							                  zs_all, vcase, max_all_spacing, tolerance)		
 
-			call MAKE_SUBTAG_ALLUVIAL(nn_loc, zs_all, j, sub_tag_all, xs_loc)				
+			call MAKE_SUBTAG_ALLUVIAL(nn_loc, zs_all, j, sub_tag_all, xs_loc, ival)				
 
 			deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
 			

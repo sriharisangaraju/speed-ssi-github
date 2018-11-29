@@ -27,11 +27,11 @@
 !> @param[in] xx_s  x-coordinate of spectral nodes
 !> @param[out] sub_tag_all labels for multi not-honoring
 
-      subroutine MAKE_SUBTAG_ALLUVIAL(nn_s, zz_elevation, j, sub_tag_all, xx_s)
+      subroutine MAKE_SUBTAG_ALLUVIAL(nn_s, zz_elevation, j, sub_tag_all, xx_s, ival)
             
       implicit none
       
-      integer*4 :: nn_s,isn,j
+      integer*4 :: nn_s,isn,j, ival
 
       integer*4, dimension(nn_s) :: sub_tag_all
       
@@ -40,7 +40,7 @@
       
 
       do isn = 1, nn_s
-         if (zz_elevation(isn) .ge. 0.0d0) then !.and. (sub_tag_all(isn) .eq. 4)) then
+         if (zz_elevation(isn) .ge. 0.0d0 .and. (sub_tag_all(isn) .eq. ival)) then
 
                 !if ((xx_s(isn) .ge. 685956).and.(xx_s(isn) .le. 701105)) then
                         sub_tag_all(isn) = j
