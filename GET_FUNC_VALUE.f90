@@ -47,7 +47,7 @@
       integer*4, dimension(nb_fnc) :: type_fnc
       integer*4, dimension(nb_fnc +1) :: ind_fnc
       
-      real*8 :: PI,t_t0,t0,t1,v0,v1,omega
+      real*8 :: PI,t_t0,t0,t1,v0,v1,omega, fp, fac
       real*8 :: TAU,scaling,HDUR 
       real*8 :: amp, ps0, tplus, alpha,time,beta2,dist,vel
       
@@ -134,6 +134,17 @@
                  * (-3.0d0 + 2.0d0*beta2*t_t0*t_t0) &
                  * dexp(-beta2*t_t0*t_t0)
       
+         case(5)
+           t_t0 = time - data_fnc(ind_fnc(id_fnc) +1)
+           fp = data_fnc(ind_fnc(id_fnc));
+           alpha = 2.d0*(pi*fp)**2
+           fac = 2*pi*fp*dsqrt(dexp(1.d0))
+           GET_FUNC_VALUE = fac*t_t0*dexp(-alpha*t_t0**2);
+           
+!          write(*,*) time, data_fnc(ind_fnc(id_fnc) +1),  fp, alpha, fac, GET_FUNC_VALUE
+!          read(*,*)
+           
+
          case(6)
            PI = 4.0d0 * datan(1.0d0)
            t_t0 = time - data_fnc(ind_fnc(id_fnc) +1)
@@ -160,7 +171,7 @@
            omega = data_fnc(ind_fnc(id_fnc))*2*pi
            GET_FUNC_VALUE = dsin(omega*time)
 
-
+         
 
          case(12)
            !------------------------------------------------

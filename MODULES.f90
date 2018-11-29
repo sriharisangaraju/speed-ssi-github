@@ -290,7 +290,7 @@ module speed_par
                    nsend,nrecv, nsend_jump, nrecv_jump, &
                    nnode_dom, nelem_dom, edgecut, &
                    nmat_nle, total_els, nvec, &
-                   nargs, ntime_err, n_test, &
+                   nargs, ntime_err, n_test, n_frac, &
                    num_testcase, label_testcase
                    
 ! 0/1 INTERGERS

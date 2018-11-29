@@ -28,35 +28,46 @@
 !> @param[in] xx,yy,zz coordinates of the grid nodes to print
 !> @param[in] local to global numbering for nodes
 
-      subroutine WRITE_FILEOUT_GRID(file_name,count,proc,nv,vec,xx,yy,zz,loc_n_num)
+      subroutine WRITE_FILEOUT_GRID(file_name,file_xyz,count,proc,nv,vec,xx,yy,zz,loc_n_num,tstart)
       
       
-      character*70 :: file_name
+      character*70 :: file_name, file_xyz
 
       integer*4 :: count,proc,nv
+      
+      real*8 :: tstart
       real*8, dimension(nv) :: vec
       
       real*8, dimension(nv/3) :: xx,yy,zz
       integer*4, dimension(nv/3) :: loc_n_num
       
-      character*70 :: out_file
-      integer*4 :: i,lname
+      character*70 :: out_file, xyz_file
+      integer*4 :: i,lname, lnamexyz
       
       lname = len_trim(file_name)
+      lnamexyz = len_trim(file_xyz)
+      
       out_file = file_name(1:lname) // '000000_000000.out'
+      xyz_file = file_xyz(1:lname) // '000000.out'
       
       if (proc .lt. 10) then
          write(out_file(lname+6:lname+6),'(i1)') proc
+         if(tstart .eq. 0.d0) write(xyz_file(lname+6:lname+6),'(i1)') proc
       else if (proc .lt. 100) then
          write(out_file(lname+5:lname+6),'(i2)') proc
+         if(tstart .eq. 0.d0) write(xyz_file(lname+5:lname+6),'(i2)') proc
       else if (proc .lt. 1000) then
          write(out_file(lname+4:lname+6),'(i3)') proc     
+         if(tstart .eq. 0.d0) write(xyz_file(lname+4:lname+6),'(i3)') proc     
       else if (proc .lt. 10000) then
          write(out_file(lname+3:lname+6),'(i4)') proc      
+         if(tstart .eq. 0.d0) write(xyz_file(lname+3:lname+6),'(i4)') proc      
       else if (proc .lt. 100000) then
          write(out_file(lname+2:lname+6),'(i5)') proc
+         if(tstart .eq. 0.d0) write(xyz_file(lname+2:lname+6),'(i5)') proc
       else
          write(out_file(lname+1:lname+6),'(i6)') proc
+         if(tstart .eq. 0.d0) write(xyz_file(lname+1:lname+6),'(i6)') proc
       endif
       
       if (count .lt. 10) then
@@ -74,15 +85,21 @@
       endif
                
       open(20+proc, file=out_file)
-      
       do i = 1,nv
+         write(20+proc,*)  vec(i)
+      enddo
+      close(20+proc)
+
+
 !         write(20+proc,*) loc_n_num(i), xx(i), yy(i), zz(i), &
 !                                        vec(3*(i-1)+1), vec(3*(i-1)+2),vec(3*(i-1)+3)
-         write(20+proc,*)  vec(i)
-
+      open(20+proc, file=xyz_file)
+      do i = 1,nv/3
+         write(20+proc,*)  loc_n_num(i), xx(i), yy(i), zz(i)
       enddo
-      
       close(20+proc)
+
+      
       
       return
       

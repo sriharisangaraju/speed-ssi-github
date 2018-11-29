@@ -160,7 +160,7 @@
                                   nb_she,val_she,fnc_she, &
                                   ntest,ftest, & !valftest,&
                                   nb_abc,lab_abc, &
-                                  nb_dg,lab_dg,lab_dg_yn, &
+                                  nb_dg,lab_dg,lab_dg_yn, lab_dg_frc, val_dg_frc, nb_frac,& 
                                   nb_sism,val_sism,fnc_sism,lab_sism, & 
                                   nb_expl,val_expl,fnc_expl,lab_expl, & 
                                   nb_case,val_case,lab_case,tol_case, & 
@@ -177,7 +177,7 @@
       character*100000 :: inline
       character*4 :: keyword
 
-      integer*4 :: nb_mate,nb_fnc, nb_fnc_data
+      integer*4 :: nb_mate,nb_fnc, nb_fnc_data, nb_frac
       integer*4 :: nb_mate_nle        
       integer*4 :: nb_diriX,nb_diriY,nb_diriZ,nb_neuX,nb_neuY,nb_neuZ
       integer*4 :: nb_neuN 
@@ -215,7 +215,7 @@
       integer*4, dimension(nb_pre) :: fnc_pre
       integer*4, dimension(nb_she) :: fnc_she     
       integer*4, dimension(nb_abc) :: lab_abc
-      integer*4, dimension(nb_dg) :: lab_dg, lab_dg_yn
+      integer*4, dimension(nb_dg) :: lab_dg, lab_dg_yn, lab_dg_frc
       integer*4, dimension(nb_sism) :: fnc_sism,lab_sism                  
       integer*4, dimension(nb_expl) :: fnc_expl,lab_expl                  
       !integer*4, dimension(*) :: lab_case                        
@@ -273,6 +273,7 @@
       real*8, dimension(nb_expl,20) :: val_expl                        
       real*8, dimension(nb_mate_nle,1) :: val_mat_nle                
       real*8, dimension(nb_mate,4) :: char_mat
+      real*8, dimension(nb_dg,2) :: val_dg_frc
       
       open(40,file=filemate)
       
@@ -461,8 +462,12 @@
 
            case('DGIC')
             idg = idg + 1
-            read(inline(ileft:iright),*) lab_dg(idg), lab_dg_yn(idg)
-         
+            if(nb_frac .eq. 0) then 
+                 read(inline(ileft:iright),*) lab_dg(idg), lab_dg_yn(idg)
+            else
+                 read(inline(ileft:iright),*) lab_dg(idg), lab_dg_yn(idg), lab_dg_frc(idg), val_dg_frc(idg,1), val_dg_frc(idg,2)
+            endif
+                        
            case('SISM')        
               isism = isism + 1                                                                
               read(inline(ileft:iright),*) fnc_sism(isism),&                                
@@ -511,15 +516,11 @@
                case(0)
                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + 0 
                
-               case(1)
+               case(1,2)
                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + 2
                  read(inline(ileft:iright),*)dummy,dummy,&
                      (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)
                
-               case(2)
-                 ind_fnc(ifunc +1) = ind_fnc(ifunc) + 2
-                 read(inline(ileft:iright),*)dummy,dummy,&
-                    (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)
                     
                case(3,30)
                  read(inline(ileft:iright),*)dummy,dummy,ndat_fnc,fileinput
@@ -539,21 +540,12 @@
                  enddo
                  close(24)
             
-               case(4)
+               case(4,5,6,7)
                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + 2
                  read(inline(ileft:iright),*)dummy,dummy,&
                     (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)
             
-               case(6)
-                 ind_fnc(ifunc +1) = ind_fnc(ifunc) + 2
-                 read(inline(ileft:iright),*)dummy,dummy,&
-                    (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)
-                        
-               case(7)
-                 ind_fnc(ifunc +1) = ind_fnc(ifunc) + 2
-                 read(inline(ileft:iright),*)dummy,dummy,&
-                    (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)
-
+                       
                case(8,9)
                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + 1
                  read(inline(ileft:iright),*)dummy,dummy,&

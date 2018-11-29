@@ -85,7 +85,7 @@
                            gamma1, gamma2, gamma3, &
                            delta1, delta2, delta3, &
                            dg_els, scratch_dg_els, &
-                           tag_dg_el, tag_dg_yn, nload_dg, &
+                           tag_dg_el, tag_dg_yn, tag_dg_frc, val_dg_frc, nload_dg, &
                            con_bc, nface,mpi_file)
                      
 
@@ -115,7 +115,7 @@
      integer*4, dimension(0:cs_nnz_loc) :: cs_loc
      integer*4, dimension(nn_loc) :: local_n_num, i4count
      integer*4, dimension(ne_loc) :: local_el_num
-     integer*4, dimension(nload_dg) :: tag_dg_el, tag_dg_yn
+     integer*4, dimension(nload_dg) :: tag_dg_el, tag_dg_yn, tag_dg_frc
 
      integer*4, dimension(:,:), allocatable :: ielem_dg 
      integer*4, dimension(:,:), allocatable :: mat_el_face
@@ -129,7 +129,7 @@
      real*8 :: val1, val2, val3, val4, val5, val6, valmin
      real*8 :: coef_a, coef_b, coef_t, det_trasf
 
-     real*8, dimension(:), allocatable :: ctgl,wwgl
+     real*8, dimension(:), allocatable :: ctgl,wwgl, zn_glo, zt_glo
      real*8, dimension(:), allocatable :: ct, ww
      real*8, dimension(nn_loc) :: xs,ys,zs
      real*8, dimension(ne_loc) :: alfa11,alfa12,alfa13
@@ -140,6 +140,7 @@
      real*8, dimension(ne_loc) :: beta31,beta32,beta33
      real*8, dimension(ne_loc) :: gamma1,gamma2,gamma3
      real*8, dimension(ne_loc) :: delta1,delta2,delta3
+     real*8, dimension(nload_dg,2) :: val_dg_frc
 
      real*8, dimension(:,:), allocatable :: dd
      real*8, dimension(:,:), allocatable :: normalxyz
@@ -180,7 +181,9 @@
                   dg_els(nel_dg_loc)%quad_rule = nofqp
  
                   dg_els(nel_dg_loc)%proj_yn = tag_dg_yn(tag_ind)
- 
+                  dg_els(nel_dg_loc)%frac_yn = tag_dg_frc(tag_ind)
+                  dg_els(nel_dg_loc)%zt = val_dg_frc(tag_ind,1)                  
+                  dg_els(nel_dg_loc)%zn = val_dg_frc(tag_ind,2)
                  
                   call MAKE_NORMAL(1,xs(ne1), xs(ne2), xs(ne3), xs(ne4), ys(ne1), ys(ne2), ys(ne3), ys(ne4), &
                                     zs(ne1), zs(ne2), zs(ne3), zs(ne4), normal_x, normal_y, normal_z, 0, 0)
@@ -257,6 +260,9 @@
                   dg_els(nel_dg_loc)%quad_rule = nofqp
  
                   dg_els(nel_dg_loc)%proj_yn = tag_dg_yn(tag_ind)
+                  dg_els(nel_dg_loc)%frac_yn = tag_dg_frc(tag_ind)
+                  dg_els(nel_dg_loc)%zt = val_dg_frc(tag_ind,1)                  
+                  dg_els(nel_dg_loc)%zn = val_dg_frc(tag_ind,2)
 
                  
                   call MAKE_NORMAL(2,xs(ne1), xs(ne2), xs(ne3), xs(ne4), ys(ne1), ys(ne2), ys(ne3), ys(ne4), &
@@ -330,6 +336,9 @@
                   dg_els(nel_dg_loc)%quad_rule = nofqp
 
                   dg_els(nel_dg_loc)%proj_yn = tag_dg_yn(tag_ind)
+                  dg_els(nel_dg_loc)%frac_yn = tag_dg_frc(tag_ind)
+                  dg_els(nel_dg_loc)%zt = val_dg_frc(tag_ind,1)                  
+                  dg_els(nel_dg_loc)%zn = val_dg_frc(tag_ind,2)
                   
                   call MAKE_NORMAL(3,xs(ne1), xs(ne2), xs(ne3), xs(ne4), ys(ne1), ys(ne2), ys(ne3), ys(ne4), &
                                     zs(ne1), zs(ne2), zs(ne3), zs(ne4), normal_x, normal_y, normal_z, 0, 0)
@@ -403,6 +412,9 @@
                   dg_els(nel_dg_loc)%quad_rule = nofqp
 
                   dg_els(nel_dg_loc)%proj_yn = tag_dg_yn(tag_ind)
+                  dg_els(nel_dg_loc)%frac_yn = tag_dg_frc(tag_ind)
+                  dg_els(nel_dg_loc)%zt = val_dg_frc(tag_ind,1)                  
+                  dg_els(nel_dg_loc)%zn = val_dg_frc(tag_ind,2)
  
                   call MAKE_NORMAL(4,xs(ne1), xs(ne2), xs(ne3), xs(ne4), ys(ne1), ys(ne2), ys(ne3), ys(ne4), &
                                     zs(ne1), zs(ne2), zs(ne3), zs(ne4), normal_x, normal_y, normal_z, 0, 0)
@@ -475,6 +487,9 @@
                   dg_els(nel_dg_loc)%quad_rule = nofqp
                   
                   dg_els(nel_dg_loc)%proj_yn = tag_dg_yn(tag_ind)
+                  dg_els(nel_dg_loc)%frac_yn = tag_dg_frc(tag_ind)
+                  dg_els(nel_dg_loc)%zt = val_dg_frc(tag_ind,1)                  
+                  dg_els(nel_dg_loc)%zn = val_dg_frc(tag_ind,2)
 
                   call MAKE_NORMAL(5,xs(ne1), xs(ne2), xs(ne3), xs(ne4), ys(ne1), ys(ne2), ys(ne3), ys(ne4), &
                                     zs(ne1), zs(ne2), zs(ne3), zs(ne4), normal_x, normal_y, normal_z, 0, 0)
@@ -547,6 +562,9 @@
                   dg_els(nel_dg_loc)%quad_rule = nofqp
                   
                   dg_els(nel_dg_loc)%proj_yn = tag_dg_yn(tag_ind)
+                  dg_els(nel_dg_loc)%frac_yn = tag_dg_frc(tag_ind)
+                  dg_els(nel_dg_loc)%zt = val_dg_frc(tag_ind,1)                  
+                  dg_els(nel_dg_loc)%zn = val_dg_frc(tag_ind,2)
 
                   call MAKE_NORMAL(6,xs(ne1), xs(ne2), xs(ne3), xs(ne4), ys(ne1), ys(ne2), ys(ne3), ys(ne4), &
                                     zs(ne1), zs(ne2), zs(ne3), zs(ne4), normal_x, normal_y, normal_z, 0, 0)
@@ -629,9 +647,9 @@
        open(unitmpi,file=filempi_new)
        write(unitmpi,*) nel_dg_loc 
        do i = 1, nel_dg_loc
-          write(unitmpi,"(1I2,1X,1I12,1X,1I2,1X,3(1X,ES12.4))") &
+          write(unitmpi,"(1I2,1X,1I12,1X,1I2,1X,3(1X,ES12.4),1X,1I2,2(1X,ES12.4))") &
                        dg_els(i)%mat, dg_els(i)%ind_el, dg_els(i)%face_el, &
-                       dg_els(i)%nx, dg_els(i)%ny, dg_els(i)%nz 
+                       dg_els(i)%nx, dg_els(i)%ny, dg_els(i)%nz, dg_els(i)%frac_yn, dg_els(i)%zt, dg_els(i)%zn  
        enddo
        close(unitmpi)     
      
@@ -647,7 +665,7 @@
          write(unitname,*) nel_dg_glo
          !close(unitname)
          
-         allocate(mat_el_face(nel_dg_glo,3), normalxyz(nel_dg_glo,3))
+         allocate(mat_el_face(nel_dg_glo,4), normalxyz(nel_dg_glo,3), zt_glo(nel_dg_glo), zn_glo(nel_dg_glo))
          k = 1
          
          do i = 1, mpi_np
@@ -679,7 +697,7 @@
                                            
              do j = 1, nel_dg_proc
                  read(unitmpi,*) mat_el_face(k,1),mat_el_face(k,2), mat_el_face(k,3), &
-                                 normalxyz(k,1), normalxyz(k,2), normalxyz(k,3)
+                                 normalxyz(k,1), normalxyz(k,2), normalxyz(k,3), mat_el_face(k,4), zt_glo(k), zn_glo(k)
                     k=k+1
              enddo
           
@@ -689,10 +707,10 @@
           
           do j = 1, nel_dg_glo
              write(unitname,*) mat_el_face(j,1),mat_el_face(j,2), mat_el_face(j,3), &
-                            normalxyz(j,1), normalxyz(j,2), normalxyz(j,3)
+                            normalxyz(j,1), normalxyz(j,2), normalxyz(j,3), mat_el_face(j,4), zt_glo(j), zn_glo(j)
           enddo
           
-          deallocate(mat_el_face, normalxyz)
+          deallocate(mat_el_face, normalxyz, zn_glo, zt_glo)
           close(unitname)
          
          

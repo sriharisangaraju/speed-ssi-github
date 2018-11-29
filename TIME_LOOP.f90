@@ -37,7 +37,7 @@
       type(el4loop), dimension(nelem_dg), intent(in) :: el_new 
       
 ! GENERAL
-      character*70 :: file_monitor, file_outU1, file_outU0, file_outV1, filePG, file_trav_load
+      character*70 :: file_monitor, file_outU1, file_outU0, file_outV1, filePG, file_trav_load, file_outXYZ
       character*70 :: file_fe0, file_fe1
       integer*4 :: unit_fe0, unit_fe1
 
@@ -354,8 +354,10 @@
         file_outU0 = bkp_file(1:len_trim(bkp_file)) // '/U0_'
         file_outU1 = bkp_file(1:len_trim(bkp_file)) // '/U1_'
         file_outV1 = bkp_file(1:len_trim(bkp_file)) // '/V1_'   
+        file_outXYZ = bkp_file(1:len_trim(bkp_file)) // '/XYZ_'
      else
-        file_outU0 = 'U0_'; file_outU1 = 'U1_'; file_outV1 = 'V1_' 
+        file_outU0 = 'U0_'; file_outU1 = 'U1_'; file_outV1 = 'V1_'
+        file_outXYZ = 'XYZ_'; 
      endif
         
       if (tstart .gt. 0.0d0) then
@@ -2120,17 +2122,17 @@
            if (mpi_id.eq.0) write(*,*) 'Writing Backup files at TIME : ', tt2
 
     
-               call WRITE_FILEOUT_GRID(file_outU0,isnap,mpi_id,3*nnod_loc,u0,& 
+               call WRITE_FILEOUT_GRID(file_outU0,file_outXYZ,isnap,mpi_id,3*nnod_loc,u0,& 
                                         xx_spx_loc,yy_spx_loc,zz_spx_loc,&
-                                        local_node_num)
+                                        local_node_num,tstart)
 
-               call WRITE_FILEOUT_GRID(file_outU1,isnap,mpi_id,3*nnod_loc,u1,& 
+               call WRITE_FILEOUT_GRID(file_outU1,file_outXYZ,isnap,mpi_id,3*nnod_loc,u1,& 
                                         xx_spx_loc,yy_spx_loc,zz_spx_loc,&
-                                        local_node_num)
+                                        local_node_num,tstart)
                                         
-               call WRITE_FILEOUT_GRID(file_outV1,isnap,mpi_id,3*nnod_loc,v1,& 
+               call WRITE_FILEOUT_GRID(file_outV1,file_outXYZ,isnap,mpi_id,3*nnod_loc,v1,& 
                                         xx_spx_loc,yy_spx_loc,zz_spx_loc,&
-                                        local_node_num)
+                                        local_node_num,tstart)
 
                
                isnap = isnap + 1

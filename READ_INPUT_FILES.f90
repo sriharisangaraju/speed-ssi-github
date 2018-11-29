@@ -135,7 +135,7 @@
                             nload_abc_el,nload_dg_el,nfunc,nfunc_data,&
                             nload_sism_el,&                                                                 
                             nload_expl_el,&                                                                
-                            n_case,n_test)                   
+                            n_case,n_test,n_frac)                   
                                                                                                                             
       if(n_test.gt.0 .and. mpi_id .eq. 0)  write(*,'(A)')'*********TEST MODE*********'
 
@@ -220,7 +220,7 @@
       
       if (nload_abc_el.gt.0) allocate (tag_abc_el(nload_abc_el))
       if (nload_dg_el.gt.0) allocate (tag_dg_el(nload_dg_el), tag_dg_yn(nload_dg_el), tag_dg_frc(nload_dg_el), val_dg_frc(nload_dg_el,2))
-
+      if (nload_dg_el.gt.0) tag_dg_frc=0; val_dg_frc=0;
 
       if (nload_sism_el.gt.0) allocate (val_sism_el(nload_sism_el,21), &
                                         fun_sism_el(nload_sism_el), tag_sism_el(nload_sism_el))     
@@ -260,7 +260,7 @@
                 nload_shea_el,val_shea_el,fun_shea_el,&
                 n_test,fun_test,& !val_fun_test,&
                 nload_abc_el,tag_abc_el,&
-                nload_dg_el,tag_dg_el,tag_dg_yn, & !tag_dg_frc, val_dg_frc, &
+                nload_dg_el,tag_dg_el,tag_dg_yn, tag_dg_frc, val_dg_frc, n_frac, &
                 nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el, &                 
                 nload_expl_el,val_expl_el,fun_expl_el,tag_expl_el, &                 
                 n_case,val_case,tag_case,tol_case, &                                 

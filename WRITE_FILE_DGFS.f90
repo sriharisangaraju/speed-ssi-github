@@ -104,7 +104,7 @@
      character*70 :: filename, filempi, filenorm, mpi_file, filempi_new
      
      integer*4 :: nm, cs_nnz_loc, nn_loc, ne_loc, nel_dg_loc, nel_dg_glo
-     integer*4 :: mpi_comm, mpi_id, mpi_np
+     integer*4 :: mpi_comm, mpi_id, mpi_np, dummy
      integer*4 :: im, nn, ie, ned, yon
      integer*4 :: ne1, ne2, ne3, ne4, ic1, ic2, ic3, ic4
      integer*4 :: ne5, ne6, ne7, ne8, ic5, ic6, ic7, ic8
@@ -183,7 +183,7 @@
      read(unitnorm,*) nofel
      do i = 1, nofel
        read(unitnorm,*) mat_el_fac(i,1),mat_el_fac(i,2),mat_el_fac(i,3) ,&
-                       normalxyz(i,1), normalxyz(i,2), normalxyz(i,3)
+                       normalxyz(i,1), normalxyz(i,2), normalxyz(i,3), dummy
      enddo
      
      close(unitnorm)

@@ -129,7 +129,7 @@
                                    gamma1, gamma2, gamma3, &
                                    delta1, delta2, delta3, &
                                    dg_els, scratch_dg_els, &
-                                   tag_dg_el, tag_dg_yn, nload_dg_el, &
+                                   tag_dg_el, tag_dg_yn, tag_dg_frc, val_dg_frc, nload_dg_el, &
                                    con_bc, nface, mpi_file)
 
         
@@ -137,7 +137,7 @@
                                    nnod_loc, local_node_num, nelem_loc, local_el_num, &
                                    xx_spx_loc,yy_spx_loc,zz_spx_loc,&
                                    nelem_dg, nelem_dg_glo, &
-                                  mpi_id, mpi_comm, mpi_np, &
+                                   mpi_id, mpi_comm, mpi_np, &
                                    alfa11, alfa12, alfa13, &
                                    alfa21, alfa22, alfa23, &
                                    alfa31, alfa32, alfa33, &

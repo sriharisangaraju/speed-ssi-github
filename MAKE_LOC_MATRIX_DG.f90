@@ -128,7 +128,7 @@
                        delta1_mn,delta2_mn,delta3_mn,&
                        cp_a,cp_b,cp_c,cp_d,cp_e,cp_f,cp_g,cp_n,cp_p, &
                        pen, dg_cnst,JP,JM,id_mpi,det_scal, testmode,&
-                       JP_uv, JM_uv)
+                       JP_uv, JM_uv, fr_yn, invZ)
 
 
      use max_var
@@ -137,7 +137,7 @@
      implicit none
      
      
-     integer*4 :: i, id_mpi, testmode
+     integer*4 :: i, id_mpi, testmode, fr_yn
      integer*4 :: ip1 , i1, j1, h1, m1, n1, p1, L1, K1
      integer*4 :: ip2 , i2, j2, h2, m2, n2, p2, L2, K2
      integer*4 :: ip3 , i3, j3, h3, m3, n3, p3, L3, K3
@@ -181,7 +181,9 @@
      real*8, dimension(:,:), allocatable :: AA,BB,CC,PP
      real*8, dimension(3*nn**3,3*nn**3), intent(out)  :: JP, JP_uv    
      real*8, dimension(3*nn**3,3*mm**3), intent(out)  :: JM, JM_uv
-    
+     real*8, dimension(3,3) :: invZ
+     
+     
     call MAKE_LGL_NODES(nn,ctp)
     call MAKE_LGL_NODES(mm,ctm)
 
@@ -189,6 +191,7 @@
 !   MATRICES (+,+)                                                                           !
 !********************************************************************************************!
      
+
      
      
   allocate(AA(nn**3,nn**3),BB(nn**3,nn**3),CC(nn**3,nn**3),PP(nn**3,nn**3))
@@ -478,7 +481,7 @@
 !!$OMP END SECTIONS
 !!$OMP BARRIER
 !!$OMP END PARALLEL 
-
+ if (fr_yn .eq. 0) then  
 
   JP = 0.d0          
   JP(1 : nn**3, 1 : nn**3) =  pen*PP - cp_a*AA - cp_c*BB - cp_d*CC &
@@ -536,6 +539,35 @@
   JM(2*nn**3+1 : 3*nn**3, 2*mm**3+1 : 3*mm**3) = - pen*QQ - cp_e*DD - cp_c*EE - cp_n*FF &
                                              - dg_cnst*cp_e*GG - dg_cnst*cp_c*HH - dg_cnst*cp_n*II
                 
+ else
+
+    JP = 0.d0          
+    JP(1 : nn**3, 1 : nn**3) =  invZ(1,1)*PP 
+    JP(1 : nn**3, nn**3+1 : 2*nn**3) = invZ(1,2)*PP  
+    JP(1 : nn**3, 2*nn**3+1 : 3*nn**3) = invZ(1,3)*pp 
+    JP(nn**3+1 : 2*nn**3, 1 : nn**3) = invZ(2,1)*PP 
+    JP(nn**3+1 : 2*nn**3, nn**3+1 : 2*nn**3) = invZ(2,2)*PP 
+    JP(nn**3+1 : 2*nn**3, 2*nn**3+1 : 3*nn**3) = invZ(2,3)*PP
+    JP(2*nn**3+1 : 3*nn**3, 1 : nn**3) = invZ(3,1)*PP 
+    JP(2*nn**3+1 : 3*nn**3, nn**3+1 : 2*nn**3) = invZ(3,2)*PP 
+    JP(2*nn**3+1 : 3*nn**3, 2*nn**3+1 : 3*nn**3) = invZ(3,3)*PP
+    
+    
+    
+    JM = 0.d0
+    JM(1 : nn**3, 1 : mm**3) = - invZ(1,1)*QQ  
+    JM(1 : nn**3, mm**3+1 : 2*mm**3) = - invZ(1,2)*QQ 
+    JM(1 : nn**3, 2*mm**3+1 : 3*mm**3) = - invZ(1,3)*QQ 
+    JM(nn**3+1 : 2*nn**3, 1 : mm**3) = - invZ(2,1)*QQ  
+    JM(nn**3+1 : 2*nn**3, mm**3+1 : 2*mm**3) = - invZ(2,2)*QQ  
+    JM(nn**3+1 : 2*nn**3, 2*mm**3+1 : 3*mm**3) = - invZ(2,3)*QQ 
+    JM(2*nn**3+1 : 3*nn**3, 1 : mm**3) = - invZ(3,1)*QQ 
+    JM(2*nn**3+1 : 3*nn**3, mm**3+1 : 2*mm**3) = - invZ(3,2)*QQ  
+    JM(2*nn**3+1 : 3*nn**3, 2*mm**3+1 : 3*mm**3) = - invZ(3,3)*QQ  
+    
+     
+endif
+
 
  
    if(testmode .eq. 1) then

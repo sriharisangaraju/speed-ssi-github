@@ -103,14 +103,14 @@
  
      character*70 :: filename, filename1, filename2
 
-     integer*4 :: mpi_comm, mpi_id, mpi_ierr, mpi_np, ishift, jshift
+     integer*4 :: mpi_comm, mpi_id, mpi_ierr, mpi_np, ishift, jshift, nel_frc
      integer*4 :: im, nn, ie, ned, ip, mm, nnz, nnz_p, nnz_m, nnz_p_only_uv, nnz_m_only_uv
-     integer*4 :: ne1, ne2, ne3, ne4, ic1, ic2, ic3, ic4
+     integer*4 :: ne1, ne2, ne3, ne4, ic1, ic2, ic3, ic4, ifr, fracture_yn
      integer*4 :: ne5, ne6, ne7, ne8, ic5, ic6, ic7, ic8
      integer*4 :: nm, cs_nnz_loc, nn_loc, ne_loc, nel_dg_loc, nel_dg_glo
      integer*4 :: n_line, ielem, iface, iene, ifacene, imne
      integer*4 :: int_trash, statuss, i, tt, ih, it, p, j,k
-     integer*4 :: unit_interface, unitname, unitname1, unitname2
+     integer*4 :: unit_interface, unitname, unitname1, unitname2, unitname_frc
      integer*4 :: error
      integer*4 :: mpierror
      integer*4 :: nofne_el, ic, testmode
@@ -121,17 +121,19 @@
      integer*4, dimension(ne_loc) :: local_el_num
      integer*4, dimension(:), allocatable :: I4S, J4S     
 
-     integer*4, dimension(:,:), allocatable :: con_DG
+     integer*4, dimension(:,:), allocatable :: con_DG, con_DG_frc_int
      integer*4, dimension(:,:), allocatable :: copia
      integer*4, dimension(3,nel_dg_glo) :: faces
 
-     real*8 :: real_trash, lambda, mu, pen_p, pen_h, pen, penalty_c, dg_cnst
+     real*8 :: real_trash, lambda, mu, pen_p, pen_h, pen, penalty_c, dg_cnst, dummy
      real*8 :: cp_a, cp_b, cp_c, cp_d, cp_e, cp_f, cp_g, cp_n, cp_p
      real*8 :: csi, eta, zeta, normal_x, normal_y, normal_z
      real*8 :: c_alfa11, c_alfa12, c_alfa13, c_alfa21, c_alfa22, c_alfa23, c_alfa31, c_alfa32, c_alfa33
      real*8 :: c_beta11, c_beta12, c_beta13, c_beta21, c_beta22, c_beta23, c_beta31, c_beta32, c_beta33
      real*8 :: c_gamma1, c_gamma2, c_gamma3, c_delta1, c_delta2, c_delta3
-
+     real*8 :: z11,z12,z13,z22,z21,z23,z31,z32,z33, detZ, zn_coef, zt_coef
+     
+     
      real*8, dimension(ne_loc) :: alfa11,alfa12,alfa13
      real*8, dimension(ne_loc) :: alfa21,alfa22,alfa23
      real*8, dimension(ne_loc) :: alfa31,alfa32,alfa33
@@ -143,11 +145,13 @@
      
      real*8, dimension(:), allocatable :: M4S
 
-     real*8, dimension(:,:), allocatable :: nodes_DG
+     real*8, dimension(:,:), allocatable :: nodes_DG, con_DG_frc_real
      real*8, dimension(:,:), allocatable :: JP,JM, JP_only_uv,JM_only_uv
      real*8, dimension(nn_loc) :: xs,ys,zs
      real*8, dimension(nm,4) :: prop_mat
      real*8, dimension(25,nel_dg_glo) :: area_nodes
+     real*8, dimension(3,3) :: invZ, compZ, Ide
+     
 
      
      
@@ -183,6 +187,26 @@
      do i = 1, 6
         nodes_DG(i, n_line+1: 2*n_line) = nodes_DG(i,1:n_line)       
      enddo
+
+
+!   Reading NORMALL.input file for fracture 
+
+     unitname = 50
+     open(unitname,file='NORMALL.input')
+     read(unitname,*) nel_frc
+
+     allocate(con_DG_frc_int(4,nel_frc), con_DG_frc_real(2,nel_frc))
+     con_DG_frc_real = 0; con_DG_frc_int = 0;     
+     
+     do i = 1, nel_frc
+        read(unitname,*) con_DG_frc_int(1,i), con_DG_frc_int(2,i), con_DG_frc_int(3,i),&
+                      dummy, dummy, dummy, con_DG_frc_int(4,i), con_DG_frc_real(1,i), con_DG_frc_real(2,i)
+     enddo
+
+
+     close(unitname)
+
+
 
      allocate(dg_els(nel_dg_loc))
 
@@ -991,6 +1015,53 @@
 
          call GET_FACE_DG(faces, nel_dg_glo, ielem, iface, ic1)
          call GET_INDLOC_FROM_INDGLO(local_el_num, ne_loc, ielem, ne1)
+
+         call GET_FACE_DG(con_DG_frc_int(1:3,:), nel_dg_glo, ielem, iface, ifr)
+         fracture_yn = con_DG_frc_int(4,ifr)
+         zt_coef = con_DG_frc_real(1,ifr)
+         zn_coef = con_DG_frc_real(2,ifr)
+         compZ = 0.d0; invZ = 0.d0;
+         
+         if(fracture_yn .eq. 1) then
+           compZ(1,1) = zn_coef*dg_els(ie)%nx*dg_els(ie)%nx + zt_coef*(1.d0 - dg_els(ie)%nx*dg_els(ie)%nx); 
+           compZ(1,2) = zn_coef*dg_els(ie)%nx*dg_els(ie)%ny - zt_coef*dg_els(ie)%nx*dg_els(ie)%ny; 
+           compZ(1,3) = zn_coef*dg_els(ie)%nx*dg_els(ie)%nz - zt_coef*dg_els(ie)%nx*dg_els(ie)%nz; 
+           compZ(2,2) = zn_coef*dg_els(ie)%ny*dg_els(ie)%ny + zt_coef*(1.d0 - dg_els(ie)%ny*dg_els(ie)%ny); 
+           compZ(2,3) = zn_coef*dg_els(ie)%ny*dg_els(ie)%nz - zt_coef*dg_els(ie)%ny*dg_els(ie)%nz; 
+           compZ(3,3) = zn_coef*dg_els(ie)%nz*dg_els(ie)%nz + zt_coef*(1.d0 - dg_els(ie)%nz*dg_els(ie)%nz); 
+           compZ(2,1) = compZ(1,2); compZ(3,1) = compZ(1,3); compZ(3,2) = compZ(2,3);
+           
+!           write(*,*) 
+!           write(*,*) compZ(1,1),compZ(1,2),compZ(1,3),compZ(2,1),compZ(2,2),compZ(2,3),compZ(3,1),compZ(3,2),compZ(3,3)
+!           read(*,*)
+           
+           detZ = compZ(1,1)*compZ(2,2)*compZ(3,3) + compZ(1,2)*compZ(2,3)*compZ(3,1) + compZ(1,3)*compZ(2,1)*compZ(3,2) &
+                - compZ(1,3)*compZ(2,2)*compZ(3,1) - compZ(1,1)*compZ(2,3)*compZ(3,2) - compZ(1,2)*compZ(2,1)*compZ(3,3);
+
+!           write(*,*) detZ;
+!           read(*,*)
+           
+           Z11 =  compZ(2,2)*compZ(3,3) - compZ(2,3)*compZ(3,2); Z11 = Z11/detZ;
+           Z12 = -compZ(2,1)*compZ(3,3) + compZ(2,3)*compZ(3,1); Z12 = Z12/detZ;
+           Z13 =  compZ(2,1)*compZ(2,3) - compZ(2,2)*compZ(3,1); Z13 = Z13/detZ;
+           Z21 = -compZ(1,2)*compZ(3,3) + compZ(1,3)*compZ(3,2); Z21 = Z21/detZ;
+           Z22 =  compZ(1,1)*compZ(3,3) - compZ(1,3)*compZ(3,1); Z22 = Z22/detZ;
+           Z23 = -compZ(1,1)*compZ(3,2) + compZ(2,1)*compZ(3,1); Z23 = Z23/detZ;
+           Z31 =  compZ(1,2)*compZ(2,3) - compZ(1,3)*compZ(2,2); Z31 = Z31/detZ;
+           Z32 = -compZ(1,1)*compZ(2,3) + compZ(1,3)*compZ(2,1); Z32 = Z32/detZ;
+           Z33 =  compZ(1,1)*compZ(2,2) - compZ(1,2)*compZ(2,1); Z33 = Z33/detZ;
+                                
+           invZ(1,1) = Z11; invZ(1,2) = Z21; invZ(1,3) = Z31;
+           invZ(2,1) = Z12; invZ(2,2) = Z22; invZ(2,3) = Z32;
+           invZ(3,1) = Z13; invZ(3,2) = Z23; invZ(3,3) = Z33;
+           
+!           Ide = matmul(invZ,compZ);
+!           write(*,*) Ide
+!           read(*,*)
+           
+         endif    
+           
+         
                
          allocate(el_new(ie)%matP(3*(nn**3),3*(nn**3)));  el_new(ie)%matP = 0.d0
          allocate(el_new(ie)%matM(dg_els(ie)%nofne))
@@ -1081,7 +1152,7 @@
                        c_delta1,c_delta2,c_delta3,&
                        cp_a,cp_b,cp_c,cp_d,cp_e,cp_f,cp_g,cp_n,cp_p, &
                        pen, dg_cnst, JP, JM, mpi_id, pen_h, testmode,&
-                       JP_only_uv, JM_only_uv)
+                       JP_only_uv, JM_only_uv,fracture_yn,invZ)
 
                        el_new(ie)%matP = el_new(ie)%matP + JP
                        el_new(ie)%matM(ic)%MJUMP = JM
@@ -1337,7 +1408,7 @@
 
 
      deallocate(dg_els)
-         
+     deallocate(con_DG_frc_int,con_DG_frc_real)         
 
 
     return
