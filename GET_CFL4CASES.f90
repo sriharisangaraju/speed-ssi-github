@@ -56,7 +56,7 @@
                              xx_loc, yy_loc, zz_loc, cs_nnz_loc, cs_loc, & 
                              time_step_cfl, fmax, deltat_fixed, &
                              mpi_comm, mpi_np, mpi_id, &
-                             vcase, tcase, zs_elev, zs_all, vs_tria, thick_tria, sub_tag_all, b_failCFL, &
+                             ncase,vcase, tcase, zs_elev, zs_all, vs_tria, thick_tria, sub_tag_all, b_failCFL, &
                              damping_type, QS, QP)
           
         use speed_exit_codes
@@ -69,7 +69,7 @@
 
         integer*4 :: nm, im, nn_loc, cs_nnz_loc, mpi_comm, mpi_np, mpi_err, mpi_id
         integer*4 :: ie, i, j, k, nn, mcode, smcode, sdeg_deltat_cfl, sdeg_npoints
-        integer*4 :: tcase, vcase, damping_type
+        integer*4 :: damping_type, ncase, icase
         integer*4 :: nel_loc, ic1, ic2, n1, n2, istart, ifin
 
        integer*4, dimension(1) :: pos
@@ -77,6 +77,7 @@
         integer*4, dimension(nn_loc) :: loc_n_num
         integer*4, dimension(nn_loc) :: sub_tag_all        
         integer*4, dimension(0:cs_nnz_loc) :: cs_loc
+        integer*4, dimension(ncase) ::  tcase, vcase
 
         real*8 :: time_step, time_step_cfl, fmax, qs_loc, qp_loc
         real*8 :: length_min,length,vs_length_min,vs_length,length_vp_min,length_vp
@@ -123,19 +124,18 @@
                 QS(im) = qs_loc
                 QP(im) = qp_loc
             
-                if (vcase.eq.tm(im)) then
-                  call MAKE_ELTENSOR_FOR_CASES(tcase, vcase,&
-                                              nn, rho_el, lambda_el, mu_el, gamma_el,&  
-                                              nn_loc, zs_elev, zs_all, vs_tria, thick_tria,&
-                                              cs_nnz_loc, cs_loc, ie,&
-                                              sub_tag_all, zz_loc, mpi_id, loc_n_num, &
-                                              damping_type, qs_loc, qp_loc, &
-                                              xx_loc, yy_loc,0)
-                                                                                                                     
-                                              
-                                              
-                endif
-      
+                do icase = 1, ncase
+                 
+                  if (vcase(icase) .eq. tm(im)) then
+                     call MAKE_ELTENSOR_FOR_CASES(tcase(icase), vcase(icase),&
+                                                  nn, rho_el, lambda_el, mu_el, gamma_el,&  
+                                                  nn_loc, zs_elev, zs_all, vs_tria, thick_tria,&
+                                                  cs_nnz_loc, cs_loc, ie,&
+                                                  sub_tag_all, zz_loc, mpi_id, loc_n_num, &
+                                                  damping_type, qs_loc, qp_loc, &
+                                                  xx_loc, yy_loc,0)
+                  endif
+                enddo    
       
 
                 smcode=sdeg(im) 
