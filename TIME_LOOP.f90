@@ -45,7 +45,8 @@
                    ic, ih, ik, il, it, ipos, ineg, &
                    isnap, its, fn, nn, ip, im, imon, iaz, &
                    i, j, k, is, in, id, istage, itime, &
-                   ie, ielem, count_monitor, find_tag
+                   ie, ielem, count_monitor, find_tag, icase
+                   
       ! Elapsed time print-out iteration divisor
       integer*4 :: it_divisor = 1000
 
@@ -361,12 +362,14 @@
      endif
         
       if (tstart .gt. 0.0d0) then
-          isnap = int(tstart/(deltat*trestart)); 
+          isnap = nint(tstart/(deltat*trestart)); 
 !          tstart = tstart + deltat;
          
          call READ_FILEOUT(file_outU0,isnap,mpi_id,3*nnod_loc,u0)
          call READ_FILEOUT(file_outU1,isnap,mpi_id,3*nnod_loc,u1)
          call READ_FILEOUT(file_outV1,isnap,mpi_id,3*nnod_loc,v1)
+         isnap = isnap + 1;
+         
       else 
          isnap = 1;   
       endif
@@ -397,19 +400,23 @@
             ! < mechanical properties are given as usual       >
             ! < BLOCK BY BLOCK                                 >
                           
-              if (n_case.gt.0) then                                                        
-                if (val_case.eq.tag_mat(im)) then    
+              if (n_case.gt.0) then       
+                
+                do icase = 1, n_case        
+                                                         
+                   if (val_case(icase) .eq. tag_mat(im)) then    
                         if (num_testcase .ne. 0) check_not_hon = 1;
                                                    
-                        call MAKE_ELTENSOR_FOR_CASES(tag_case, val_case,&                        
-                                            nn, rho_el, lambda_el, mu_el, gamma_el,&        
-                                            nnod_loc, zs_elev, zs_all, vs_tria, thick, &        
-                                            con_nnz_loc, con_spx_loc, ie,&        
-                                            sub_tag_all, zz_spx_loc, mpi_id, local_node_num, &
-                                            damping_type, QS_nh, QP_nh, &
-                                            xx_spx_loc, yy_spx_loc, check_not_hon,label_testcase)
-
-                endif        
+                        call MAKE_ELTENSOR_FOR_CASES(tag_case(icase), val_case(icase),&                        
+                                                     nn, rho_el, lambda_el, mu_el, gamma_el,&        
+                                                     nnod_loc, zs_elev, zs_all, vs_tria, thick, &        
+                                                     con_nnz_loc, con_spx_loc, ie,&        
+                                                     sub_tag_all, zz_spx_loc, mpi_id, local_node_num, &
+                                                     damping_type, QS_nh, QP_nh, &
+                                                     xx_spx_loc, yy_spx_loc, check_not_hon,label_testcase)
+                  endif
+                enddo  
+                          
              endif                
                 
             call MAKE_MASS_MATRIX(nn,ct,ww,dd,rho_el,&
@@ -496,17 +503,25 @@
                  ! < mechanical properties are given as usual       >
                  ! < BLOCK BY BLOCK                                 >
                               
-                 if (n_case.gt.0) then                                                        
-                        if (val_case.eq.tag_mat(im)) then                                        
-                                call MAKE_ELTENSOR_FOR_CASES(tag_case, val_case,&                        
-                                        nn, rho_el, lambda_el, mu_el, gamma_el,&        
-                                        nnod_loc, zs_elev, zs_all, vs_tria, thick, &        
-                                        con_nnz_loc, con_spx_loc, ie,&        
-                                        sub_tag_all, zz_spx_loc, mpi_id, local_node_num, &
-                                        damping_type, QS_nh, QP_nh, &
-                                        xx_spx_loc, yy_spx_loc,0,label_testcase)
-                        endif        
-                 endif                
+              if (n_case.gt.0) then       
+                
+                do icase = 1, n_case        
+                                                         
+                   if (val_case(icase) .eq. tag_mat(im)) then    
+
+                                                   
+                        call MAKE_ELTENSOR_FOR_CASES(tag_case(icase), val_case(icase),&                        
+                                                     nn, rho_el, lambda_el, mu_el, gamma_el,&        
+                                                     nnod_loc, zs_elev, zs_all, vs_tria, thick, &        
+                                                     con_nnz_loc, con_spx_loc, ie,&        
+                                                     sub_tag_all, zz_spx_loc, mpi_id, local_node_num, &
+                                                     damping_type, QS_nh, QP_nh, &
+                                                     xx_spx_loc, yy_spx_loc, 0,label_testcase)
+                  endif
+                enddo  
+                          
+             endif                
+               
                  
                  if (damping_type .eq. 1)  then                  
 
@@ -674,15 +689,15 @@
                           in = con_spx_loc(con_spx_loc(ie -1) + is)                                
                           con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 1
                           node_nle_4_mpi(in) = 1;
-                          if (n_case .gt. 0 .and. tag_case .ne. 16 .and. tag_case .ne. 21) then        
+                          if (n_case .gt. 0 .and. tag_case(1) .ne. 16 .and. tag_case(1) .ne. 21) then        
                                 if (Depth_nle_el(ie) .lt. zs_elev(in) .or. zs_elev(in) .lt. 0.d0) then
                                              con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 0; node_nle_4_mpi(in) = 0
                                 endif             
-                                if ((tag_case .gt. 0).and.(zs_all(in) .lt. 0.0d0)) then
+                                if ((tag_case(1) .gt. 0).and.(zs_all(in) .lt. 0.0d0)) then
                                              con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 0; node_nle_4_mpi(in) = 0
                                 endif
                               
-                          elseif(n_case .gt. 0 .and. tag_case .eq. 16) then
+                          elseif(n_case .gt. 0 .and. tag_case(1) .eq. 16) then
                                 if (Depth_nle_el(ie) .lt. zs_elev(in) .or. zs_elev(in) .lt. 0.d0) then
                                              con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 0; node_nle_4_mpi(in) = 0
                                 endif
@@ -690,7 +705,7 @@
                                              con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 0; node_nle_4_mpi(in) = 0
                                 endif             
                          
-                          elseif(n_case .gt. 0 .and. tag_case .eq. 21) then
+                          elseif(n_case .gt. 0 .and. tag_case(1) .eq. 21) then
                                 if (Depth_nle_el(ie) .lt. zs_elev(in) .or. zs_elev(in) .lt. 0.d0) then
                                              con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 0; node_nle_4_mpi(in) = 0
                                 endif
@@ -1030,18 +1045,20 @@
                     ! < mechanical properties are given as usual       >
                     ! < BLOCK BY BLOCK                                 >
                                         
-                    if (n_case .gt. 0) then                                                        
-                        if (val_case .eq. tag_mat(im)) then                                        
-                                call MAKE_ELTENSOR_FOR_CASES(tag_case, val_case,&                        
-                                                nn, rho_el, lambda_el, mu_el, gamma_el,&        
-                                                nnod_loc, zs_elev, zs_all, vs_tria, thick, &        
-                                                con_nnz_loc, con_spx_loc, ie,&        
-                                                sub_tag_all, zz_spx_loc, mpi_id, local_node_num,&
-                                                damping_type, QS_nh, QP_nh,&
-                                                xx_spx_loc, yy_spx_loc,0,label_testcase)
-                                                
-                         endif        
-                    endif                
+              if (n_case.gt.0) then       
+                do icase = 1, n_case        
+                   if (val_case(icase) .eq. tag_mat(im)) then    
+                        call MAKE_ELTENSOR_FOR_CASES(tag_case(icase), val_case(icase),&                        
+                                                     nn, rho_el, lambda_el, mu_el, gamma_el,&        
+                                                     nnod_loc, zs_elev, zs_all, vs_tria, thick, &        
+                                                     con_nnz_loc, con_spx_loc, ie,&        
+                                                     sub_tag_all, zz_spx_loc, mpi_id, local_node_num, &
+                                                     damping_type, QS_nh, QP_nh, &
+                                                     xx_spx_loc, yy_spx_loc, 0,label_testcase)
+                  endif
+                enddo  
+             endif                
+              
 
                     !+----------------------------------------------------------------------------------------
                     !|
@@ -1134,12 +1151,14 @@
                     if (damping_type .eq. 2) then 
 
 
-                       if (n_case.gt.0) then                                                        
-                           if (val_case.eq.tag_mat(im)) then 
+                       if (n_case.gt.0) then    
+                        do icase = 1, n_case                                                    
+                           if (val_case(icase) .eq. tag_mat(im)) then 
                               call MAKE_ANELASTIC_COEFFICIENTS_NH(nn, N_SLS, lambda_el, mu_el,&
-                                            rho_el, QS_nh, QP_nh, fmax, &
-                                            Y_lambda_nh, Y_mu_nh, frequency_range, mpi_id)
+                                                                  rho_el, QS_nh, QP_nh, fmax, &
+                                                                  Y_lambda_nh, Y_mu_nh, frequency_range, mpi_id)
                            endif
+                        enddo   
                        else
                            Y_lambda_nh(1,:) = Y_lambda(im,:);
                            Y_mu_nh(1,:) = Y_mu(im,:);
@@ -1401,19 +1420,20 @@
                ! < mechanical properties are given as usual       >
                ! < BLOCK BY BLOCK                                 >
                                          
-               if (n_case.gt.0) then                                                        
-                  if (val_case.eq.tag_mat(im)) then                                        
-                        call MAKE_ELTENSOR_FOR_CASES(tag_case, val_case,&                        
-                                                nn, rho_el, lambda_el, mu_el, gamma_el,&        
-                                                nnod_loc, zs_elev, zs_all, vs_tria, thick,  &        
-                                                con_nnz_loc, con_spx_loc, ie,&        
-                                                sub_tag_all, zz_spx_loc, mpi_id, local_node_num, &
-                                                damping_type, QS_nh, QP_nh, &
-                                                xx_spx_loc, yy_spx_loc,0,label_testcase)
-
-                  endif        
-                endif                
-
+              if (n_case.gt.0) then       
+                do icase = 1, n_case        
+                   if (val_case(icase) .eq. tag_mat(im)) then    
+                        call MAKE_ELTENSOR_FOR_CASES(tag_case(icase), val_case(icase),&                        
+                                                     nn, rho_el, lambda_el, mu_el, gamma_el,&        
+                                                     nnod_loc, zs_elev, zs_all, vs_tria, thick, &        
+                                                     con_nnz_loc, con_spx_loc, ie,&        
+                                                     sub_tag_all, zz_spx_loc, mpi_id, local_node_num, &
+                                                     damping_type, QS_nh, QP_nh, &
+                                                     xx_spx_loc, yy_spx_loc, 0,label_testcase)
+                  endif
+                enddo  
+             endif                
+              
                      
                 call MAKE_ABC_FORCE(nn,ct,ww,dd,&
                                    rho_el,lambda_el,mu_el,&                         

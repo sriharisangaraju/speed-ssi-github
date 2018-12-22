@@ -1163,13 +1163,14 @@
                                 
                    elseif (tcase.eq.30) then
 
+
                         !-------------------------------------------------------------------
                         ! CASE 30: Athens Parthenon -  NOT honoring
                         !
                         !-------------------------------------------------------------------
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 1st Layer
                 
-                        if (sub_tag_all(ic).eq.1) then
+                        if (sub_tag_all(ic).eq.2) then
                                 VS = 350.d0;
                                 VP  = 700.d0;
                                 rho = 1800.d0;
@@ -1178,7 +1179,7 @@
                                 qs = 0.05d0*VS;
                                 gamma = 4.d0*datan(1.d0)/qs;                        
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 2nd Layer
-                        elseif (sub_tag_all(ic).eq.2) then
+                        elseif (sub_tag_all(ic).eq.3) then
                                 VS = 700.d0;
                                 VP  = 1250.d0;
                                 rho = 2300.d0;
@@ -1186,7 +1187,7 @@
                                 mu = rho * VS**2.d0;
                                 qs = 0.05d0*VS;
                                 gamma = 4.d0*datan(1.d0)/qs;                                
-                        else 
+                        else ! + MATERIAL "ABOVE" ACROPOLI & BELOW ALLUVIONAL BASINS
                                 VS = 1500.d0;
                                 VP  = 2670.d0;
                                 rho = 2500.d0;
@@ -1196,6 +1197,14 @@
                                 gamma = 4.d0*datan(1.d0)/qs;
                         endif
 
+       					if (check_case .eq. 1)  &
+                            write(1000+mpi_id,*) xs(ic),ys(ic),zs(ic), &
+                            VS, VP, rho, lambda, mu, &
+                            qp, qs, gamma, zs_elev(ic), zs_all(ic)                              
+
+                        
+                        !
+                        !-------------------------------------------------------------------
 
                    elseif (tcase.eq.31) then
 
@@ -1206,29 +1215,96 @@
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 1st Layer
                 
                         if (sub_tag_all(ic).eq.1) then
-                                VS = 300.d0;
-                                VP  = 1800.d0;
+                                VS = 320.d0;
+                                VP  = 1750.d0;
                                 rho = 1960.d0;
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
-                                qs = 0.01d0*VS;
-                                gamma = 4.d0*datan(1.d0)/qs;                        
+                                qs = 50.d0;
+                                gamma = 4.d0*datan(1.d0)/qs;              
+                             !   if((dabs(xs(ic) - 347369.8d0) .le. 100.d0) .or. &
+                             !      (dabs(xs(ic) - 357369.8d0) .le. 100.d0) .or. &
+                             !      (dabs(ys(ic) - 5909256.3d0) .le. 100.d0) .or. &
+                             !      (dabs(ys(ic) - 5919256.3d0) .le. 100.d0) ) then 
+                             !       VS = 320.d0;
+                             !       VP = 665.d0;
+                             !       rho = 1960.d0;
+                             !       lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                             !       mu = rho * VS**2.d0;
+                             !       qs = 50.d0
+                             !       gamma = 4.d0*atan(1.d0)/qs;        
+                             !   endif                          
+
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 2nd Layer
                         elseif (sub_tag_all(ic).eq.2) then
-                                VS = 500.d0;
-                                VP  = 2000.d0;
+                                VS = 430.d0;
+                                VP  = 1860.d0;
                                 rho = 1960.d0;
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
-                                qs = 0.05d0*VS;
+                                qs = 100.d0;
                                 gamma = 4.d0*datan(1.d0)/qs;                                
-                        else 
+
+                              !  if((dabs(xs(ic) - 347369.8d0) .le. 100.d0) .or. &
+                              !     (dabs(xs(ic) - 357369.8d0) .le. 100.d0) .or. &
+                              !     (dabs(ys(ic) - 5909256.3d0) .le. 100.d0) .or. &
+                              !     (dabs(ys(ic) - 5919256.3d0) .le. 100.d0) ) then 
+                              !      VS = 320.d0;
+                              !       VP = 780.d0;
+                              !      rho = 1960.d0;
+                              !      lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                              !      mu = rho * VS**2.d0;
+                              !      qs = 50.d0
+                              !      gamma = 4.d0*atan(1.d0)/qs;        
+                              !  endif                          
+
+                       ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 3rd Layer
+                        elseif (sub_tag_all(ic).eq.3) then
+                                VS = 1724.d0;
+                                VP  = 3360.d0;
+                                rho = 2600.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = 200.d0;
+                                gamma = 4.d0*datan(1.d0)/qs;                                
+                              !  if((dabs(xs(ic) - 347369.8d0) .le. 100.d0) .or. &
+                              !     (dabs(xs(ic) - 357369.8d0) .le. 100.d0) .or. &
+                              !     (dabs(ys(ic) - 5909256.3d0) .le. 100.d0) .or. &
+                              !     (dabs(ys(ic) - 5919256.3d0) .le. 100.d0) ) then 
+                              !      VS = 320.d0;
+                              !      VP = 3024.d0;
+                              !      rho = 1960.d0;
+                              !      lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                              !      mu = rho * VS**2.d0;
+                              !      qs = 50.d0
+                              !      gamma = 4.d0*atan(1.d0)/qs;        
+                              !  endif                          
+
+                        ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 4th Layer
+                        elseif (sub_tag_all(ic).eq.4) then
+                                VS = 2800.d0;
+                                VP  = 5000.d0;
+                                rho = 2100.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = 300.d0;
+                                gamma = 4.d0*datan(1.d0)/qs;                                
+                        ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 5th Layer
+                        elseif (sub_tag_all(ic).eq.5) then
                                 VS = 1955.d0;
                                 VP  = 3628.d0;
                                 rho = 2550.d0;
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
-                                qs = 0.05d0*VS;
+                                qs = 300.d0;
+                                gamma = 4.d0*datan(1.d0)/qs;                                
+                        else 
+                                VS = 2342.d0;
+                                VP  = 4077.d0;
+                                rho = 2700.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = 300.d0;
                                 gamma = 4.d0*datan(1.d0)/qs;
                         endif
 
@@ -1385,6 +1461,43 @@
 
                                 endif
                                 
+                        elseif (tcase.eq.100) then
+
+                                !-------------------------------------------------------------------
+                                ! CASE 99: TEST plane wave (TOPOGRAPHY&ALLUVIAL)
+                        
+                                Depth = zs_elev(ic)    !D: depth in m
+                                
+
+                                if ((Depth .ge. 0.0d0) .and. (zs_all(ic) .ge. 0.0d0)) then
+
+		                            VS  = 300.d0         !VS: S velocity in m/s
+		                            VP  = 600.d0     !VP: P velocity in m/s 
+		                            rho = 1800.d0         !rho_el: MASS DENSITY in kg/m^3
+		                            lambda = rho * (VP**2 - 2*VS**2)
+		                            mu = rho * VS**2
+		                            qp = 60;
+		                            qs = 30;
+                                    gamma = 4.d0*datan(1.d0)/qs;
+                                    
+                                else    
+		                            VS  = 2000.d0         !VS: S velocity in m/s
+		                            VP  = 4000.d0     !VP: P velocity in m/s 
+		                            rho = 2200.d0         !rho_el: MASS DENSITY in kg/m^3
+		                            lambda = rho * (VP**2 - 2*VS**2)
+		                            mu = rho * VS**2
+		                            qp = 400;
+		                            qs = 200;
+                                    gamma = 4.d0*datan(1.d0)/qs;
+                                    
+
+                                endif
+
+
+
+
+
+
                                 
                         endif
                rho_el(p,q,r) = rho

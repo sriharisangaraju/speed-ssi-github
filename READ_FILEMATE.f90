@@ -198,7 +198,7 @@
       integer*4 :: ipr,ish,iabc,idg
       integer*4 :: ileft,iright
       integer*4 :: i,j,dummy,status
-      integer*4 :: val_case, lab_case, ntest
+      integer*4 :: ntest
 
       integer*4, dimension(nb_diriX) :: fnc_diriX,lab_diriX
       integer*4, dimension(nb_diriY) :: fnc_diriY,lab_diriY
@@ -218,7 +218,7 @@
       integer*4, dimension(nb_dg) :: lab_dg, lab_dg_yn, lab_dg_frc
       integer*4, dimension(nb_sism) :: fnc_sism,lab_sism                  
       integer*4, dimension(nb_expl) :: fnc_expl,lab_expl                  
-      !integer*4, dimension(*) :: lab_case                        
+      integer*4, dimension(nb_case) :: lab_case                        
       integer*4, dimension(nb_poiX) :: fnc_poiX
       integer*4, dimension(nb_poiY) :: fnc_poiY
       integer*4, dimension(nb_poiZ) :: fnc_poiZ
@@ -237,13 +237,13 @@
       
       integer*4, dimension(nb_mate_nle) :: type_mat_nle                
       integer*4, dimension(nb_mate_nle,1) :: char_mat_nle        
-      !integer*4, dimension(nb_case,*) :: val_case                        
+      integer*4, dimension(nb_case) :: val_case                        
 
       real*8 :: fmax                                                                
       real*8 :: fpeak                                                                
-      real*8 :: tol_case, rho, VS, VP
+      real*8 :: rho, VS, VP
       
-      !real*8, dimension(*) :: tol_case                                
+      real*8, dimension(nb_case) :: tol_case                                
       real*8, dimension(nb_fnc_data) :: dat_fnc
       real*8, dimension(nb_mate) :: trefm, Qua_S, Qua_P
       
@@ -495,8 +495,8 @@
            case('CASE')                                                        
               icase = icase + 1                                                                
               read(inline(ileft:iright),*) &                                                
-                 !lab_case(icase),val_case(icase,1),tol_case(icase)                                
-                 lab_case,val_case,tol_case
+                 lab_case(icase),val_case(icase),tol_case(icase)                                
+                 !lab_case,val_case,tol_case
 
            case('FMAX') 
               read(inline(ileft:iright),*) fmax                                        

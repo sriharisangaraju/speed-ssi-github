@@ -219,15 +219,16 @@
       if (nload_shea_el.gt.0) allocate (val_shea_el(nload_shea_el,10), fun_shea_el(nload_shea_el))
       
       if (nload_abc_el.gt.0) allocate (tag_abc_el(nload_abc_el))
-      if (nload_dg_el.gt.0) allocate (tag_dg_el(nload_dg_el), tag_dg_yn(nload_dg_el), tag_dg_frc(nload_dg_el), val_dg_frc(nload_dg_el,2))
-      if (nload_dg_el.gt.0) tag_dg_frc=0; val_dg_frc=0;
-
+      if (nload_dg_el .gt. 0) allocate (tag_dg_el(nload_dg_el), tag_dg_yn(nload_dg_el), tag_dg_frc(nload_dg_el), val_dg_frc(nload_dg_el,2))
+      if (nload_dg_el .gt. 0) then
+              tag_dg_frc=0; val_dg_frc=0;
+      endif
       if (nload_sism_el.gt.0) allocate (val_sism_el(nload_sism_el,21), &
                                         fun_sism_el(nload_sism_el), tag_sism_el(nload_sism_el))     
       if (nload_expl_el.gt.0) allocate (val_expl_el(nload_expl_el,20), &
                                         fun_expl_el(nload_expl_el), tag_expl_el(nload_expl_el))
       
-      !if (n_case.gt.0) allocate (val_case(n_case,1), tag_case(n_case), tol_case(n_case))
+      if (n_case.gt.0) allocate (val_case(n_case), tag_case(n_case), tol_case(n_case))
       
       if (nfunc.gt.0) allocate (tag_func(nfunc), func_type(nfunc), func_indx(nfunc +1), func_data(nfunc_data))
       
@@ -314,10 +315,11 @@
       if (mpi_id.eq.0) then                        
          write(*,'(A)')                                
          if (n_case.gt.0) then
+           do i = 1, n_case
                                
               write(*,'(A)') '------------------Not-Honoring case-------------------'
-              write(*,'(A,I8)') 'CASE :', tag_case    !tag_case(1)
-            select case (tag_case)  !(tag_case(1))
+              write(*,'(A,I8)') 'CASE :', tag_case(i)    !tag_case(1)
+            select case (tag_case(i))  !(tag_case(1))
               case(1)
                 write(*,'(A)')'GRENOBLE H.'                        
               case(2)
@@ -358,15 +360,16 @@
                 write(*,'(A)')'GRONINGEN'                
               case(40)
                 write(*,'(A)')'KUTCH BASIN, INDIA'                                            
-              case(98,99)
+              case(98,99,100)
                 write(*,'(A)')'TEST MODE'                                
               case default
                  write(*,'(A)')'ERROR.. this case was not implemented!'
              end select 
                                    
-               write(*,'(A,I8)')    'MATERIAL TYPE    : ',val_case   !(val_case(1,1))        
-              write(*,'(A,E12.4)') 'MATERIAL TOL.    : ',tol_case   !(tol_case(1))
+               write(*,'(A,I8)')    'MATERIAL TYPE    : ',val_case(i)   !(val_case(1,1))        
+              write(*,'(A,E12.4)') 'MATERIAL TOL.    : ',tol_case(i)   !(tol_case(1))
             write(*,*)
+            enddo
          endif
       endif
       

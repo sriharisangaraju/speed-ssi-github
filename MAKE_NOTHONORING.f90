@@ -42,9 +42,9 @@
 !> @param[out] thick thickness of soft sediments
 
      subroutine MAKE_NOTHONORING(loc_n_num, nn_loc,&
-                             n_case, tag_case, val_case, tolerance, &
-               		     cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &			
-               		     xs_loc, ys_loc, zs_loc, zs_elev, zs_all, vs, thick, sub_tag_all,mpi_id)
+                             n_case, tag_case, val_case, tol_case, &
+               		         cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &			
+               		         xs_loc, ys_loc, zs_loc, zs_elev, zs_all, vs, thick, sub_tag_all,mpi_id)
 
 !                                 SUBROUTINE FOR CASEs
 !                            COMPUTATION OF THE ELEVATION
@@ -77,8 +77,8 @@
      integer*4 :: ncase,vcase,tcase						
      integer*4 :: n_elev,n_tria_elev						
      integer*4 :: start,finish							
-     integer*4 :: n_all,n_tria_all, ival	
-     integer*4 :: tag_case, val_case					
+     integer*4 :: n_all,n_tria_all, ival, icase	
+     !integer*4 :: tag_case, val_case					
 
      integer*4, dimension (:), allocatable :: node1_all,node2_all,node3_all	
      integer*4, dimension (:), allocatable :: node1_elev,node2_elev,node3_elev	 
@@ -86,13 +86,14 @@
      integer*4, dimension(0:cs_nnz_loc) :: cs_loc
      integer*4, dimension(nm) :: tag_mat, sdeg_mat
      integer*4, dimension(nn_loc) :: loc_n_num
-     !integer*4, dimension(n_case) :: tag_case					
-     !integer*4, dimension(n_case,1) :: val_case				
+     integer*4, dimension(n_case) :: tag_case					
+     integer*4, dimension(n_case) :: val_case				
      integer*4, dimension(nn_loc), intent(inout) :: sub_tag_all			
 
      real*8 :: tolerance							
      real*8 :: max_elev_spacing,max_all_spacing
 
+     real*8, dimension(n_case) :: tol_case				
      real*8, dimension (:), allocatable :: x_elev,y_elev,z_elev, vs_elev, sedim		
      real*8, dimension (:), allocatable :: x_all,y_all,z_all			
      real*8, dimension(nn_loc) :: xs_loc, ys_loc, zs_loc 							
@@ -106,12 +107,11 @@
 !*************************************************************************************************
 !                                   GRENOBLE - honoring
 !*************************************************************************************************
-    ncase = 1					
+    ncase = n_case					
         
         						
-    tcase = tag_case !tag_case(ncase)										
-    vcase = val_case !val_case(ncase,1)		   
-
+    tcase = tag_case(1) !tag_case(ncase)										
+    
 
 
     if (tcase.eq.1) then										
@@ -139,19 +139,20 @@
 			   node1_elev,node2_elev,node3_elev,&
 			   max_elev_spacing)		     
 														
- 	 call GET_NODE_DEPTH_FROM_SIMPLE(loc_n_num, n_elev, n_tria_elev,&					
-					   x_elev, y_elev, z_elev,&				
-					   node1_elev, node2_elev, node3_elev,&			
-               				   cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat,&			
-               				   nn_loc, xs_loc, ys_loc, zs_loc,&					
-					   zs_elev, vcase, max_elev_spacing, tolerance)		
-
+ 	 do icase = 1, ncase
+ 	   		call GET_NODE_DEPTH_FROM_SIMPLE(loc_n_num, n_elev, n_tria_elev,&					
+		                        			x_elev, y_elev, z_elev,&				
+					                        node1_elev, node2_elev, node3_elev,&			
+               				                cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat,&			
+               				                nn_loc, xs_loc, ys_loc, zs_loc,&					
+					                        zs_elev, val_case(icase), max_elev_spacing, tol_case(icase))		
+     enddo
  	 deallocate(x_elev,y_elev,z_elev,node1_elev,node2_elev,node3_elev)							
 
-	if (mpi_id.eq.0) then									
-		write(*,'(A)')'Done'								
-		write(*,'(A)')									
-	endif														
+	 if (mpi_id.eq.0) then									
+	  	 write(*,'(A)')'Done'								
+		 write(*,'(A)')									
+ 	endif														
 
 
 !*************************************************************************************************
@@ -241,22 +242,24 @@
 				  node1_all,node2_all,node3_all,&			
 				  max_all_spacing)					
 
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
+		do icase = 1, ncase
+		 	 
+		 	 call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
 						                  x_all, y_all, z_all, &					
 						                  node1_all, node2_all, node3_all,&			
 			                              cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
                         			      nn_loc, xs_loc, ys_loc, zs_loc, &					
-						                  zs_all, vcase, max_all_spacing, tolerance)		
+						                  zs_all, val_case(icase), max_all_spacing, tol_case(icase))		
 
-		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
+		    call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
 	   				                   x_elev, y_elev, z_elev, &				
 						               node1_elev, node2_elev, node3_elev,&			
                                        cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
                                        nn_loc, xs_loc, ys_loc, zs_loc, &
 				                       zs_elev, zs_all, &					
-						               vcase, max_elev_spacing, tolerance)			
+						               val_case(icase), max_elev_spacing, tol_case(icase))			
 
-
+        enddo
 
 		deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)	
 		deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
@@ -309,15 +312,18 @@
 					          node1_all,node2_all,node3_all,&			
 					          max_all_spacing)					
 
-			call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
+		    do icase = 1, ncase
+			 
+			 		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
 							   x_all, y_all, z_all, &					
 							   node1_all, node2_all, node3_all,&			
 				               cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
 	                           nn_loc, xs_loc, ys_loc, zs_loc, &	
-							   zs_all, vcase, max_all_spacing, tolerance)		
+							   zs_all, val_case(icase), max_all_spacing, tol_case(icase))		
+		    enddo    					
 
-			call MAKE_SUBTAG_ALLUVIAL(nn_loc, zs_all, j, sub_tag_all, xs_loc, ival)				
-
+		    call MAKE_SUBTAG_ALLUVIAL(nn_loc, zs_all, j, sub_tag_all, xs_loc, ival)
+		        	
 			deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
 			
 			if (mpi_id.eq.0) then	
@@ -385,22 +391,22 @@
         call READ_FILEVS(file_case_vs, n_tria_elev, vs_elev, sedim)
 
 
+        do icase = 1, ncase 
+		     if(tcase .eq. 21) call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
+			     	                    		   x_all, y_all, z_all, &					
+				    		                       node1_all, node2_all, node3_all,&			
+			                                       cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
+                            		               nn_loc, xs_loc, ys_loc, zs_loc, &	
+						                           zs_all, val_case(icase), max_all_spacing, tol_case(icase))		
 
-		if(tcase .eq. 21) call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
-				                    		   x_all, y_all, z_all, &					
-						                       node1_all, node2_all, node3_all,&			
-			                                   cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-                        		               nn_loc, xs_loc, ys_loc, zs_loc, &	
-						                       zs_all, vcase, max_all_spacing, tolerance)		
-
-		call GET_NODE_DEPTH_AND_VS(loc_n_num, n_elev, n_tria_elev, &					
+		     call GET_NODE_DEPTH_AND_VS(loc_n_num, n_elev, n_tria_elev, &					
 	   				        x_elev, y_elev, z_elev, vs_elev, sedim,&				
 						    node1_elev, node2_elev, node3_elev,&			
                             cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
                             nn_loc, xs_loc, ys_loc, zs_loc, &	
 				            zs_elev, zs_all, vs, thick, &					
-						    vcase, max_elev_spacing, tolerance)			
-         
+						    val_case(icase), max_elev_spacing, tol_case(icase))			
+         enddo
 
 
 		deallocate(x_elev, y_elev, z_elev,vs_elev,sedim, node1_elev, node2_elev, node3_elev)
@@ -424,14 +430,16 @@
 		endif											
 								
 
-		sub_tag_all = 3		
-		ival = 3						
+		sub_tag_all = 4		
+		ival = 4						
 											
-		do j = 1,2										    
+		do j = 1,3										    
 			if (j.eq.1) then								
 				file_case_all ='ALL1.out'
+			elseif (j.eq.2) then								
+				file_case_all ='ALL2.out'
 			else								
-				file_case_all ='ALL2.out'						
+				file_case_all ='ALL3.out'						
 			endif										
 	
 			zs_all = -1.0e+30
@@ -446,12 +454,14 @@
 					  node1_all,node2_all,node3_all,&			
 					  max_all_spacing)					
 
-			call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
+			do icase = 1, ncase
+						call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
 							                  x_all, y_all, z_all, &					
 							                  node1_all, node2_all, node3_all,&			
 				                              cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
 	                        			      nn_loc, xs_loc, ys_loc, zs_loc, &	
-							                  zs_all, vcase, max_all_spacing, tolerance)		
+							                  zs_all, val_case(icase), max_all_spacing, tol_case(icase))	
+            enddo
 
 			call MAKE_SUBTAG_ALLUVIAL(nn_loc, zs_all, j, sub_tag_all, xs_loc, ival)				
 
@@ -462,23 +472,19 @@
 				write(*,'(A,I8)') 'ALLUVIAL Layer # ',j	
 			endif
 
-		enddo !do j = 1,3 	
+		enddo 	
 
-                !do i = 1, nn_loc
-                !   write(*,*) zs_loc(i), sub_tag_all(i)
-                !enddo
-                !read(*,*)   
+   
                    
                                    
 		if (mpi_id.eq.0) then
 			write(*,'(A)') 'Done'
 			write(*,'(A)')	
 		endif
-
 								
 									
 !*************************************************************************************************
-!                             Atene - Partenone
+!                             Groningen 
 !*************************************************************************************************
 
 	elseif (tcase.eq. 31) then									
@@ -489,14 +495,20 @@
 		endif											
 								
 
-		sub_tag_all = 3		
-		ival = 3						
+		sub_tag_all = 6		
+		ival = 6						
 											
-		do j = 1,2										    
+		do j = 1,5										    
 			if (j.eq.1) then								
 				file_case_all ='ALL1.out'
-			else								
+			elseif(j.eq.2) then								
 				file_case_all ='ALL2.out'						
+			elseif(j.eq.3) then								
+				file_case_all ='ALL3.out'						
+			elseif(j.eq.4) then								
+				file_case_all ='ALL4.out'						
+			else								
+				file_case_all ='ALL5.out'						
 			endif										
 	
 			zs_all = -1.0e+30
@@ -511,12 +523,14 @@
 					  node1_all,node2_all,node3_all,&			
 					  max_all_spacing)					
 
-			call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
+			do icase = 1, ncase
+					call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
 							                  x_all, y_all, z_all, &					
 							                  node1_all, node2_all, node3_all,&			
 				                              cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
 	                        			      nn_loc, xs_loc, ys_loc, zs_loc, &	
-							                  zs_all, vcase, max_all_spacing, tolerance)		
+							                  zs_all, val_case(icase), max_all_spacing, tol_case(icase))		
+            enddo
 
 			call MAKE_SUBTAG_ALLUVIAL(nn_loc, zs_all, j, sub_tag_all, xs_loc, ival)				
 
@@ -570,13 +584,17 @@
 				   node1_elev,node2_elev,node3_elev,& 		
 				   max_elev_spacing)		      			
 														
-	 	 call GET_NODE_DEPTH_FROM_SIMPLE(loc_n_num, n_elev, n_tria_elev,&					
+	 	 do icase = 1, ncase
+	 	 		
+	 	 			call GET_NODE_DEPTH_FROM_SIMPLE(loc_n_num, n_elev, n_tria_elev,&					
 						   x_elev, y_elev, z_elev,&				
 						   node1_elev, node2_elev, node3_elev,&			
 	               	       cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat,&			
 	               		   nn_loc, xs_loc, ys_loc, zs_loc,&					
-						   zs_elev, vcase, max_elev_spacing, tolerance)		
+						   zs_elev, val_case(iacse), max_elev_spacing, tol_case(icase))		
 
+         enddo
+         
 	 	 deallocate(x_elev,y_elev,z_elev,node1_elev,node2_elev,node3_elev)	
 
 		if (mpi_id.eq.0) then									
@@ -621,22 +639,23 @@
 				  max_all_spacing)					
 
 
-
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
+	 	do icase = 1, ncase
+	 	 
+		    call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
 						   x_all, y_all, z_all, &					
 						   node1_all, node2_all, node3_all,&			
 			               cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
                            nn_loc, xs_loc, ys_loc, zs_loc, &	
-						   zs_all, vcase, max_all_spacing, tolerance)		
+						   zs_all, val_case(icase), max_all_spacing, tol_case(icase))		
 
-		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
+		    call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
 	   				       x_elev, y_elev, z_elev, &				
 						   node1_elev, node2_elev, node3_elev,&			
                            cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
                            nn_loc, xs_loc, ys_loc, zs_loc, &
 				           zs_elev, zs_all, &					
-						   vcase, max_elev_spacing, tolerance)			
-
+						   val_case(icase), max_elev_spacing, tol_case(icase))			
+       enddo
 
 
 		deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)	

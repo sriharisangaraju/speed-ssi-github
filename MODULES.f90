@@ -309,7 +309,6 @@ module speed_par
                    initial_snap, &
                    mpi_id, mpi_np, mpi_comm, &
                    ncase, ndt_mon_lst, ndt_mon_pgm, &
-                   val_case, tag_case, &
                    iargc, &
                    rk_order, rk_stages, testmode, debug
                    
@@ -331,7 +330,7 @@ module speed_par
 
 ! VARIABLES DEFINED IN FILENAME.MATE                                
       integer*4, dimension (:), allocatable :: &
-                 sub_tag_all, &                    !FOR MULTI-NOTHONORING (Not yet implemented)                        
+                 sub_tag_all, val_case, tag_case, &    !FOR MULTI-NOTHONORING
                  sdeg_mat, type_mat, tag_mat, &
                  fun_dirX_el, fun_neuX_el, fun_dirY_el, fun_neuY_el, fun_dirZ_el, fun_neuZ_el, &
                  fun_neuN_el, & 
@@ -345,7 +344,7 @@ module speed_par
                  tag_neuN_el, &
                  tag_plaY_el, tag_plaX_el, tag_plaZ_el, &
                  tag_abc_el, tag_dg_el, tag_dg_yn, tag_dg_frc, &
-                 tag_sism_el, tag_expl_el, &  !tag_case         
+                 tag_sism_el, tag_expl_el, &           
                  tag_func, func_type, func_indx
       
       
@@ -388,7 +387,7 @@ module speed_par
                xx_macro, yy_macro, zz_macro, &         ! NODES
                depth_search_mon_pgm, rotation_angle_mon_pgm, depth_search_mon_lst, &        ! MONITORS
                dg_c, pen_c, &                          ! DG CONSTANTS
-               dist, eps, r8t, tol_case                ! OTHER 
+               dist, eps, r8t                ! OTHER 
                
                
 ! VECTOR WITH FIXED DIMENSION                
@@ -397,7 +396,7 @@ module speed_par
      
 ! SPECTRAL NODES & MAPPING TRANFORMATION      
       real*8, dimension (:), allocatable ::  & 
-              zs_elev, zs_all, vs_tria, thick, &        !NOT HONORING                                          
+              zs_elev, zs_all, vs_tria, thick, tol_case ,&        !NOT HONORING                                          
               xx_spx, yy_spx, zz_spx, & !SPECTRAL NODES
               xx_spx_loc, yy_spx_loc, zz_spx_loc, &   !SPECTRAL NODES    
               alfa11, alfa12, alfa13, alfa21, alfa22, alfa23, alfa31, alfa32, alfa33, & !MAP
