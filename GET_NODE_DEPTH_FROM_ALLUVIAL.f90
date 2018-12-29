@@ -99,20 +99,27 @@
       ne = cs_loc(0) - 1
  
 
-      nn = 2
-      allocate(ct(nn),ww(nn),dd(nn,nn))
-      call MAKE_LGL_NW(nn,ct,ww,dd)
+!      nn = 2
+!      allocate(ct(nn),ww(nn),dd(nn,nn))
+!      call MAKE_LGL_NW(nn,ct,ww,dd)
       
-      do im = 1,nm
-         if ((sd(im) +1).ne.nn) then
-            deallocate(ct,ww,dd)
-            nn = sd(im) +1
-            allocate(ct(nn),ww(nn),dd(nn,nn))
-            call MAKE_LGL_NW(nn,ct,ww,dd)
-         endif
+!      do im = 1,nm
+!         if ((sd(im) +1).ne.nn) then
+!            deallocate(ct,ww,dd)
+!            nn = sd(im) +1
+!            allocate(ct(nn),ww(nn),dd(nn,nn))
+!            call MAKE_LGL_NW(nn,ct,ww,dd)
+!         endif
          
-         do ie = 1,ne
-            if (cs_loc(cs_loc(ie -1) +0).eq.tagmat) then
+      do ie = 1,ne
+           im = cs_loc(cs_loc(ie -1) +0);
+           nn = sd(im) +1 
+      
+            if (im .eq. tagmat) then
+               
+                
+                allocate(ct(nn),ww(nn),dd(nn,nn))
+                call MAKE_LGL_NW(nn,ct,ww,dd)
               
                do k = 1,nn
                   do j = 1,nn
@@ -124,7 +131,8 @@
                         
 
 
-                        if (zz_elevation(ic).eq.-1.0e+30) then
+                        if (zz_elevation(ic) .eq. -1.0e+30) then
+                        
                            do h = 1,nn_elem
                               if (zz_s(ic).lt.z_elev_min) exit 
 
@@ -228,10 +236,11 @@
            enddo !do j = 1,nn
          enddo !do i = 1,nn
 
-               
+         deallocate(ct,ww,dd)
+  
          endif
        enddo
-      enddo
+!      enddo
       
       return
       

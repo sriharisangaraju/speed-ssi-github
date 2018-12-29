@@ -1003,6 +1003,31 @@
                              gamma = 4.d0*atan(1.d0)/qs;             
                          endif                          
                                                                          
+                   elseif (tcase.eq.18) then
+                    !-------------------------------------------------------------------
+                    ! CASE 18: BEIJING
+                    !-------------------------------------------------------------------
+                    
+                         Depth = zs_elev(ic)                       
+
+                         if ((Depth .ge. 0.0d0).and.(zs_all(ic) .ge. 0.0d0)) then                                    
+                               VS = 800 + 10*dsqrt(Depth);
+                               VP  = 1300.d0 + 15.d0*dsqrt(Depth);                           
+                               rho = 1800.d0 +  5.d0*dsqrt(Depth);                                 
+                               mu = rho * VS**2.d0;
+                               qs = 0.1d0*VS;
+                               gamma = 4.d0*datan(1.d0)/qs;
+                         else 
+                               VS = 2100 
+                               VP = 3500
+                               rho = 2200   
+                               lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);                           
+                               mu = rho * VS**2.d0;
+                               qs = 0.1d0*VS;
+                               gamma = 4.d0*datan(1.d0)/qs;
+                         
+                         endif     
+
 
 
                    elseif (tcase.eq.20) then
@@ -1038,7 +1063,7 @@
                          
                    elseif (tcase.eq.21) then
                     !-------------------------------------------------------------------
-                    ! CASE 20: BEIJING
+                    ! CASE 21: BEIJING
                     !-------------------------------------------------------------------
                     
                          Depth = zs_elev(ic)

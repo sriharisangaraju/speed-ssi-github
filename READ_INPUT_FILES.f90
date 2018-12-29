@@ -348,6 +348,8 @@
                 write(*,'(A)')'MARSICA-FUCINO'   
               case(16)
                 write(*,'(A)')'ISTANBUL'                     
+              case(18)
+                write(*,'(A)')'BEIJING-TUTORIAL'                     
               case(20)
                 write(*,'(A)')'ATHENS'                     
               case(21)
