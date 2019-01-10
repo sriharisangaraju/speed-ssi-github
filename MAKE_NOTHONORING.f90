@@ -437,7 +437,7 @@
 		sub_tag_all = 4		
 		ival = 4						
 											
-		do j = 1,3										    
+		do j = 1,1										    
 			if (j.eq.1) then								
 				file_case_all ='ALL1.out'
 			elseif (j.eq.2) then								

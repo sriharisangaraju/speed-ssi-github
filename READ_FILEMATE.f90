@@ -494,7 +494,8 @@
 
            case('CASE')                                                        
               icase = icase + 1                                                                
-              read(inline(ileft:iright),*) &                                                
+              read(inline(ileft:iright),*) &   
+                 !case tag, block id, tolerance                                             
                  lab_case(icase),val_case(icase),tol_case(icase)                                
                  !lab_case,val_case,tol_case
 

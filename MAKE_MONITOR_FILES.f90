@@ -126,7 +126,7 @@
 
      endif
 
-     write(*,*)     
+    ! write(*,*)     
      deallocate(monitor_index)
     
      end subroutine MAKE_MONITOR_FILES  
