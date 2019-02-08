@@ -437,7 +437,7 @@
 		sub_tag_all = 4		
 		ival = 4						
 											
-		do j = 1,1										    
+		do j = 1,3										    
 			if (j.eq.1) then								
 				file_case_all ='ALL1.out'
 			elseif (j.eq.2) then								
@@ -499,10 +499,10 @@
 		endif											
 								
 
-		sub_tag_all = 6		
-		ival = 6						
+		sub_tag_all = 7		
+		ival = 7						
 											
-		do j = 1,5										    
+		do j = 1,6										    
 			if (j.eq.1) then								
 				file_case_all ='ALL1.out'
 			elseif(j.eq.2) then								
@@ -511,8 +511,10 @@
 				file_case_all ='ALL3.out'						
 			elseif(j.eq.4) then								
 				file_case_all ='ALL4.out'						
-			else								
+			elseif(j.eq.5) then								
 				file_case_all ='ALL5.out'						
+			else								
+				file_case_all ='ALL6.out'						
 			endif										
 	
 			zs_all = -1.0e+30

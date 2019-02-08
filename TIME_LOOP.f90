@@ -1917,7 +1917,7 @@
             in = inode_dirX(i)
             !write(*,*) in
             iaz = 3*(in -1) +1; 
-            !u2(iaz) = 0.0d0; u1(iaz)  = 0.d0; v1(iaz) = 0.d0 
+            u2(iaz) = 0.0d0; u1(iaz)  = 0.d0; v1(iaz) = 0.d0 
             if(rk_scheme .eq. 'RUNGEKUTTA') v2(iaz) = 0.d0
             do fn = 1,nfunc
                 u2(iaz) = u2(iaz) + Fel(fn,(3*(in -1) +1)) * func_value(fn)
@@ -1930,7 +1930,7 @@
          do i = 1,nnode_dirY
             in = inode_dirY(i)
             iaz = 3*(in -1) +2;
-            !u2(iaz) = 0.0d0; u1(iaz)  = 0.d0; v1(iaz) = 0.d0
+            u2(iaz) = 0.0d0; u1(iaz)  = 0.d0; v1(iaz) = 0.d0
             if(rk_scheme .eq. 'RUNGEKUTTA') v2(iaz) = 0.d0
             do fn = 1,nfunc
                 u2(iaz) = u2(iaz) + Fel(fn,(3*(in -1) +2)) * func_value(fn)
@@ -1943,7 +1943,7 @@
          do i = 1,nnode_dirZ
             in = inode_dirZ(i)
             iaz = 3*(in -1) +3; 
-            !u2(iaz) = 0.0d0; u1(iaz)  = 0.d0;  v1(iaz) = 0.d0
+            u2(iaz) = 0.0d0; u1(iaz)  = 0.d0;  v1(iaz) = 0.d0
             if(rk_scheme .eq. 'RUNGEKUTTA') v2(iaz) = 0.d0
             do fn = 1,nfunc
                u2(iaz) = u2(iaz) + Fel(fn,(3*(in -1) +3)) * func_value(fn)

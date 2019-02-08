@@ -287,7 +287,7 @@
             if(QS(im) .eq. 0.d0) then 
                prop_mat(im,4) = 0.d0;
             else
-               prop_mat(im,4) = 4.d0*datan(1.d0)*(fmax/3.d0)/QS(im)
+               prop_mat(im,4) = 4.d0*datan(1.d0)*(fmax)/QS(im)
             endif   
 
          enddo
