@@ -689,7 +689,8 @@
                           in = con_spx_loc(con_spx_loc(ie -1) + is)                                
                           con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 1
                           node_nle_4_mpi(in) = 1;
-                          if (n_case .gt. 0 .and. tag_case(1) .ne. 16 .and. tag_case(1) .ne. 21) then        
+                          if (n_case .gt. 0) then 
+                             if (tag_case(1) .ne. 16 .and. tag_case(1) .ne. 21) then        
                                 if (Depth_nle_el(ie) .lt. zs_elev(in) .or. zs_elev(in) .lt. 0.d0) then
                                              con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 0; node_nle_4_mpi(in) = 0
                                 endif             
@@ -697,7 +698,7 @@
                                              con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 0; node_nle_4_mpi(in) = 0
                                 endif
                               
-                          elseif(n_case .gt. 0 .and. tag_case(1) .eq. 16) then
+                             elseif(tag_case(1) .eq. 16) then
                                 if (Depth_nle_el(ie) .lt. zs_elev(in) .or. zs_elev(in) .lt. 0.d0) then
                                              con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 0; node_nle_4_mpi(in) = 0
                                 endif
@@ -705,13 +706,14 @@
                                              con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 0; node_nle_4_mpi(in) = 0
                                 endif             
                          
-                          elseif(n_case .gt. 0 .and. tag_case(1) .eq. 21) then
+                             elseif(tag_case(1) .eq. 21) then
                                 if (Depth_nle_el(ie) .lt. zs_elev(in) .or. zs_elev(in) .lt. 0.d0) then
                                              con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 0; node_nle_4_mpi(in) = 0
                                 endif
                                 if (vs_tria(in) .ge. 600.d0 .or. (zs_all(in) .lt. 0.0d0)) then
                                              con_spx_loc_nle(con_spx_loc_nle(ie -1) + is) = 0; node_nle_4_mpi(in) = 0
-                                endif             
+                                endif
+                             endif             
                           endif
                        enddo                                                                                
                     enddo                                                                                        

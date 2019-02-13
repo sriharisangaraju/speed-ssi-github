@@ -229,6 +229,7 @@
                                         fun_expl_el(nload_expl_el), tag_expl_el(nload_expl_el))
       
       if (n_case.gt.0) allocate (val_case(n_case), tag_case(n_case), tol_case(n_case))
+      if (n_case .eq. 0) allocate(tag_case(1)); tag_case(1)=0;
       
       if (nfunc.gt.0) allocate (tag_func(nfunc), func_type(nfunc), func_indx(nfunc +1), func_data(nfunc_data))
       
