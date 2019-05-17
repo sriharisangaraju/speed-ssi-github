@@ -434,23 +434,23 @@
                          
                          if ((Depth.ge.0.0d0).and.(zs_all(ic).ge.0.0d0)) then                  
                                                  
-                               ! if (Depth.lt.15.0d0) then               
-                               !          VS = 270.d0                                 
-                               !          ni = 0.45d0                                                           
-                               !          VP  =  (((2.0d0*(1.0d0 - ni))/(1.0d0-2.0d0*ni))**0.5)*VS 
-                               !          rho = 1700.d0      
-                               !          lambda = rho * (VP**2 - 2*VS**2)                                                    
-                               !          mu = rho * VS**2                                
-                               !          gamma = (3.1415*(2/3))/(70.d0)                                                      
-                               !  elseif (Depth.lt.50.0d0) then                                                       
-                               !          VS = 270.d0+11.5d0*(Depth-15.d0)                                                    
-                               !          ni = 0.45 - 0.0025*(Depth-15.d0)                                                    
-                               !          VP  =  (((2.0d0*(1.0d0 - ni))/(1.0d0-2.0d0*ni))**0.5)*VS
-                               !          rho = 1700.d0 + 5.d0*(Depth-15.d0)                                                  
-                               !          lambda = rho * (VP**2 - 2*VS**2)                                                    
-                               !          mu = rho * VS**2  
-                               !          gamma = (3.1415*(2/3))/(70.d0+0.5d0*(Depth-15.d0))                                  
-                               !  else                                                                                
+                                if (Depth.lt.15.0d0) then               
+                                         VS = 270.d0                                 
+                                         ni = 0.45d0                                                           
+                                         VP  =  (((2.0d0*(1.0d0 - ni))/(1.0d0-2.0d0*ni))**0.5)*VS 
+                                         rho = 1700.d0      
+                                         lambda = rho * (VP**2 - 2*VS**2)                                                    
+                                         mu = rho * VS**2                                
+                                         gamma = (3.1415*(2/3))/(70.d0)                                                      
+                                 elseif (Depth.lt.50.0d0) then                                                       
+                                         VS = 270.d0+11.5d0*(Depth-15.d0)                                                    
+                                         ni = 0.45 - 0.0025*(Depth-15.d0)                                                    
+                                         VP  =  (((2.0d0*(1.0d0 - ni))/(1.0d0-2.0d0*ni))**0.5)*VS
+                                         rho = 1700.d0 + 5.d0*(Depth-15.d0)                                                  
+                                         lambda = rho * (VP**2 - 2*VS**2)                                                    
+                                         mu = rho * VS**2  
+                                         gamma = (3.1415*(2/3))/(70.d0+0.5d0*(Depth-15.d0))                                  
+                                 else                                                                                
                                          VS= 270.d0 + 11.5d0*(50.d0-15.d0) + 0.7d0*(Depth-50)                                
                                          ni= 0.45d0 - 0.0025d0*(50.d0-15.d0) - 0.000075d0*(Depth-50)                         
                                          VP  =  (((2.0d0*(1.0d0 - ni))/(1.0d0-2.0d0*ni))**0.5)*VS                            
@@ -458,28 +458,28 @@
                                          lambda = rho * (VP**2 - 2*VS**2)                                                    
                                          mu = rho * VS**2                                                       
                                          gamma = (3.1415*(2/3))/(70.d0 + 0.5d0*(50.d0-15.d0) + 0.0775d0*(Depth-50))          
-                          !endif                                                                                      
+                                 endif                                                                                      
                                                                                                                                                      
                           else          
                              Depth_real = abs(zs(ic))
                                                                                                                                                
-                               !  if (Depth_real.lt.15.0d0) then               
-                               !          VS = 750.d0                                                                 
-                               !          ni = 0.30d0                                                        
-                               !          VP  =  (((2.0d0*(1.0d0 - ni))/(1.0d0-2.0d0*ni))**0.5)*VS                            
-                               !          rho = 2000.d0                                             
-                               !          lambda = rho * (VP**2 - 2*VS**2)                                                    
-                               !          mu = rho * VS**2                                
-                               !          gamma = (3.1415*(2/3))/(100.d0)                                                     
-                               !  elseif (Depth_real.lt.50.0d0) then                                                       
-                               !          VS = 750.d0+14.d0*(Depth_real-15.d0)              
-                               !          ni = 0.30d0 - 0.0005d0*(Depth_real-15.d0)  
-                               !          VP  =  (((2.0d0*(1.0d0 - ni))/(1.0d0-2.0d0*ni))**0.5)*VS                            
-                               !          rho = 2000.d0 + 6.5d0*(Depth_real-15.d0) 
-                               !          lambda = rho * (VP**2 - 2*VS**2)                                                    
-                               !          mu = rho * VS**2       
-                               !          gamma = (3.1415*(2/3))/(100.d0+0.8d0*(Depth_real-15.d0))  
-                               !  else              
+                                 if (Depth_real.lt.15.0d0) then               
+                                         VS = 750.d0                                                                 
+                                         ni = 0.30d0                                                        
+                                         VP  =  (((2.0d0*(1.0d0 - ni))/(1.0d0-2.0d0*ni))**0.5)*VS                            
+                                         rho = 2000.d0                                             
+                                         lambda = rho * (VP**2 - 2*VS**2)                                                    
+                                         mu = rho * VS**2                                
+                                         gamma = (3.1415*(2/3))/(100.d0)                                                     
+                                 elseif (Depth_real.lt.50.0d0) then                                                       
+                                         VS = 750.d0+14.d0*(Depth_real-15.d0)              
+                                         ni = 0.30d0 - 0.0005d0*(Depth_real-15.d0)  
+                                         VP  =  (((2.0d0*(1.0d0 - ni))/(1.0d0-2.0d0*ni))**0.5)*VS                            
+                                         rho = 2000.d0 + 6.5d0*(Depth_real-15.d0) 
+                                         lambda = rho * (VP**2 - 2*VS**2)                                                    
+                                         mu = rho * VS**2       
+                                         gamma = (3.1415*(2/3))/(100.d0+0.8d0*(Depth_real-15.d0))  
+                                 else              
                                          VS= 750.d0 + 14.d0*(50.d0-15.d0) + 1.1d0*(Depth_real-50)         
                                          ni= 0.30d0 - 0.0005d0*(50.d0-15.d0) - 0.000022d0*(Depth_real-50) 
                                          VP  =  (((2.0d0*(1.0d0 - ni))/(1.0d0-2.0d0*ni))**0.5)*VS                            
@@ -487,45 +487,45 @@
                                          lambda = rho * (VP**2 - 2*VS**2)                                                    
                                          mu = rho * VS**2  
                                          gamma = (3.1415*(2/3))/(100.d0 + 0.8d0*(50.d0-15.d0) + 0.049d0*(Depth_real-50))
-                              !   endif                                                  
+                                 endif                                                  
                           endif                
                          !left
-                         if(dabs(xs(ic) - 612223.16d0) .le. 500.d0) then 
-                             VS =  866.d0;
-                             VP = 1500.d0;
-                             rho = 1550.d0;
-                             lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
-                             mu = rho * VS**2.d0;
-                             qs = 0.1*VS;
-                             gamma = 4.d0*atan(1.d0)/qs;             
+                         !if(dabs(xs(ic) - 612223.16d0) .le. 500.d0) then 
+                         !    VS =  866.d0;
+                         !    VP = 1500.d0;
+                         !    rho = 1550.d0;
+                         !    lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                         !    mu = rho * VS**2.d0;
+                         !    qs = 0.1*VS;
+                         !    gamma = 4.d0*atan(1.d0)/qs;             
                          !right
-                         elseif(dabs(xs(ic) -  657223.16d0) .le. 500.d0) then 
-                             VS =  866.d0;
-                             VP = 1500.d0;
-                             rho = 1550.d0;
-                             lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
-                             mu = rho * VS**2.d0;
-                             qs = 0.1*VS;
-                             gamma = 4.d0*atan(1.d0)/qs;             
-                         !up
-                         elseif(dabs(ys(ic) - 5202628.88d0) .le. 500.d0) then 
-                             VS = 866.d0;
-                             VP = 1500.d0;
-                             rho = 1550.d0;
-                             lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
-                             mu = rho * VS**2.d0;
-                             qs = 0.1*VS;
-                             gamma = 4.d0*atan(1.d0)/qs;             
-                         !down
-                         elseif(dabs(ys(ic) - 5157628.88d0) .le. 500.d0) then 
-                             VS = 866.d0;
-                             VP = 1500.d0;
-                             rho = 1550.d0;
-                             lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
-                             mu = rho * VS**2.d0;
-                             qs = 0.1*VS;
-                             gamma = 4.d0*atan(1.d0)/qs;             
-                         endif                          
+                         !elseif(dabs(xs(ic) -  657223.16d0) .le. 500.d0) then 
+                         !    VS =  866.d0;
+                         !    VP = 1500.d0;
+                         !    rho = 1550.d0;
+                         !    lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                         !    mu = rho * VS**2.d0;
+                         !    qs = 0.1*VS;
+                         !    gamma = 4.d0*atan(1.d0)/qs;             
+                         !!up
+                         !elseif(dabs(ys(ic) - 5202628.88d0) .le. 500.d0) then 
+                         !    VS = 866.d0;
+                         !    VP = 1500.d0;
+                         !    rho = 1550.d0;
+                         !    lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                         !    mu = rho * VS**2.d0;
+                         !    qs = 0.1*VS;
+                         !    gamma = 4.d0*atan(1.d0)/qs;             
+                         !!down
+                         !elseif(dabs(ys(ic) - 5157628.88d0) .le. 500.d0) then 
+                         !    VS = 866.d0;
+                         !    VP = 1500.d0;
+                         !    rho = 1550.d0;
+                         !    lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                         !    mu = rho * VS**2.d0;
+                         !    qs = 0.1*VS;
+                         !    gamma = 4.d0*atan(1.d0)/qs;             
+                         !endif                          
                                                                          
                           
                           
@@ -1243,41 +1243,27 @@
                 
                         if (sub_tag_all(ic).eq.1) then
                                 
-                                val1(1) =  maxval((/ 200.d0, 90.d0 + 80.d0*zs(ic)**0.30/))
-                                VS = val1(1);
+                                !val1(1) =  maxval((/ 200.d0, 90.d0 + 80.d0*dabs(zs(ic))**0.30/))
+                                VS = 150 + 40*dabs(zs(ic))**(0.4);
                                 VP  = VS*4.5d0;
-                                if((dabs(xs(ic) - 338944.7d0) .le. 100.d0) .or. &
-                                   (dabs(xs(ic) - 358944.7d0) .le. 100.d0) .or. &
-                                   (dabs(ys(ic) - 5901822.0d0) .le. 100.d0) .or. &
-                                   (dabs(ys(ic) - 5921822.0d0) .le. 100.d0) ) then 
-                                    VP = VS*1.80d0
-                                endif                          
-
-                                rho = 2050.d0;
+                                rho = 1800.d0;
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
+                                qp = qp/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;   !CHECK f0 = 5Hz => FMAX in file.mate           
 
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 2nd Layer
                         ! from PE_B to NU_B
                         elseif (sub_tag_all(ic).eq.2) then
-                                val1(1) = minval((/ 600.d0,360.d0+0.68*zs(ic) /));
+                                val1(1) = minval((/ 600.d0,360.d0+0.68*dabs(zs(ic)) /));
                                 VS = val1(1);
                                 VP  = VS * 3.8d0;
-
-                                if((dabs(xs(ic) - 338944.7d0) .le. 100.d0) .or. &
-                                   (dabs(xs(ic) - 358944.7d0) .le. 100.d0) .or. &
-                                   (dabs(ys(ic) - 5901822.0d0) .le. 100.d0) .or. &
-                                   (dabs(ys(ic) - 5921822.0d0) .le. 100.d0) ) then 
-                                    VP = VS*1.80d0
-                                endif                          
-
-
                                 rho = 2050.d0;
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
+                                qp = qp/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
 
 
@@ -1286,36 +1272,27 @@
                         elseif (sub_tag_all(ic).eq.3) then
                                 VS = 600.d0;
                                 VP  = VS * 3.2d0;
-
-                                if((dabs(xs(ic) - 338944.7d0) .le. 100.d0) .or. &
-                                   (dabs(xs(ic) - 358944.7d0) .le. 100.d0) .or. &
-                                   (dabs(ys(ic) - 5901822.0d0) .le. 100.d0) .or. &
-                                   (dabs(ys(ic) - 5921822.0d0) .le. 100.d0) ) then 
-                                    VP = VS*1.80d0
-                                endif                          
-
                                 rho = 2050.d0;
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
+                                qp = qp/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;       
                                  
 
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 4th Layer
                         ! CK
                         elseif (sub_tag_all(ic).eq.4) then
-                                VS = 365.d0 + 1.15*zs(ic);
+                                !VS = 365.d0 + 1.15*dabs(zs(ic));
+                                VS = 2090.d0;
+                                if (dabs(zs(ic)) .le. 1200.d0) VS = 1515.d0 
+                                
                                 VP  = VS * 2.d0;
-                                if((dabs(xs(ic) - 338944.7d0) .le. 100.d0) .or. &
-                                   (dabs(xs(ic) - 358944.7d0) .le. 100.d0) .or. &
-                                   (dabs(ys(ic) - 5901822.0d0) .le. 100.d0) .or. &
-                                   (dabs(ys(ic) - 5921822.0d0) .le. 100.d0) ) then 
-                                    VP = VS*1.80d0
-                                endif                          
                                 rho = 2400.d0;
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
+                                qp = qp/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 5th Layer
                         ! ZE
@@ -1326,6 +1303,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
+                                qp = qp/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 6th Layer
                         ! RO (reservoir)
@@ -1336,6 +1314,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
+                                qp = qp/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
                         else ! LI (halfspace)
                                 VS = 2600.d0;
@@ -1344,9 +1323,123 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
+                                qp = qp/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;
                         endif
 
+       					if (check_case .eq. 1)  &
+                            write(1000+mpi_id,*) xs(ic),ys(ic),zs(ic), &
+                            VS, VP, rho                           
+
+                        
+                        !
+                        !-------------------------------------------------------------------
+					 
+                   elseif (tcase.eq.32) then
+
+                        !-------------------------------------------------------------------
+                        ! CASE 32: Groningen -  layered model
+                        !
+                        !-------------------------------------------------------------------
+                        ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 1st Layer
+                        ! from ground surface to PE_B
+                        if (sub_tag_all(ic).eq.1 .or. sub_tag_all(ic).eq.2 ) then
+                                
+                                if (dabs(zs(ic)) .le. 15.d0) 
+                                  VS = 150.d0;
+                                  VP  = 1064.d0;
+                                  rho = 1800.d0;
+                                elseif (dabs(zs(ic)) .le. 30.d0)
+                                  VS = 294.d0;
+                                  VP  = 1321.d0;
+                                  rho = 1800.d0;
+                                elseif (dabs(zs(ic)) .le. 50.d0)
+                                  VS = 332.d0;
+                                  VP  = 1494.d0;
+                                  rho = 1800.d0;
+                                elseif (dabs(zs(ic)) .le. 80.d0)
+                                  VS = 370.d0;
+                                  VP  = 1664.d0;
+                                  rho = 1800.d0;
+                                elseif (dabs(zs(ic)) .le. 120.d0)
+                                  VS = 408.d0;
+                                  VP  = 1838.d0;
+                                  rho = 1800.d0;
+                                elseif (dabs(zs(ic)) .le. 180.d0)
+                                  VS = 450.d0;
+                                  VP  = 2024.d0;
+                                  rho = 1800.d0;
+                                else ! NU_B 
+                                  VS = 523.d0;
+                                  VP  = 1988.d0;
+                                  rho = 2050.d0;
+                                end
+
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = qp/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs; 
+
+                       ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 3rd Layer
+                       ! from NU_B to NS_B
+                        elseif (sub_tag_all(ic).eq.3) then
+                                VS = 600.d0;
+                                VP  = VS * 3.2d0;
+                                rho = 2050.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = qp/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;       
+                                 
+
+                        ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 4th Layer
+                        ! CK
+                        elseif (sub_tag_all(ic).eq.4) then
+
+                                VS = 2090.d0;
+                                if (dabs(zs(ic)) .le. 1200.d0) VS = 1515.d0 
+                                
+                                VP  = VS * 2.d0;
+                                rho = 2400.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = qp/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
+                        ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 5th Layer
+                        ! ZE
+                        elseif (sub_tag_all(ic).eq.5) then
+                                VS = 2850.d0;
+                                VP  = 5100.d0;
+                                rho = 2450.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = qp/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
+                        ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 6th Layer
+                        ! RO (reservoir)
+                        elseif (sub_tag_all(ic).eq.6) then
+                                VS = 2300.d0;
+                                VP  = 3900.d0;
+                                rho = 2450.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = qp/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
+                        else ! LI (halfspace)
+                                VS = 2600.d0;
+                                VP  = 4500.d0;
+                                rho = 2650.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = qp/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;
+                        endif
        					if (check_case .eq. 1)  &
                             write(1000+mpi_id,*) xs(ic),ys(ic),zs(ic), &
                             VS, VP, rho                           

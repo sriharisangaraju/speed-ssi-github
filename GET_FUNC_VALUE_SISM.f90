@@ -145,7 +145,7 @@
            elseif ( time .ge. t0_delay + tau_new) then 
                GET_FUNC_VALUE_SISM = 1.d0;
            else
-               dt = 0.01;
+               dt = 0.001;
                Tr = tau_new;
                Te = 0.8*Tr;
                Tp = 0.2*Tr;

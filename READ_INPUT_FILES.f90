@@ -360,7 +360,9 @@
               case(30) 
                 write(*,'(A)')'ATHENS-Parthenon'
               case(31) 
-                write(*,'(A)')'GRONINGEN'                
+                write(*,'(A)')'GRONINGEN'                     
+              case(32) 
+                write(*,'(A)')'GRONINGEN-LAYERED MODEL'      
               case(40)
                 write(*,'(A)')'KUTCH BASIN, INDIA'                                            
               case(98,99,100)
