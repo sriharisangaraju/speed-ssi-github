@@ -1345,27 +1345,27 @@
                         ! from ground surface to PE_B
                         if (sub_tag_all(ic).eq.1 .or. sub_tag_all(ic).eq.2 ) then
                                 
-                                if (dabs(zs(ic)) .le. 15.d0) 
+                                if (dabs(zs(ic)) .le. 15.d0) then
                                   VS = 150.d0;
                                   VP  = 1064.d0;
                                   rho = 1800.d0;
-                                elseif (dabs(zs(ic)) .le. 30.d0)
+                                elseif (dabs(zs(ic)) .le. 30.d0) then
                                   VS = 294.d0;
                                   VP  = 1321.d0;
                                   rho = 1800.d0;
-                                elseif (dabs(zs(ic)) .le. 50.d0)
+                                elseif (dabs(zs(ic)) .le. 50.d0) then
                                   VS = 332.d0;
                                   VP  = 1494.d0;
                                   rho = 1800.d0;
-                                elseif (dabs(zs(ic)) .le. 80.d0)
+                                elseif (dabs(zs(ic)) .le. 80.d0) then
                                   VS = 370.d0;
                                   VP  = 1664.d0;
                                   rho = 1800.d0;
-                                elseif (dabs(zs(ic)) .le. 120.d0)
+                                elseif (dabs(zs(ic)) .le. 120.d0) then
                                   VS = 408.d0;
                                   VP  = 1838.d0;
                                   rho = 1800.d0;
-                                elseif (dabs(zs(ic)) .le. 180.d0)
+                                elseif (dabs(zs(ic)) .le. 180.d0) then
                                   VS = 450.d0;
                                   VP  = 2024.d0;
                                   rho = 1800.d0;
@@ -1373,7 +1373,7 @@
                                   VS = 523.d0;
                                   VP  = 1988.d0;
                                   rho = 2050.d0;
-                                end
+                                endif
 
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
