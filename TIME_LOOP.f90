@@ -45,7 +45,7 @@
                    ic, ih, ik, il, it, ipos, ineg, &
                    isnap, its, fn, nn, ip, im, imon, iaz, &
                    i, j, k, is, in, id, istage, itime, &
-                   ie, ielem, count_monitor, find_tag, icase
+                   ie, ielem, count_monitor, find_tag, icase, irand
                    
       ! Elapsed time print-out iteration divisor
       integer*4 :: it_divisor = 1000
@@ -414,11 +414,41 @@
                                                      sub_tag_all, zz_spx_loc, mpi_id, local_node_num, &
                                                      damping_type, QS_nh, QP_nh, &
                                                      xx_spx_loc, yy_spx_loc, check_not_hon,label_testcase)
+                                                     
+                                                     
                   endif
-                enddo  
-                          
+                enddo 
+                  
              endif                
                 
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!Random materials begin
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+              if (nmat_rnd.gt.0) then       
+                do irand = 1, nmat_rnd
+                  if (rand_mat(irand) .eq. tag_mat(im)) then
+                     do k = 1,nn
+                        do j = 1,nn
+                           do i = 1,nn
+                              is = nn*nn*(k -1) +nn*(j -1) +i
+                              in = con_spx_loc(con_spx_loc(ie -1) + is) 
+                              rho_el(i,j,k) = rho_rnd(in);
+                              lambda_el(i,j,k) = lambda_rnd(in);
+                              mu_el(i,j,k) = mu_rnd(in); 
+                           enddo
+                        enddo
+                     enddo                                      
+                  endif                               
+                enddo 
+              endif  
+                          
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!Random materials end
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
             call MAKE_MASS_MATRIX(nn,ct,ww,dd,rho_el,&
                      alfa11(ie),alfa12(ie),alfa13(ie),&
                      alfa21(ie),alfa22(ie),alfa23(ie),&
@@ -522,6 +552,32 @@
                           
              endif                
                
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!Random materials begin
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+              if (nmat_rnd.gt.0) then       
+                do irand = 1, nmat_rnd
+                  if (rand_mat(irand) .eq. tag_mat(im)) then
+                     do k = 1,nn
+                        do j = 1,nn
+                           do i = 1,nn
+                              is = nn*nn*(k -1) +nn*(j -1) +i
+                              in = con_spx_loc(con_spx_loc(ie -1) + is) 
+                              rho_el(i,j,k) = rho_rnd(in);
+                              lambda_el(i,j,k) = lambda_rnd(in);
+                              mu_el(i,j,k) = mu_rnd(in); 
+                           enddo
+                        enddo
+                     enddo                                      
+                  endif                               
+                enddo 
+              endif  
+                          
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!Random materials end
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
                  
                  if (damping_type .eq. 1)  then                  
 
@@ -1062,6 +1118,35 @@
              endif                
               
 
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!Random materials begin
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+              if (nmat_rnd.gt.0) then       
+                do irand = 1, nmat_rnd
+                  if (rand_mat(irand) .eq. tag_mat(im)) then
+                     do k = 1,nn
+                        do j = 1,nn
+                           do i = 1,nn
+                              is = nn*nn*(k -1) +nn*(j -1) +i
+                              in = con_spx_loc(con_spx_loc(ie -1) + is) 
+                              rho_el(i,j,k) = rho_rnd(in);
+                              lambda_el(i,j,k) = lambda_rnd(in);
+                              mu_el(i,j,k) = mu_rnd(in); 
+                           enddo
+                        enddo
+                     enddo                                      
+                  endif                               
+                enddo 
+              endif  
+                          
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!Random materials end
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
                     !+----------------------------------------------------------------------------------------
                     !|
                     ! NON LINEAR ELASTIC IMPLEMENTATION:
@@ -1436,6 +1521,34 @@
                 enddo  
              endif                
               
+
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!Random materials begin
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+              if (nmat_rnd.gt.0) then       
+                do irand = 1, nmat_rnd
+                  if (rand_mat(irand) .eq. tag_mat(im)) then
+                     do k = 1,nn
+                        do j = 1,nn
+                           do i = 1,nn
+                              is = nn*nn*(k -1) +nn*(j -1) +i
+                              in = con_spx_loc(con_spx_loc(ie -1) + is) 
+                              rho_el(i,j,k) = rho_rnd(in);
+                              lambda_el(i,j,k) = lambda_rnd(in);
+                              mu_el(i,j,k) = mu_rnd(in); 
+                           enddo
+                        enddo
+                     enddo                                      
+                  endif                               
+                enddo 
+              endif  
+                          
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!Random materials end
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
                      
                 call MAKE_ABC_FORCE(nn,ct,ww,dd,&
                                    rho_el,lambda_el,mu_el,&                         

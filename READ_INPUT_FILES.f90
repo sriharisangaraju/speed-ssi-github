@@ -123,7 +123,7 @@
       if(filefound .eqv. .FALSE.) call EXIT(EXIT_MISSING_FILE)
       
       call READ_DIME_FILEMATE(mat_file,nmat, &
-                            nmat_nle, &                                                                        
+                            nmat_nle, nmat_rnd, &                                                                        
                             nload_dirX_el,nload_dirY_el,nload_dirZ_el, &
                             nload_neuX_el,nload_neuY_el,nload_neuZ_el, &
                             nload_neuN_el, &                                                            
@@ -142,6 +142,7 @@
       if (mpi_id.eq.0) then
          write(*,'(A,I8)') 'Materials        : ',nmat
          if(nmat_nle.gt.0) write(*,'(A,I8)')     'Materials NL-El. : ',nmat_nle        
+         if(nmat_rnd.gt.0) write(*,'(A,I8)')     'Materials Random : ',nmat_rnd        
          if(nload_dirX_el.gt.0) write(*,'(A,I8)')'Dirichlet X B.C. : ',nload_dirX_el
          if(nload_dirY_el.gt.0) write(*,'(A,I8)')'Dirichlet Y B.C. : ',nload_dirY_el
          if(nload_dirZ_el.gt.0) write(*,'(A,I8)')'Dirichlet Z B.C. : ',nload_dirZ_el
@@ -184,6 +185,7 @@
       allocate (type_mat(nmat), tref_mat(nmat), prop_mat(nmat,4), sdeg_mat(nmat), tag_mat(nmat))
 
       if (nmat_nle.gt.0) allocate(type_mat_nle(nmat_nle), prop_mat_nle(nmat_nle,1), val_mat_nle(nmat_nle,1), tag_mat_nle(nmat_nle))
+      if (nmat_rnd.gt.0) allocate(rand_mat(nmat_rnd))
       
       if (nload_dirX_el.gt.0) allocate (val_dirX_el(nload_dirX_el,4), fun_dirX_el(nload_dirX_el), tag_dirX_el(nload_dirX_el))      
       if (nload_dirY_el.gt.0) allocate (val_dirY_el(nload_dirY_el,4), fun_dirY_el(nload_dirY_el), tag_dirY_el(nload_dirY_el))      
@@ -237,7 +239,8 @@
       allocate(QS(nmat), QP(nmat)); QS = 0.d0; QP = 0.d0;
             
       call READ_FILEMATE(mat_file,nmat,prop_mat,type_mat,tref_mat,tag_mat, QS, QP,&
-                nmat_nle,prop_mat_nle,val_mat_nle,type_mat_nle,tag_mat_nle, &        
+                nmat_nle,prop_mat_nle,val_mat_nle,type_mat_nle,tag_mat_nle, &   
+                nmat_rnd, rand_mat, &     
                 nload_dirX_el,val_dirX_el,fun_dirX_el,tag_dirX_el, &
                 nload_dirY_el,val_dirY_el,fun_dirY_el,tag_dirY_el, &
                 nload_dirZ_el,val_dirZ_el,fun_dirZ_el,tag_dirZ_el, &

@@ -291,7 +291,7 @@ module speed_par
                    nnode_dom, nelem_dom, edgecut, &
                    nmat_nle, total_els, nvec, &
                    nargs, ntime_err, n_test, n_frac, &
-                   num_testcase, label_testcase
+                   num_testcase, label_testcase, nmat_rnd 
                    
 ! 0/1 INTERGERS
       integer*4 :: file_mon_pgm, file_mon_lst, &
@@ -365,8 +365,7 @@ module speed_par
 
 ! OTHER
       integer*4, dimension (:), allocatable :: itersnap, vec, i4count, &
-                                               type_mat_nle, tag_mat_nle
-
+                                               type_mat_nle, tag_mat_nle, rand_mat
 
 
 ! MATRICES
@@ -421,6 +420,10 @@ module speed_par
       real*8, dimension(:), allocatable :: QS, QP, frequency_range
       real*8, dimension(:,:), allocatable:: Y_lambda,Y_mu
       real*8, dimension(:), allocatable :: A0_ray, A1_ray
+
+
+! RANDOM 
+      real*8, dimension (:), allocatable :: lambda_rnd, rho_rnd, mu_rnd
 
 
 ! OTHER 
@@ -502,7 +505,10 @@ module speed_timeloop
                         
                         !(NLE) MATERIALS
                          nmat, tag_mat, type_mat, sdeg_mat, tref_mat, prop_mat, &
-                              nmat_nle, tag_mat_nle, type_mat_nle, prop_mat_nle, val_mat_nle, fpeak, &
+                         nmat_nle,  tag_mat_nle, type_mat_nle, prop_mat_nle, val_mat_nle, fpeak, &
+                         
+                        !RAND MATERIALS
+                        nmat_rnd,  rand_mat, lambda_rnd, mu_rnd, rho_rnd, &
                         
                         !EXTERNAL LOADS
                          nload_traX_el, nload_traY_el, nload_traZ_el, &                  
@@ -534,7 +540,7 @@ module speed_timeloop
                           !SEISMIC MOMENT
                          check_node_sism, check_dist_node_sism, &                                                  
                          length_check_node_sism, nload_sism_el, factor_seismic_moment, tau_seismic_moment, &
-                           check_node_expl, check_dist_node_expl, &        
+                         check_node_expl, check_dist_node_expl, &        
                          length_check_node_expl,nload_expl_el,factor_explosive_source, &
                          
                           !DAMPING

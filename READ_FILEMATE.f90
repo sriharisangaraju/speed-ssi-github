@@ -136,6 +136,7 @@
 
       subroutine READ_FILEMATE(filemate,nb_mate,char_mat,type_mat,trefm,lab_mat,Qua_S,Qua_P, &
                                   nb_mate_nle,char_mat_nle,val_mat_nle,type_mat_nle,lab_mat_nle, & 
+                                  nb_mate_rnd, lab_mat_rnd, &     
                                   nb_diriX,val_diriX,fnc_diriX,lab_diriX, &
                                   nb_diriY,val_diriY,fnc_diriY,lab_diriY, &
                                   nb_diriZ,val_diriZ,fnc_diriZ,lab_diriZ, &
@@ -178,7 +179,7 @@
       character*4 :: keyword
 
       integer*4 :: nb_mate,nb_fnc, nb_fnc_data, nb_frac
-      integer*4 :: nb_mate_nle        
+      integer*4 :: nb_mate_nle, nb_mate_rnd        
       integer*4 :: nb_diriX,nb_diriY,nb_diriZ,nb_neuX,nb_neuY,nb_neuZ
       integer*4 :: nb_neuN 
       integer*4 :: nb_poiX,nb_poiY,nb_poiZ,nb_forX,nb_forY,nb_forZ,nb_forF
@@ -190,7 +191,7 @@
       integer*4 :: icase,nb_case                                        
       
       integer*4 :: im,ifunc,idf,ndat_fnc,file_nd
-      integer*4 :: im_nle        
+      integer*4 :: im_nle, im_rnd        
       integer*4 :: idX,idY,idZ,inX,inY,inZ, itX, itY, itZ
       integer*4 :: inN, itest 
       integer*4 :: ipX,ipY,ipZ,ifX,ifY,ifZ,iff
@@ -233,7 +234,8 @@
       integer*4, dimension(nb_fnc) :: type_fnc
       integer*4, dimension(nb_fnc) :: lab_fnc
       integer*4, dimension(nb_fnc +1) :: ind_fnc
-      integer*4, dimension(nb_mate_nle) :: lab_mat_nle                
+      integer*4, dimension(nb_mate_nle) :: lab_mat_nle   
+      integer*4, dimension(nb_mate_rnd) :: lab_mat_rnd                             
       
       integer*4, dimension(nb_mate_nle) :: type_mat_nle                
       integer*4, dimension(nb_mate_nle,1) :: char_mat_nle        
@@ -279,7 +281,7 @@
       
 
       
-      im = 0;       im_nle = 0;   icase = 0
+      im = 0;       im_nle = 0;   icase = 0 ;    im_rnd = 0;
       idX = 0;      idY = 0;      idZ = 0
       inX = 0;      inY = 0;      inZ = 0;      inN = 0;
       ipX = 0;      ipY = 0;      ipZ = 0
@@ -338,6 +340,10 @@
             read(inline(ileft:iright),*) lab_mat_nle(im_nle),type_mat_nle(im_nle),&                                
                  char_mat_nle(im_nle,1),val_mat_nle(im_nle,1)                         
          
+           case('MATR')                                                                        
+            im_rnd = im_rnd + 1                                                                                        
+            read(inline(ileft:iright),*) lab_mat_rnd(im_rnd)                          
+
            case('DIRX')
             idX = idX + 1
             read(inline(ileft:iright),*) lab_diriX(idX),fnc_diriX(idX),&

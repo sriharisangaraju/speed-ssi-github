@@ -54,7 +54,7 @@
 !> @param[out] nb_case  number of not honoring cases
 !> @param[out] n_test  1 for test case mode
 
-      subroutine READ_DIME_FILEMATE(filemate,nb_mat,nb_mat_nle, &
+      subroutine READ_DIME_FILEMATE(filemate,nb_mat,nb_mat_nle, nb_mat_rnd, &
                                     nb_load_dirX,nb_load_dirY,nb_load_dirZ, &
                                     nb_load_neuX,nb_load_neuY,nb_load_neuZ, &
                                     nb_load_neuN, &  
@@ -74,7 +74,7 @@
       character*4 :: keyword
 
       integer*4 :: nb_mat
-      integer*4 :: nb_mat_nle
+      integer*4 :: nb_mat_nle, nb_mat_rnd
       integer*4 :: nb_load_dirX,nb_load_dirY,nb_load_dirZ
       integer*4 :: nb_load_neuX,nb_load_neuY,nb_load_neuZ
       integer*4 :: nb_load_neuN
@@ -91,7 +91,7 @@
       integer*4 :: status
       integer*4 :: lab_fnc, type_fnc, ndat_fnc
       
-      nb_mat = 0;            nb_mat_nle = 0;        nb_case = 0        
+      nb_mat = 0;            nb_mat_nle = 0;        nb_case = 0;           nb_mat_rnd = 0;        
       nb_load_dirX = 0;      nb_load_dirY = 0;      nb_load_dirZ = 0
       nb_load_neuX = 0;      nb_load_neuY = 0;      nb_load_neuZ = 0
       nb_load_neuN = 0;      nb_load_poiX = 0;      nb_load_poiY = 0 
@@ -119,7 +119,9 @@
            case('MATE')
             nb_mat = nb_mat + 1
            case('MATN')              
-            nb_mat_nle = nb_mat_nle + 1                        
+            nb_mat_nle = nb_mat_nle + 1     
+           case('MATR')              
+            nb_mat_rnd = nb_mat_rnd + 1                                    
            case('DIRX')        
             nb_load_dirX = nb_load_dirX + 1
            case('DIRY')

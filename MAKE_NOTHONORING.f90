@@ -491,10 +491,11 @@
 !                             Groningen 
 !*************************************************************************************************
 
-	elseif (tcase.eq. 31) then									
+	elseif (tcase.eq. 31 .or. tcase .eq. 32) then									
 		if (mpi_id.eq.0) then									
-			write(*,'(A)')									
-			write(*,'(A)')'CASE 31: GRONINGEN'		
+			write(*,'(A)')
+			if(tcase.eq. 31) write(*,'(A)')'CASE 31: GRONINGEN'		
+			if(tcase.eq. 32) write(*,'(A)')'CASE 32: GRONINGEN'		 
 			write(*,'(A)')'Reading Topography&Alluvial...'					
 		endif											
 								
@@ -564,20 +565,20 @@
 !                             Groningen layered model
 !*************************************************************************************************
 
-	elseif (tcase.eq. 32) then		
+	!elseif (tcase.eq. 32) then		
 	
-     	zs_elev = -1.0e+30								
-		zs_all = -1.0e+30								
+    ! 	zs_elev = -1.0e+30								
+    !   zs_all = -1.0e+30								
 							
-		if (mpi_id.eq.0) then									
-			write(*,'(A)')									
-			write(*,'(A)')'CASE 32: GRONINGEN'		
-			write(*,'(A)')'Layered Model...'					
-		endif												
-		if (mpi_id.eq.0) then
-			write(*,'(A)') 'Done'
-			write(*,'(A)')	
-		endif
+!		if (mpi_id.eq.0) then									
+!			write(*,'(A)')									
+!			write(*,'(A)')'CASE 32: GRONINGEN'		
+!			write(*,'(A)')'Layered Model...'					
+!		endif												
+!		if (mpi_id.eq.0) then
+!			write(*,'(A)') 'Done'
+!			write(*,'(A)')	
+!		endif
 									
 
 !*************************************************************************************************

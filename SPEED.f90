@@ -202,11 +202,12 @@
                                       
        if (mpi_id.eq.0) write(*,'(A)')'----------------Making not-honoring case---------------'                  
 
-       allocate(zs_elev(nnod_loc), zs_all(nnod_loc), sub_tag_all(nnod_loc), vs_tria(nnod_loc), thick(nnod_loc))
-     
+       allocate(zs_elev(nnod_loc), zs_all(nnod_loc), sub_tag_all(nnod_loc), vs_tria(nnod_loc), thick(nnod_loc))  
+       
        if(mpi_id .eq.0) then
           start1=MPI_WTIME()  
        endif 
+       
        call MAKE_NOTHONORING(local_node_num, nnod_loc,&
                              n_case, tag_case, val_case, tol_case, &
                              con_nnz_loc, con_spx_loc, nmat, tag_mat, sdeg_mat, &                        
@@ -232,6 +233,18 @@
 
     endif
 
+!*****************************************************************************************
+!   RANDOMIZED PARAMETERS          
+!*****************************************************************************************
+    if (nmat_rnd .gt. 0) then
+        allocate(lambda_rnd(nnod_loc),mu_rnd(nnod_loc),rho_rnd(nnod_loc))
+        
+        call MAKE_RANDOM_PARAM(local_node_num, nnod_loc, &
+                               nmat_rnd, rand_mat,  &
+                               xx_spx_loc, yy_spx_loc, zz_spx_loc, &
+                               lambda_rnd, mu_rnd, rho_rnd, mpi_id)
+ 
+    endif
 
 !*****************************************************************************************
 !    SETUP FOR BOUNDARY CONDITIONS    

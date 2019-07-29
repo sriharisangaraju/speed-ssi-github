@@ -1250,7 +1250,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
-                                qp = qp/10.d0
+                                qp = VP/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;   !CHECK f0 = 5Hz => FMAX in file.mate           
 
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 2nd Layer
@@ -1263,7 +1263,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
-                                qp = qp/10.d0
+                                qp = VP/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
 
 
@@ -1276,7 +1276,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
-                                qp = qp/10.d0
+                                qp = VP/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;       
                                  
 
@@ -1292,7 +1292,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
-                                qp = qp/10.d0
+                                qp = VP/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 5th Layer
                         ! ZE
@@ -1303,7 +1303,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
-                                qp = qp/10.d0
+                                qp = VP/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 6th Layer
                         ! RO (reservoir)
@@ -1323,7 +1323,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
-                                qp = qp/10.d0
+                                qp = VP/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;
                         endif
 
@@ -1349,14 +1349,23 @@
                                   VS = 150.d0;
                                   VP  = 1064.d0;
                                   rho = 1800.d0;
+                                  if (check_case .eq. 1)  &
+                                      write(1000+mpi_id,*) xs(ic),ys(ic),zs(ic), &
+                                                           VS, VP, rho   
                                 elseif (dabs(zs(ic)) .le. 30.d0) then
                                   VS = 294.d0;
                                   VP  = 1321.d0;
                                   rho = 1800.d0;
+                                  if (check_case .eq. 1)  &
+                                      write(1000+mpi_id,*) xs(ic),ys(ic),zs(ic), &
+                                                           VS, VP, rho   
                                 elseif (dabs(zs(ic)) .le. 50.d0) then
                                   VS = 332.d0;
                                   VP  = 1494.d0;
                                   rho = 1800.d0;
+                                  if (check_case .eq. 1)  &
+                                      write(1000+mpi_id,*) xs(ic),ys(ic),zs(ic), &
+                                                           VS, VP, rho   
                                 elseif (dabs(zs(ic)) .le. 80.d0) then
                                   VS = 370.d0;
                                   VP  = 1664.d0;
@@ -1378,7 +1387,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
-                                qp = qp/10.d0
+                                qp = VP/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs; 
 
                        ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 3rd Layer
@@ -1390,7 +1399,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
-                                qp = qp/10.d0
+                                qp = VP/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;       
                                  
 
@@ -1406,7 +1415,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
-                                qp = qp/10.d0
+                                qp = VP/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 5th Layer
                         ! ZE
@@ -1417,7 +1426,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
-                                qp = qp/10.d0
+                                qp = VP/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
                         ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 6th Layer
                         ! RO (reservoir)
@@ -1428,7 +1437,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
-                                qp = qp/10.d0
+                                qp = VP/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
                         else ! LI (halfspace)
                                 VS = 2600.d0;
@@ -1437,7 +1446,7 @@
                                 lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
                                 mu = rho * VS**2.d0;
                                 qs = VS/10.d0;
-                                qp = qp/10.d0
+                                qp = VP/10.d0
                                 gamma = 4.d0*datan(1.d0)*5.d0/qs;
                         endif
        					if (check_case .eq. 1)  &
