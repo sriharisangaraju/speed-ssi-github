@@ -102,7 +102,7 @@
                              if (func_type(fn) .eq. 60 ) then     
                  
                                 reduction_factor = get_func_value(nf,func_type,func_indx,func_data, nfdata, &  
-                                                               fn,R_el(p,q,r))
+                                                               fn,R_el(p,q,r),0,0)
                                                                                 
                                 mu_el(p,q,r) = mu_el(p,q,r) *  reduction_factor                      
                                 VS = dsqrt(mu_el(p,q,r)/rho_el(p,q,r))                   
@@ -120,7 +120,7 @@
                              if (func_type(fn) .eq. 60 .and. vs_tria(in) .lt. 325.d0) then     
 
                                reduction_factor = get_func_value(nf,func_type,func_indx,func_data, nfdata, &  
-                                                                 fn,R_el(p,q,r))
+                                                                 fn,R_el(p,q,r),0,0)
                                                                                 
                                mu_el(p,q,r) = mu_el(p,q,r) *  reduction_factor                      
                                VS = dsqrt(mu_el(p,q,r)/rho_el(p,q,r))                   
@@ -130,7 +130,7 @@
                              elseif (func_type(fn) .eq. 62 .and. vs_tria(in) .lt. 450.d0) then     
                                
                                reduction_factor = get_func_value(nf,func_type,func_indx,func_data, nfdata, &  
-                                                                 fn,R_el(p,q,r))
+                                                                 fn,R_el(p,q,r),0,0)
                                                                                 
                                mu_el(p,q,r) = mu_el(p,q,r) *  reduction_factor                      
                                VS = dsqrt(mu_el(p,q,r)/rho_el(p,q,r))                   

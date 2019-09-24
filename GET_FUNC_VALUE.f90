@@ -89,20 +89,32 @@
          case(3)
            ind_start = ind_fnc(id_fnc); ind_end = ind_fnc(id_fnc+1)-3;
 
-           
+!           write(*,*) id_fnc, ind_fnc
+!           read(*,*)
 !           print*, ind_start, data_fnc(ind_start)
 !           print*, ind_end, data_fnc(ind_end-1)
-!           read*
-!           print*, data_fnc(ind_start:ind_end:2)
-!           read*
+          ! read*
+          ! print*, data_fnc(ind_start:ind_end:2)
+          ! read*
+           
+        !   open(300,file='th.out',position='APPEND')
+        !   do i = ind_start, ind_end, 2
+        !       write(300,*) data_fnc(i), data_fnc(i+1)
+        !   enddo
+        !   close(300)  
+
+           
            !valmax = maxval(data_fnc(ind_start:ind_end:2))
            if (time >= data_fnc(ind_end-1)) then
                v1 = data_fnc(ind_end + 2);
                GET_FUNC_VALUE = v1;
            else
               idx = binarySearch_real(data_fnc(ind_start:ind_end:2), time)
-              t0 = data_fnc(2*idx-1);        t1 = data_fnc(2*idx+1)
-              v0 = data_fnc(2*idx);      v1 = data_fnc(2*idx+2)
+              
+!              write(*,*) idx
+              
+              t0 = data_fnc(ind_start-1 + 2*idx-1);        t1 = data_fnc(ind_start-1 + 2*idx+1)
+              v0 = data_fnc(ind_start-1 + 2*idx);          v1 = data_fnc(ind_start-1 + 2*idx+2)
               
               GET_FUNC_VALUE = (v1 - v0) / (t1 - t0) * (time - t0)  + v0
 
@@ -114,8 +126,11 @@
 !              t0 = data_fnc(i);    t1 = data_fnc(i +2)
 !              v0 = data_fnc(i +1);  v1 = data_fnc(i +3)
 !              if ((time.ge.t0) .and. (time .le. t1))  then
-!              print*, i, t0, t1, v0, v1
-!              read*
+!               write(*,*) time, t0, t1, v0, v1, GET_FUNC_VALUE
+             !  open(300,file='th.out',position='APPEND')
+             !  write(300,*) time, GET_FUNC_VALUE
+             !  close(300)  
+             ! read*
 
 !                 GET_FUNC_VALUE = (v1 - v0) / (t1 - t0) * (time - t0)  + v0
 !                 val2 = (v1 - v0) / (t1 - t0) * (time - t0)  + v0
@@ -275,7 +290,8 @@
          case(60,62)
            ! FUNCTION FOR G/G0
            do i = ind_fnc(id_fnc),ind_fnc(id_fnc+1) -3,2     
-           t0 = data_fnc(i);     t1 = data_fnc(i +2)                    
+             
+              t0 = data_fnc(i);     t1 = data_fnc(i +2)                    
               v0 = data_fnc(i +1);  v1 = data_fnc(i +3)                
     
               if (abs(time).le.data_fnc(ind_fnc(id_fnc))) then          

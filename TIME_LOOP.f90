@@ -2019,7 +2019,9 @@
 
       do fn = 1,nfunc
             func_value(fn) = GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt2,0,0)
+!            write(*,*) tt2, func_value(fn)
       enddo
+!      read(*,*)
          
 !      if (mpi_id .eq. 0) close(unit_fe0) 
 !      if (mpi_id .eq. 1) close(unit_fe1) 
