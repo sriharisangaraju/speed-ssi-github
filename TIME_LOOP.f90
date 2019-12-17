@@ -1287,7 +1287,7 @@
                                  iaz = 6*(in -1) +5; strain(iaz) = strain(iaz)  & 
                                                                   + 0.5*(duydz_el(i,j,k) + duzdy_el(i,j,k))/node_counter(in) !yz
                                 !if (local_el_num(ie) .eq. 453) write(*,*) mpi_id, &
-                                !                              local_node_num(in), duxdz_el(i,j,k)
+                                !                              local_node_num(in), duydz_el(i,j,k)
                                  iaz = 6*(in -1) +6; strain(iaz) = strain(iaz)  &
                                                                  + 0.5*(duxdz_el(i,j,k) + duzdx_el(i,j,k))/node_counter(in) !zx
                                 !if (local_el_num(ie) .eq. 453) write(*,*) mpi_id, &

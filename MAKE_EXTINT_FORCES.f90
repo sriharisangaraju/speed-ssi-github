@@ -2130,22 +2130,28 @@
                     ! Seismic Tensor is given is terms of norma and slip vector:
                                         ! nx, ny, nz and sx, sy, sz
                                         ! i.e.: SULMONA Case
-                    facsmom(isism,1) = 1/facsmom(isism,1) &                                        
+                    if(facsmom(isism,1) .ne. 0) &
+                                       facsmom(isism,1) = 1/facsmom(isism,1) &                                        
                                        * (slip1_sism*norm1_sism+slip1_sism*norm1_sism) &        
                                        * amp_sism                                                
-                    facsmom(isism,2) = 1/facsmom(isism,2) &                                        
+                    if(facsmom(isism,2) .ne. 0) &
+                                       facsmom(isism,2) = 1/facsmom(isism,2) &                                        
                                        * (slip2_sism*norm2_sism+slip2_sism*norm2_sism) &        
                                        * amp_sism                                                
-                    facsmom(isism,3) = 1/facsmom(isism,3) &                                        
+                    if(facsmom(isism,3) .ne. 0) &
+                                       facsmom(isism,3) = 1/facsmom(isism,3) &                                        
                                        * (slip3_sism*norm3_sism+slip3_sism*norm3_sism) &        
                                        * amp_sism                                                
-                    facsmom(isism,4) = 1/facsmom(isism,4) &                                        
+                    if(facsmom(isism,4) .ne. 0) &
+                                       facsmom(isism,4) = 1/facsmom(isism,4) &                                        
                                        * (slip2_sism*norm3_sism+slip3_sism*norm2_sism) &        
                                        * amp_sism                                                
-                    facsmom(isism,5) = 1/facsmom(isism,5) &                                        
+                    if(facsmom(isism,5) .ne. 0) &
+                                       facsmom(isism,5) = 1/facsmom(isism,5) &                                        
                                        * (slip1_sism*norm3_sism+slip3_sism*norm1_sism) &        
                                        * amp_sism                                                
-                    facsmom(isism,6) = 1/facsmom(isism,6) &                                        
+                    if(facsmom(isism,6) .ne. 0) &
+                                       facsmom(isism,6) = 1/facsmom(isism,6) &                                        
                                        * (slip1_sism*norm2_sism+slip2_sism*norm1_sism) &        
                                        * amp_sism                          
                                                                            

@@ -48,10 +48,14 @@
                           nl_sism,&
                           num_ns,max_num_ns,&
                           sour_ns,dist_sour_ns,&
+                          pos_sour_nx, pos_sour_ny, pos_sour_nz, &
                           check_ns,check_dist_ns,&
                           length_cns,&
+                          check_pos_ns, &
                           fun_sism,nf,tag_func,val_sism,&
                           nn_loc, local_n_num)
+
+
 
 !      use speed_par, only: slip_type
       
@@ -75,13 +79,15 @@
       integer*4, dimension(max_num_ns,nl_sism) :: sour_ns
       integer*4, dimension(length_cns,4) :: check_ns
             
-      real*8 :: vel_prop, dist_b, xb, yb, zb
+      real*8 :: vel_prop, dist_b, xb, yb, zb, trup_b, dist_p, trup_p
       
       real*8, dimension(:), allocatable :: ct,ww
       
       real*8, dimension(:,:), allocatable :: dd
       real*8, dimension(max_num_ns,nl_sism) :: dist_sour_ns
+      real*8, dimension(max_num_ns,nl_sism) :: pos_sour_nx, pos_sour_ny, pos_sour_nz 
       real*8, dimension(length_cns,1) :: check_dist_ns
+      real*8, dimension(length_cns,3) :: check_pos_ns
       real*8, dimension(nl_sism,21) :: val_sism
       
       
@@ -117,8 +123,13 @@
                                      h = h + 1
                                      check_ns(h,1) = sour_ns(ip,isism) !source node
                                      check_ns(h,2) = fun_sism(isism)   !fun type
-                                     check_ns(h,3) = isism             !faul number
+                                     check_ns(h,3) = isism             !fault number
                                      check_ns(h,4) = ie                !local element
+                                     ! new --- added position of nodes 
+                                     check_pos_ns(h,1) = pos_sour_nx(ip, isism)
+                                     check_pos_ns(h,2) = pos_sour_ny(ip, isism)
+                                     check_pos_ns(h,3) = pos_sour_nz(ip, isism)                                                                          
+                                     
                                      !!distance from hypo / rupture velocity = rupture time --> std
                                      !!rupture time  ---> Archuleta (line 120 ~ rupt. velocity)
                                      !!write(*,*) slip_type
@@ -138,8 +149,19 @@
                                      xb = (val_sism(isism,4) + val_sism(isism,7) + val_sism(isism,10))/3.d0;
                                      yb = (val_sism(isism,5) + val_sism(isism,8) + val_sism(isism,11))/3.d0;
                                      zb = (val_sism(isism,6) + val_sism(isism,9) + val_sism(isism,12))/3.d0;
+                                     
+                                     trup_b = val_sism(isism,19)                                   
                                      dist_b = dsqrt((val_sism(isism,1)-xb)**2.d0+(val_sism(isism,2)-yb)**2.d0+(val_sism(isism,3)-zb)**2.d0);
-                                     if (dabs(dist_b) .le. 1.e-6) then
+                                     dist_p = dsqrt((val_sism(isism,1)-check_pos_ns(h,1))**2.d0 & 
+                                                   +(val_sism(isism,2)-check_pos_ns(h,2))**2.d0 & 
+                                                   +(val_sism(isism,3)-check_pos_ns(h,3))**2.d0); 
+                                                   
+                                     trup_p = trup_b*dist_p/dist_b;              
+                                     
+                                     !write(*,*) h, dist_b, trup_b, dist_p, trup_p
+                                     
+                                                                          
+                                     if (dabs(dist_b) .le. 100) then
                                         check_dist_ns(h,1) =  val_sism(isism,19)
                                      else
                                         check_dist_ns(h,1) = (val_sism(isism,19) * dist_sour_ns(ip,isism)) / dist_b;

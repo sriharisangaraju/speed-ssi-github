@@ -162,7 +162,7 @@
 	elseif (tcase .eq. 2 .or. tcase .eq. 3 .or. tcase .eq. 4 .or. tcase .eq. 6 &
 	        .or. tcase .eq. 7 .or. tcase .eq. 8 .or. tcase .eq. 11 .or. tcase .eq. 12 &
 	        .or. tcase .eq. 13 .or. tcase .eq. 14 .or. tcase .eq. 15 .or. tcase .eq. 18 &
-	        .or. tcase .eq. 22  .or. tcase .eq. 40) then									
+	        .or. tcase .eq. 22  .or. tcase .eq. 40 .or. tcase .eq. 33) then									
 		if (mpi_id.eq. 0 .and. tcase .eq. 2) then									
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 2: GRENOBLE'					
@@ -215,6 +215,10 @@
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 22: NORCIA'	
 	 
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 23) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 33: GRONINGEN-ZE'	
+
 	    elseif(mpi_id .eq. 0 .and. tcase .eq. 40) then		
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 40: KUTCH'	     				
@@ -360,8 +364,9 @@
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 21: BEIJING '	     				
 		endif													
-    
-    	write(*,'(A)')'Reading Topography&Alluvial...'					
+        	
+        if (mpi_id.eq.0) write(*,'(A)')'Reading Topography&Alluvial...'					
+
 
 		file_case_xyz ='XYZ.out'								
 		if(tcase .eq. 21)  file_case_all ='ALL.out'

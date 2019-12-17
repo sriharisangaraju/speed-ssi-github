@@ -52,7 +52,8 @@
                                  nnod,xs,ys,zs, &                
                                  num_ns,sour_ns,i_sism,&        
                                  dist_sour_ns,nl_sism,&                
-                                 max_num_ns,loc_n_num, nn_loc)                
+                                 max_num_ns,loc_n_num, nn_loc, &
+                                 pos_sour_nx,pos_sour_ny,pos_sour_nz)                
 
 
       implicit none
@@ -72,11 +73,12 @@
       real*8, dimension(4) :: X,Y,Z
 
       real*8, dimension(max_num_ns,nl_sism) :: dist_sour_ns
+      real*8, dimension(max_num_ns,nl_sism) :: pos_sour_nx,pos_sour_ny,pos_sour_nz
 
       node_sism = 0
 
       tol = 6.28
-      EPSILON = 1.d-8
+      EPSILON = 1.d-3
       TWOPI = 6.283185307179586476925287
                     
       X(1) = X1
@@ -123,6 +125,9 @@
               node_sism = node_sism + 1
               sour_ns(node_sism,i_sism) = loc_n_num(isn) 
               dist_sour_ns(node_sism,i_sism) = sqrt((Xipo - xs(isn))**2 +(Yipo - ys(isn))**2 +(Zipo - zs(isn))**2)
+              pos_sour_nx(node_sism,i_sism) = xs(isn)
+              pos_sour_ny(node_sism,i_sism) = ys(isn)              
+              pos_sour_nz(node_sism,i_sism) = zs(isn)
 
           endif
 

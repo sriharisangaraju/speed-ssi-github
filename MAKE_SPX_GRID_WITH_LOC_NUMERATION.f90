@@ -54,7 +54,7 @@
                             local_node_num)
       
      if(mpi_id .eq.0) write(*,'(A)')
-     if(mpi_id.eq.0) write(*,'(A,I8)') 'Total Spectral Nodes : ',nnod
+     if(mpi_id.eq.0) write(*,'(A,I20)') 'Total Spectral Nodes : ',nnod
 
      
      allocate(alfa11(nelem_loc),alfa12(nelem_loc),alfa13(nelem_loc))

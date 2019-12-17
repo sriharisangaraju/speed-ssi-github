@@ -63,7 +63,6 @@
       subroutine READ_HEADER(headerfile,gridfile,matefile,mpifile,monfile,bkpfile,&   
                              time_step,start_time,stop_time,&
                              option_out_var,&          
-                             option_out_data,option_out_form,&
                              trestart,&
                              ndt_monitor,&                
                              deltat_fixed,&                
@@ -86,8 +85,7 @@
       character*3 :: deltat_fixed        
 
       integer*4 :: testmode, trestart
-      integer*4 :: option_out_data,option_out_form
-      integer*4 :: status
+      integer*4 :: status, dummy
       integer*4 :: ileft,iright, order, stages
       integer*4 :: arglen      
       integer*4 :: i,j,im,is
@@ -119,7 +117,7 @@
       logical :: b_failoncoeffs, b_setuponly, b_failCFL
 
 
-      im = 0;       is = 0;   itime = 0;
+      im = 0;       is = 0;            itime = 0;
       n_pgm = 0;    monfile_pgm = 0                 
       n_lst = 0;    monfile_lst = 0       
       n_testcase = 0;          
@@ -140,7 +138,7 @@
             cycle
          endif
 
-         !!!! Parse ketword arguments
+         !!!! Parse keyword arguments
          ileft = 1
          iright = len_trim(inline)
          
@@ -218,8 +216,7 @@
 
            case('OPTIOUT')
             read(inline(ileft:iright),*) option_out_var(1),option_out_var(2),&  
-                        option_out_var(3), option_out_var(4),option_out_var(5),option_out_var(6),&  
-                        option_out_form, option_out_data
+                        option_out_var(3), option_out_var(4),option_out_var(5),option_out_var(6) 
                         
            case('TIMEERR') 
             itime = itime + 1                
@@ -269,6 +266,9 @@
            ! Ignored keywords (for compatibility)
            case('r_f')
             write(*,'(A,I3,A,A)') 'In SPEED.input, row', file_row, ': ignored field ', keyword
+            
+           case('DEBUG')
+             read(inline(ileft:iright),*) dummy            
 
            ! Fail if keyword is not recognised
            case default

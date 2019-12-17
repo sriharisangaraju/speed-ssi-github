@@ -38,11 +38,14 @@
       if (mpi_id.eq.0) then
          write(*,'(A)') 
          write(*,'(A)')'------------------Reading Header File------------------'
-         write(*,'(A,A36)') 'Header File: ',head_file
+         write(*,'(A,A50)') 'Header File: ',head_file
       endif
       
       inquire(file=head_file,exist=filefound);
-      if(filefound .eqv. .FALSE.) call EXIT(EXIT_MISSING_FILE)
+      if(filefound .eqv. .FALSE.) then
+        write(*,*) 'File ', head_file, ' is missing!'
+        call EXIT(EXIT_MISSING_FILE)
+      endif
        
       opt_out_var= 1;  opt_out_form = 1; opt_out_data = 1
       
@@ -69,7 +72,6 @@
       call READ_HEADER(head_file,grid_file,mat_file, mpi_file, monitor_file, bkp_file, &
                        deltat,tstart,tstop,&
                        opt_out_var,& 
-                       opt_out_data,opt_out_form,&
                        trestart,&
                        ndt_mon_lst,&        
                        deltat_fixed,&        
@@ -86,12 +88,10 @@
 
       ! Instability control
       if (mpi_id .eq. 0) then
-          write(*,*)
-          write(*,'(A,L)') 'Instability control  :   ', b_instabilitycontrol
           if (b_instabilitycontrol) then
-            write(*,'(A,E12.4,A,E12.4,A)') 'Instability threshold: ', instability_maxval,' (default: ', instability_maxval_default, ')'
+              write(*,'(A,L)') 'Instability control  :   ', b_instabilitycontrol
+              write(*,'(A,E12.4,A,E12.4,A)') 'Instability threshold: ', instability_maxval,' (default: ', instability_maxval_default, ')'
           endif
-          write(*,*)
       endif
       
       
@@ -365,7 +365,9 @@
               case(31) 
                 write(*,'(A)')'GRONINGEN'                     
               case(32) 
-                write(*,'(A)')'GRONINGEN-LAYERED MODEL'      
+                write(*,'(A)')'GRONINGEN-LAYERED MODEL' 
+              case(33) 
+                write(*,'(A)')'GRONINGEN-ZE' 
               case(40)
                 write(*,'(A)')'KUTCH BASIN, INDIA'                                            
               case(98,99,100)

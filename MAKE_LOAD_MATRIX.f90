@@ -26,7 +26,7 @@
       use max_var
       use speed_par
       
-
+     
       implicit none
  
       include 'SPEED.MPI'      
@@ -84,8 +84,8 @@
 
           
           
-
-          
+                ! length_check_node_sism = total number of seismic nodes for each processors 
+                
           if (mpi_id.eq.0) write(*,'(A)')'Load matrix built.'
           if (mpi_id.eq.0) write(*,'(A)')
           deallocate(con) 
@@ -110,22 +110,73 @@
 !  check_dist_node_sism(i,1) = distance from hypocenter
 
       if (nload_sism_el.gt.0) then        
-         if (mpi_id.eq.0) write(*,'(A)')'------------------Make Seismic Moment------------------'
+         
+      
+!         if (mpi_id.eq.0) then
+!            write(*,'(A)')'------------------Make Seismic Moment------------------'
+!            write(*,*) 'Seismic moment tensor for each sub fault'          
+!            do i = 1, nload_sism_el
+!               write(*,*) 'Subfault :', i
+!              ! write(*,*) 'Mxx : ', factor_seismic_moment(i,1)
+!               write(*,*) 'Myy : ', factor_seismic_moment(i,2)
+!               write(*,*) 'Mzz : ', factor_seismic_moment(i,3)
+!               write(*,*) 'Myz : ', factor_seismic_moment(i,4)
+!               write(*,*) 'Mzx : ', factor_seismic_moment(i,5)
+!               write(*,*) 'Mxy : ', factor_seismic_moment(i,6)
+!               write(*,*) 'Target seismic moment : ', val_sism_el(i,20)
+!               write(*,*) 'Assigned seismic moment : ', sum(factor_seismic_moment(i,1:6)) 
+!               write(*,*) '(Target - Assigned) seismic moment : ', &
+!                           val_sism_el(i,20)-sum(factor_seismic_moment(i,1:6))  
+!            write(*,*) '----------------------------------------------------------'
+!            enddo         
+!         endif
+    
          allocate (check_node_sism(length_check_node_sism,4))
          allocate (check_dist_node_sism(length_check_node_sism,1))
+         allocate (check_pos_sism(length_check_node_sism,3))
+      
       
          call CHECK_SISM(con_nnz_loc, con_spx_loc,&                        
                          nmat, tag_mat, sdeg_mat, &                          
                          nload_sism_el,&
                          num_node_sism, max_num_node_sism,&        
-                         sour_node_sism, dist_sour_node_sism, &        
+                         sour_node_sism, dist_sour_node_sism, &  
+                         pos_sour_node_x,pos_sour_node_y,pos_sour_node_z,&      
                          check_node_sism, check_dist_node_sism, &        
-                         length_check_node_sism,&                
+                         length_check_node_sism,& 
+                         check_pos_sism, &               
                          fun_sism_el, nfunc, tag_func, val_sism_el, &
                          nnod_loc, local_node_num)
+
+! uncomment this to check kinematic source parameters
+!          filename = 'SISM00000.dat';
+!           if (mpi_id .lt. 10) then                                        
+!              write(filename(9:9),'(i1)') mpi_id;
+!           else if (mpi_id .lt. 100) then                                
+!              write(filename(8:9),'(i2)') mpi_id;                                
+!           else if (mpi_id .lt. 1000) then                                
+!              write(filename(7:9),'(i3)') mpi_id;                
+!           else if (mpi_id .lt. 10000) then                                
+!               write(filename(6:9),'(i4)') mpi_id;               
+!           endif
+
+
+          !write(*,*) mpi_id, filename
+!          open(1000+mpi_id, file=filename,position='APPEND')        
+            
+!          do i = 1, length_check_node_sism
+!              ! fault num - node index - coordinates xyz - rise time - rupture time - 
+!              write(1000+mpi_id,*) check_node_sism(i,3), check_node_sism(i,1), check_pos_sism(i,1), &
+!              check_pos_sism(i,2), check_pos_sism(i,3) , &
+!              tau_seismic_moment(check_node_sism(i,3),1), check_dist_node_sism(i,1)
+!          enddo
+!          
+!          close(1000+mpi_id)      
+                 
         
          deallocate (sour_node_sism)                                
-         deallocate (dist_sour_node_sism)                        
+         deallocate (dist_sour_node_sism)     
+         deallocate (pos_sour_node_x,pos_sour_node_y,pos_sour_node_z)                   
 
       endif                                                        
 

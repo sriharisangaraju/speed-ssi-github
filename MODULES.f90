@@ -356,6 +356,7 @@ module speed_par
 ! OTHER (SEISMIC MOMENT OR EXPLOSIVE SOURCE)
       integer*4, dimension (:), allocatable :: num_node_sism, num_node_expl, &
                                                sism_el_glo, expl_el_glo
+                                               
          
 ! OTHER (MPI SETUP)      
       integer*4, dimension (:), allocatable :: mpi_stat, &
@@ -414,7 +415,7 @@ module speed_par
               x_glo_real, y_glo_real, z_glo_real, &
               highest_pgm, highest_pgm_loc, &
               highest_lst, highest_lst_loc, & 
-              dist_el_glo
+              dist_el_glo, posx_el_glo, posy_el_glo, posz_el_glo
 
 ! DAMPING
       real*8, dimension(:), allocatable :: QS, QP, frequency_range
@@ -449,7 +450,8 @@ module speed_par
 ! (MATRICES FOR) SEISMIC MOMENT OR EXPLOSIVE SOURCE                       
       real*8, dimension (:,:), allocatable :: &
               factor_seismic_moment, tau_seismic_moment, dist_sour_node_sism, check_dist_node_sism, &        
-              factor_explosive_source, dist_sour_node_expl, check_dist_node_expl                
+              factor_explosive_source, dist_sour_node_expl, check_dist_node_expl, &
+              pos_sour_node_x, pos_sour_node_y, pos_sour_node_z, check_pos_sism                
 
 ! AREA DG FACES
       real*8, dimension (:,:), allocatable :: area_nodes

@@ -1457,6 +1457,138 @@
                         !
                         !-------------------------------------------------------------------
 					 
+
+                   elseif (tcase.eq.33) then
+
+                        !-------------------------------------------------------------------
+                        ! CASE 32: Groningen -  layered model
+                        !
+                        !-------------------------------------------------------------------
+                        ! + MATERIAL INSIDE THE ALLUVIAL BASIN - 1st Layer
+                        ! from ground surface to PE_B
+
+                         Depth = zs_elev(ic)   
+
+					
+                        if ((Depth .ge. 0.0d0) .and. (zs_all(ic) .ge. 0.0d0)) then     
+                        ! I am between -300 meter and the ZE surface
+
+                       !- between -300 and -800 metri
+                           if(dabs(zs(ic)) .le. 800.d0) then 
+                                VS = 523.d0;
+                                VP  = 1988.d0;
+                                rho = 2050.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = VP/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs; 
+
+                      ! between -800 and -1200
+                           elseif(dabs(zs(ic)) .le. 1200.d0) then 
+                                VS = 600.d0;
+                                VP  = VS * 3.2d0;
+                                rho = 2050.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = VP/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;       
+                                 
+                      ! between -1200 and -1800
+                           elseif(dabs(zs(ic)) .le. 1800.d0) then 
+                                VS = 1515.d0;
+                                VP  = VS * 2.d0;
+                                rho = 2400.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = VP/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
+
+                      ! betweeen -1800 and -2800
+                           elseif(dabs(zs(ic)) .le. 2800.d0) then 
+                                VS = 2850.d0;
+                                VP  = 5100.d0;
+                                rho = 2450.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = VP/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
+
+                      ! between -2800 and -3100
+                           elseif(dabs(zs(ic)) .le. 3100.d0) then 
+                                VS = 2300.d0;
+                                VP  = 3900.d0;
+                                rho = 2450.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = VP/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
+
+                      ! else
+                           else
+                                VS = 2600.d0;
+                                VP  = 4500.d0;
+                                rho = 2650.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = VP/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;
+                           endif     
+                        
+                        else ! I am under the ZE surface
+                      ! between -1800 and -2800     
+                            if(dabs(zs(ic)) .le. 2800.d0) then 
+                                VS = 2850.d0;
+                                VP  = 5100.d0;
+                                rho = 2450.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = VP/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
+
+                      ! between -2800 and -3100
+                           elseif(dabs(zs(ic)) .le. 3100.d0) then 
+                                VS = 2300.d0;
+                                VP  = 3900.d0;
+                                rho = 2450.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = VP/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;                                
+
+                      ! else
+                           else
+                                VS = 2600.d0;
+                                VP  = 4500.d0;
+                                rho = 2650.d0;
+                                lambda = rho * (VP**2.d0 - 2.d0*VS**2.d0);
+                                mu = rho * VS**2.d0;
+                                qs = VS/10.d0;
+                                qp = VP/10.d0
+                                gamma = 4.d0*datan(1.d0)*5.d0/qs;
+                        
+                            endif
+                        
+                        endif
+                        
+                        
+                        
+       					if (check_case .eq. 1)  &
+                            write(1000+mpi_id,*) xs(ic),ys(ic),zs(ic), &
+                            VS, VP, rho                           
+
+                        
+                        !
+                        !-------------------------------------------------------------------
+
+
                    elseif (tcase.eq.40) then
                     !-------------------------------------------------------------------
                     ! CASE 40: KUTCH  
