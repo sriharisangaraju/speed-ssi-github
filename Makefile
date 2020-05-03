@@ -2,8 +2,6 @@ SRCS=$(wildcard *.f90)
 OBJS=$(SRCS:.f90=.o)
 
 FC_PC=mpif90
-#FC_FERMI=mpixlf90
-#FC_FERMI_OMP=mpixlf90_r
 
 PKG_CONFIG_PATH=/usr/local/petsc/lib/pkgconfig
 
@@ -12,8 +10,6 @@ PKG_CONFIG_PATH=/usr/local/petsc/lib/pkgconfig
 LD_PC_FLAGS=-O5 -fopenmp -lgomp /opt/metis-4.0.3/libmetis.a
 FC_PC_FLAGS=-O5 -g -c -cpp -ffree-form -ffree-line-length-none -fopenmp -fbounds-check -DPETSC_AVOID_MPIF_H 
 
-#LD_FE_FLAGS=-g -qstrict -O5 -qsmp=omp -qmaxmem=-1 -qspillsize=32000 /fermi/home/userexternal/lformagg/metis-4.0.3/libmetis.a
-#FC_FE_FLAGS=-g -c -qstrict -O5 -qsmp=omp -qmaxmem=-1 -qspillsize=32000
 
 
 PETSC_LD_FLAGS=$(shell PKG_CONFIG_PATH=/usr/local/petsc/lib/pkgconfig pkg-config --libs PETSc)

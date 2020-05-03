@@ -99,6 +99,7 @@
      real*8, dimension(nn_loc) :: xs_loc, ys_loc, zs_loc 							
      real*8, dimension(nn_loc), intent(inout) :: zs_elev, zs_all, vs, thick				
 		
+
      !Initialization for vs for the new not-honoring strategy				
      vs = 0.d0
      thick = 0.d0
