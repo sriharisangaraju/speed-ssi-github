@@ -30,6 +30,8 @@
 
      subroutine  GET_MINVALUES(i_glo, v_glo, n_glo, i_loc, n_loc, np)
      
+  
+     
      implicit none
      
      integer*4 :: n_glo, n_loc, np
@@ -37,6 +39,7 @@
 
      integer*4, dimension(1) :: pos
      integer*4, dimension(np) :: ind     
+     integer*4, dimension(np) :: pos_glo
      integer*4, dimension(n_glo) :: i_glo
      integer*4, dimension(n_loc) :: i_loc
           
@@ -44,16 +47,29 @@
      real*8, dimension(n_loc) :: v_loc
      real*8, dimension(np) :: val
      
+    ! write(*,*) v_glo
+    ! read(*,*)
+    ! write(*,*) i_glo
+    ! read(*,*)
+     
 
      do i = 1, n_loc
         do j = 1, np
           
-          ind(j) = i_glo(n_loc*(j-1) + i)
-          val(j) = v_glo(n_loc*(j-1) + i)
+          pos_glo(j) = n_loc*(j-1) + i
+          ind(j)     = i_glo(n_loc*(j-1) + i)
+          val(j)     = v_glo(n_loc*(j-1) + i)
+
+    !      write(*,*) j, val(j), ind(j)
+    !      read(*,*)
         enddo  
         
        pos = minloc(val)
-       i_loc(i) = ind(pos(1))
+    !   write(*,*) i, val 
+    !   write(*,*) pos(1),pos_glo(pos(1))
+    !   write(*,*) '====================='
+       !i_loc(i) = ind(pos(1))
+       i_loc(i) = pos_glo(pos(1))
             
      enddo         
 

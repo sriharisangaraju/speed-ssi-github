@@ -663,8 +663,11 @@
         ind_locX = 0
         
         call GET_MINVALUES(ind_gloX, val_gloX, nl_poiX*mpi_np, ind_locX, nl_poiX, mpi_np)
-
-        node_poiX = ind_locX
+        
+        do i = 1, nl_poiX
+           node_poiX = ind_gloX(ind_locX(i))
+        enddo
+        
         deallocate(ind_locX, val_locX, ind_gloX, val_gloX)        
                 
       endif
@@ -687,7 +690,11 @@
 
         call GET_MINVALUES(ind_gloY,val_gloY, nl_poiY*mpi_np, ind_locY, nl_poiY, mpi_np)
 
-        node_poiY = ind_locY
+
+        do i = 1, nl_poiY
+           node_poiY = ind_gloY(ind_locY(i))
+        enddo
+
         deallocate(ind_locY, val_locY, ind_gloY, val_gloY)        
         
       endif
@@ -709,7 +716,11 @@
         
         call GET_MINVALUES(ind_gloZ,val_gloZ, nl_poiZ*mpi_np, ind_locZ, nl_poiZ, mpi_np)
 
-        node_poiZ = ind_locZ
+        do i = 1, nl_poiZ
+           node_poiZ = ind_gloZ(ind_locZ(i))
+        enddo
+
+
         deallocate(ind_locZ, val_locZ, ind_gloZ, val_gloZ)        
         
       endif
@@ -735,12 +746,32 @@
          do i = 1, nb_tra_load
                 call GET_NEAREST_NODE_PGM(nnod_loc, xs_loc, ys_loc, zs_loc,&
                                   x_tra(i), y_tra(i), z_tra(i),&
-                                  n_tra(i), dist_tra(i), -1.d3)        
+                                  n_tra(i), dist_tra(i), -1.d30)        
               
                
                 xt_tra(i) = xs_loc(n_tra(i)); yt_tra(i) = ys_loc(n_tra(i)); zt_tra(i) = zs_loc(n_tra(i))
                 n_tra(i) = local_n_num(n_tra(i))
+                
+                !if(mpi_id .eq. 1) then
+                !    write(*,*) xt_tra(i), yt_tra(i), zt_tra(i), dist_tra(i) 
+                !endif
+                
          enddo
+
+         !if (mpi_id .eq. 0) then
+         !write(*,*) mpi_id,'id', n_tra
+         !write(*,*) '======================'
+         !write(*,*) mpi_id,'id', dist_tra
+         !endif
+         !call MPI_BARRIER(mpi_comm, mpi_ierr)          
+
+         !if (mpi_id .eq. 1) then
+         !write(*,*) mpi_id,'id', n_tra
+         !write(*,*) '======================'
+         !write(*,*) mpi_id,'id', dist_tra
+         !endif
+         !call MPI_BARRIER(mpi_comm, mpi_ierr)          
+
 
          allocate(dist_tra_glo(nb_tra_load*mpi_np),n_tra_glo(nb_tra_load*mpi_np))
          allocate(xt_tra_glo(nb_tra_load*mpi_np), yt_tra_glo(nb_tra_load*mpi_np),zt_tra_glo(nb_tra_load*mpi_np)) 
@@ -749,6 +780,15 @@
                
          call MPI_ALLGATHER(dist_tra, nb_tra_load, SPEED_DOUBLE, dist_tra_glo, nb_tra_load, &
                                    SPEED_DOUBLE, mpi_comm, mpi_ierr)
+
+         !if (mpi_id .eq. 1) then
+         !       write(*,*) mpi_id,'id', dist_tra_glo
+         !       write(*,*) '======================'
+         !endif
+         !call MPI_BARRIER(mpi_comm, mpi_ierr)          
+
+
+
 
          call MPI_ALLGATHER(n_tra, nb_tra_load, SPEED_INTEGER, n_tra_glo, nb_tra_load, &
                                    SPEED_INTEGER, mpi_comm, mpi_ierr)
@@ -759,16 +799,38 @@
                                    SPEED_DOUBLE, mpi_comm, mpi_ierr)
          call MPI_ALLGATHER(z_tra, nb_tra_load, SPEED_DOUBLE, zt_tra_glo, nb_tra_load, &
                                    SPEED_DOUBLE, mpi_comm, mpi_ierr)
-                                   
+                             
+         !if(mpi_id .eq. 0) then                          
+         
          call GET_MINVALUES(n_tra_glo, dist_tra_glo, nb_tra_load*mpi_np, n_tra, nb_tra_load, mpi_np)
+         
+         !endif    
+         !call MPI_BARRIER(mpi_comm, mpi_ierr)                      
+
+         !if (mpi_id .eq. 0) then
+         !   do j = 1, nb_tra_load 
+         !       write(*,*) mpi_id,'id', xt_tra_glo(j), yt_tra_glo(j), zt_tra_glo(j)
+         !       write(*,*) mpi_id,'id', dist_tra_glo(j)
+         !       write(*,*) '======================'
+         !      
+         !   enddo      
+         !endif
+         !call MPI_BARRIER(mpi_comm, mpi_ierr)          
 
         
-         j = 1
-         do while(j .le. nb_tra_load)
-            call GET_INDLOC_FROM_INDGLO(n_tra_glo, nb_tra_load*mpi_np, n_tra(j), ic)              
-            x_tra(j) = xt_tra_glo(ic);  y_tra(j) = yt_tra_glo(ic);  z_tra(j) = zt_tra_glo(ic)
-            j=j+1;
+!         j = 1
+!         do while(j .le. nb_tra_load)
+!            call GET_INDLOC_FROM_INDGLO(n_tra_glo, nb_tra_load*mpi_np, n_tra(j), ic)              
+!            x_tra(j) = xt_tra_glo(ic);  y_tra(j) = yt_tra_glo(ic);  z_tra(j) = zt_tra_glo(ic)
+!            j=j+1;
+!         enddo
+
+         do j = 1, nb_tra_load
+            x_tra(j) = xt_tra_glo(n_tra(j));  y_tra(j) = yt_tra_glo(n_tra(j));  z_tra(j) = zt_tra_glo(n_tra(j))
+            n_tra(j) = n_tra_glo(n_tra(j))
          enddo
+
+
 
          deallocate(dist_tra_glo, n_tra_glo, xt_tra_glo, yt_tra_glo, zt_tra_glo)
          allocate(dist_tra_real(nb_tra_load)); dist_tra_real = 0.d0 
@@ -790,6 +852,7 @@
         deallocate(x_tra,y_tra,z_tra,dist_tra_real,dist_tra)
 
         call MPI_BARRIER(mpi_comm, mpi_ierr)
+        !stop
 
       endif
 

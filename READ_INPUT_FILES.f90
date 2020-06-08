@@ -153,8 +153,8 @@
          if(nload_poiX_el.gt.0) write(*,'(A,I8)')'Point Loads X    : ',nload_poiX_el
          if(nload_poiY_el.gt.0) write(*,'(A,I8)')'Point Loads Y    : ',nload_poiY_el
          if(nload_poiZ_el.gt.0) write(*,'(A,I8)')'Point Loads Z    : ',nload_poiZ_el
-         if(nload_traX_el.gt.0) write(*,'(A,I8)')'Travel. Load X   : ',nload_traX_el
-         if(nload_traY_el.gt.0) write(*,'(A,I8)')'Travel. Load Y   : ',nload_traY_el
+!         if(nload_traX_el.gt.0) write(*,'(A,I8)')'Travel. Load X   : ',nload_traX_el
+!         if(nload_traY_el.gt.0) write(*,'(A,I8)')'Travel. Load Y   : ',nload_traY_el
          if(nload_traZ_el.gt.0) write(*,'(A,I8)')'Travel. Load Z   : ',nload_traZ_el         
          if(nload_plaX_el.gt.0) write(*,'(A,I8)')'Plane Loads X    : ',nload_plaX_el              
          if(nload_plaY_el.gt.0) write(*,'(A,I8)')'Plane Loads Y    : ',nload_plaY_el              

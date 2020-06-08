@@ -185,8 +185,13 @@
          
 		call READ_FILE_TRAV_POINT(file_trav_load, nb_tra_load, node_tra, dist_tra)
 		                             
-        !write(*,*) nb_tra_load, node_tra, dist_tra
-        !read(*,*)
+        
+       ! if(mpi_id .eq. 0) then 
+       !    write(*,*) nb_tra_load
+       !    write(*,*) node_tra
+       !    write(*,*) dist_tra
+       ! endif
+       ! call MPI_BARRIER(mpi_comm,mpi_ierr)
      endif 
        
 
@@ -510,7 +515,8 @@
               if (nelem_loc .gt. 0) then
 
 !$OMP PARALLEL &
-!$OMP PRIVATE(ie,im,nn,ct,ww,dd,rho_el,lambda_el,mu_el,gamma_el,mc_el,mck_el,i,j,k,is,in,iaz)
+!$OMP PRIVATE(ie,im,nn,ct,ww,dd,rho_el,lambda_el,mu_el,gamma_el,mc_el,mck_el,i,j,k,is,in,iaz) &
+!$OMP PRIVATE(irand)
  
 !$OMP DO        
               do ie = 1,nelem_loc                                        
@@ -847,7 +853,7 @@
                   if(nload_traZ_el .gt. 0) then  !TRAVELING POINT LOAD Z 
                      call FIND_POS(nload_traZ_el,fun_traZ_el,tag_func(fn),find_tag)
                      
-                    !                  write(*,*) 'Inside travelling load', nb_tra_load
+                     !write(*,*) 'Inside travelling load', mpi_id, nb_tra_load, find_tag
     
 
                      do i = 1, nb_tra_load
@@ -857,13 +863,13 @@
 
                        if(local_node_num(id) .eq. node_tra(i) .and. find_tag .ne. 0) then
                           iaz = 3*(id -1) +3; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +3)) * & 
-                                               GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,&
-                                                              nfunc_data,fn,tt_int,dist_tra(i),val_traZ_el(find_tag,1))
+                           GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,&
+                                          nfunc_data,fn,tt_int,dist_tra(i),val_traZ_el(find_tag,1))
                           ! val_debug =   GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,&
                           !                                    nfunc_data,fn,tt_int,dist_tra(i),val_traZ_el(find_tag,1))
                                                                                                 
-!                        write(*,*) 'I am here', local_node_num(id)
-!                        write(*,*) 'input',val_debug
+                       ! write(*,*) 'I am here', local_node_num(id)
+                       ! write(*,*) 'input', find_tag
                        endif
                      enddo
 
@@ -908,8 +914,8 @@
 !            enddo     
 !            read(*,*)  
                          
-            
-                          
+         ! call MPI_BARRIER(mpi_comm, mpi_ierr)  
+         ! stop                
 !---------------------------------------------------------------------------
 !     EXCHANGE U0, U1 & V1 VALUES
 !---------------------------------------------------------------------------
@@ -1143,9 +1149,6 @@
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 !Random materials end
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-
 
                     !+----------------------------------------------------------------------------------------
                     !|

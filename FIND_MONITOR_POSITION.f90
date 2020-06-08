@@ -195,6 +195,8 @@
                 allocate(x_monitor_real(nmonitors_lst), y_monitor_real(nmonitors_lst), z_monitor_real(nmonitors_lst))
 
 		do i = 1,nmonitors_lst
+		
+		   ! write(*,*) 'mon' ,i
 			call GET_NEAREST_NODE_PGM(nnod_loc, xx_spx_loc, yy_spx_loc, zz_spx_loc,&
 					             x_monitor_lst(i), y_monitor_lst(i), z_monitor_lst(i),&
 						         n_monitor_lst(i), dist_monitor_lst(i), depth_search_mon_lst)	
@@ -223,40 +225,44 @@
                 
                 j = 1
                 do while(j .le. nmonitors_lst)
+                   ! write(*,*) 'monitor numero', j
                 
                 	allocate(dist_glo(mpi_np),n_glo(mpi_np), el_glo(mpi_np))
-                        allocate(xr_glo(mpi_np), yr_glo(mpi_np), zr_glo(mpi_np)) 
-                        allocate(x_glo_real(mpi_np), y_glo_real(mpi_np),z_glo_real(mpi_np)) 
+                    allocate(xr_glo(mpi_np), yr_glo(mpi_np), zr_glo(mpi_np)) 
+                    allocate(x_glo_real(mpi_np), y_glo_real(mpi_np),z_glo_real(mpi_np)) 
 
-                        call MPI_BARRIER(mpi_comm, mpi_ierr)
+                    call MPI_BARRIER(mpi_comm, mpi_ierr)
                         
-                call MPI_ALLGATHER(dist_monitor_lst(j), 1, SPEED_DOUBLE, dist_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
-                call MPI_ALLGATHER(xr_monitor_lst(j), 1, SPEED_DOUBLE, xr_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
-                call MPI_ALLGATHER(yr_monitor_lst(j), 1, SPEED_DOUBLE, yr_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
-                call MPI_ALLGATHER(zr_monitor_lst(j), 1, SPEED_DOUBLE, zr_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
-                call MPI_ALLGATHER(n_monitor_lst(j), 1, SPEED_INTEGER, n_glo, 1, SPEED_INTEGER, mpi_comm, mpi_ierr)
-                call MPI_ALLGATHER(el_monitor_lst(j), 1, SPEED_INTEGER, el_glo, 1, SPEED_INTEGER, mpi_comm, mpi_ierr)
-                call MPI_ALLGATHER(x_monitor_real(j), 1, SPEED_DOUBLE, x_glo_real, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
-                call MPI_ALLGATHER(y_monitor_real(j), 1, SPEED_DOUBLE, y_glo_real, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
-                call MPI_ALLGATHER(z_monitor_real(j), 1, SPEED_DOUBLE, z_glo_real, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
+                    call MPI_ALLGATHER(dist_monitor_lst(j), 1, SPEED_DOUBLE, dist_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
+                    call MPI_ALLGATHER(xr_monitor_lst(j), 1, SPEED_DOUBLE, xr_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
+                    call MPI_ALLGATHER(yr_monitor_lst(j), 1, SPEED_DOUBLE, yr_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
+                    call MPI_ALLGATHER(zr_monitor_lst(j), 1, SPEED_DOUBLE, zr_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
+                    call MPI_ALLGATHER(n_monitor_lst(j), 1, SPEED_INTEGER, n_glo, 1, SPEED_INTEGER, mpi_comm, mpi_ierr)
+                    call MPI_ALLGATHER(el_monitor_lst(j), 1, SPEED_INTEGER, el_glo, 1, SPEED_INTEGER, mpi_comm, mpi_ierr)
+                    call MPI_ALLGATHER(x_monitor_real(j), 1, SPEED_DOUBLE, x_glo_real, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
+                    call MPI_ALLGATHER(y_monitor_real(j), 1, SPEED_DOUBLE, y_glo_real, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
+                    call MPI_ALLGATHER(z_monitor_real(j), 1, SPEED_DOUBLE, z_glo_real, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
                                    
                                    
                 
-                call GET_MINVALUES(n_glo, dist_glo, mpi_np, n_monitor_lst(j), 1, mpi_np)
+                    call GET_MINVALUES(n_glo, dist_glo, mpi_np, n_monitor_lst(j), 1, mpi_np)
         
-                call GET_INDLOC_FROM_INDGLO(n_glo, mpi_np, n_monitor_lst(j), ic)              
+                   ! write(*,*) mpi_id, n_monitor_lst(j)
+                   ! call MPI_BARRIER(mpi_comm, mpi_ierr)
 
-                   x_monitor_real(j) = x_glo_real(ic)
-                   y_monitor_real(j) = y_glo_real(ic)
-                   z_monitor_real(j) = z_glo_real(ic)
-                   xr_monitor_lst(j) = xr_glo(ic)
-                   yr_monitor_lst(j) = yr_glo(ic)
-                   zr_monitor_lst(j) = zr_glo(ic)
-                   el_monitor_lst(j) = el_glo(ic)                                   
-                   j=j+1
+                    call GET_INDLOC_FROM_INDGLO(n_glo, mpi_np, n_glo(n_monitor_lst(j)), ic)              
+ 
+                    x_monitor_real(j) = x_glo_real(ic)
+                    y_monitor_real(j) = y_glo_real(ic)
+                    z_monitor_real(j) = z_glo_real(ic)
+                    xr_monitor_lst(j) = xr_glo(ic)
+                    yr_monitor_lst(j) = yr_glo(ic)
+                    zr_monitor_lst(j) = zr_glo(ic)
+                    el_monitor_lst(j) = el_glo(ic)                                   
+                    j=j+1
 
-                deallocate(dist_glo, n_glo, el_glo, xr_glo, yr_glo, zr_glo, &
-                           x_glo_real, y_glo_real, z_glo_real)
+                    deallocate(dist_glo, n_glo, el_glo, xr_glo, yr_glo, zr_glo, &
+                            x_glo_real, y_glo_real, z_glo_real)
                 enddo
                 deallocate(dist_monitor_lst)
 

@@ -404,7 +404,7 @@
 
            case('TLOZ') 
             itZ = itZ + 1
-            
+            ! function id, velocity of travelling load, amplitude wave
             read(inline(ileft:iright),*) ftZ(itZ),valtZ(itZ,1),valtZ(itZ,2)
  
            case('PLAX')                                        

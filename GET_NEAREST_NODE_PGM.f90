@@ -51,7 +51,7 @@
 
          if (zs(i) .gt. elevation) then
             
-            dist = (xs(i) - xt)*(xs(i) - xt) + (ys(i) - yt)*(ys(i) - yt) + (zs(i) - zt)*(zs(i) - zt) 
+            dist = dsqrt((xs(i) - xt)*(xs(i) - xt) + (ys(i) - yt)*(ys(i) - yt) + (zs(i) - zt)*(zs(i) - zt)) 
 
             if (dist .lt. dist_min) then
                dist_min = dist; nt = i
