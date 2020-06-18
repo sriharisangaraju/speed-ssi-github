@@ -875,11 +875,11 @@
 
 
                   else  !EXTERNAL FORCES   
-                    iaz = 3*(id -1) +1; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +1)) * & 
+                    iaz = 3*(id -1) +1; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +1)) *  & 
                                  GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
-                    iaz = 3*(id -1) +2; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +2)) * & 
+                    iaz = 3*(id -1) +2; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +2)) *  & 
                                  GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
-                    iaz = 3*(id -1) +3; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +3)) * & 
+                    iaz = 3*(id -1) +3; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +3)) *  & 
                                  GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
                   endif
                enddo
@@ -903,16 +903,16 @@
                fe(3*(in -1) +3) = fe(3*(in -1) +3) +send_buffer(3*(i -1) +3)
             enddo
             
-!            do id = 1, nnod_loc
-!               if (fe(3*(id -1) +1) .ne. 0) then 
-!                   print*, id, fe(3*(id -1) +1)
-!               elseif (fe(3*(id -1) +2) .ne. 0) then 
-!                   print*, id, fe(3*(id -1) +2)
-!               elseif  (fe(3*(id -1) +3) .ne. 0) then 
-!                   print*, id, fe(3*(id -1) +3)
-!               endif
-!            enddo     
-!            read(*,*)  
+ !           do id = 1, nnod_loc
+ !              if (fe(3*(id -1) +1) .ne. 0) then 
+ !                  print*, id, fe(3*(id -1) +1)
+ !              elseif (fe(3*(id -1) +2) .ne. 0) then 
+ !                  print*, id, fe(3*(id -1) +2)
+ !              elseif  (fe(3*(id -1) +3) .ne. 0) then 
+ !                  print*, id, fe(3*(id -1) +3)
+ !              endif
+ !           enddo     
+ !           read(*,*)  
                          
          ! call MPI_BARRIER(mpi_comm, mpi_ierr)  
          ! stop                
@@ -1981,7 +1981,7 @@
                if (make_damping_yes_or_not .eq. 0 .or. damping_type .eq. 2) then
                    u2(iaz) = 2.0d0 * u1(iaz) - u0(iaz) &
                      + (fe(iaz) - fk(iaz) - jump(iaz)) / mv(iaz) *deltat2
-               else
+               else             
                    u2(iaz) = ( fe(iaz) - fk(iaz) - jump(iaz) - mck(iaz) * u1(iaz) &                                
                        + (mc(iaz)/(2*deltat)) * u0(iaz) + (mv(iaz)/deltat2) &                         
                        * ( 2.0d0 * u1(iaz) - u0(iaz) ) ) / (mv(iaz)/deltat2 + mc(iaz)/(2*deltat) )
@@ -2010,6 +2010,22 @@
                          + (mc(iaz)/(2*deltat)) * u0(iaz) + (mv(iaz)/deltat2) &                         
                          * ( 2.0d0 * u1(iaz) - u0(iaz) ) )  / (mv(iaz)/deltat2 + mc(iaz)/(2*deltat) )                       
                endif
+
+!               if(mpi_id .eq. 0) then
+!                  if(u2(iaz).ne.0) then
+!                     write(*,*) mpi_id, id,u2(iaz), fe(iaz)
+!                  endif          
+!               endif
+!               call MPI_BARRIER(mpi_comm,mpi_ierr)
+!               if(mpi_id .eq. 1) then
+!                  if(u2(iaz).ne.0) then
+!                     write(*,*) mpi_id, id, u2(iaz), fe(iaz)
+!                  endif          
+!               endif
+!               call MPI_BARRIER(mpi_comm,mpi_ierr)
+                     
+
+
                if(abs(u2(iaz)).lt. 1.0e-30) u2(iaz) = 0.d0 
 
 
@@ -2019,6 +2035,8 @@
 !         endif
                                                                                           
       endif                                                                                        
+
+!stop
 
       do fn = 1,nfunc
             func_value(fn) = GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt2,0,0)

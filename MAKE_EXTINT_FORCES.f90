@@ -233,6 +233,8 @@
       integer*4, dimension(max_num_ns,nl_sism) :: sour_ns                        
       integer*4, dimension(max_num_ne,nl_expl) :: sour_ne                 
 
+      integer*4, dimension(:), allocatable :: node_counter_poiX,node_counter_poiY,node_counter_poiZ
+      
       real*8 :: dxdx,dxdy,dxdz,dydx,dydy,dydz,dzdx,dzdy,dzdz,det_j
       real*8 :: lambda,mu,alpha,tref,pi,lambda2, mu2, rho2
       real*8 :: rho,ellez                                                         
@@ -306,6 +308,8 @@
 
 !***********************************************************************************
       pi = 4.d0*datan(1.d0);
+
+!**********************************************************************************
 
     ! Initialization "seismic moment" variables - begin
       length_cns = 0                                
@@ -654,6 +658,7 @@
             val_locX(i) = dist
             ind_locX(i) = local_n_num(node_poiX(i))   !local_n_num(i)             
         enddo
+      
 
         call MPI_BARRIER(mpi_comm,mpi_ierr)
       
@@ -669,6 +674,36 @@
         enddo
         
         deallocate(ind_locX, val_locX, ind_gloX, val_gloX)        
+        allocate(node_counter_poiX(nl_poiX))
+        node_counter_poiX = 0;
+        
+
+        
+        do ie = 1,ne_loc
+            im = cs_loc(cs_loc(ie -1) +0);
+            nn = sdeg_mat(im) +1
+            do ip = 1, nl_poiX   
+
+               do k = 1,nn
+                  do j = 1,nn
+                     do i = 1,nn
+                        is = nn*nn*(k -1) +nn*(j -1) +i
+                        in = cs_loc(cs_loc(ie -1) +is)
+
+                        if (local_n_num(in) .eq. node_poiX(ip)) then
+                            node_counter_poiX(ip) = node_counter_poiX(ip) + 1  
+                        endif
+                     enddo
+                  enddo
+               enddo
+           enddo    
+
+         enddo
+      
+
+!      write(*,*) mpi_id, node_counter_poiX
+      call MPI_BARRIER(mpi_comm,mpi_ierr)
+      call MPI_ALLREDUCE(node_counter_poiZ,node_counter_poiX, nl_poiX, SPEED_INTEGER, MPI_SUM, mpi_comm, mpi_ierr)
                 
       endif
 
@@ -696,6 +731,37 @@
         enddo
 
         deallocate(ind_locY, val_locY, ind_gloY, val_gloY)        
+        allocate(node_counter_poiY(nl_poiY))
+        node_counter_poiY = 0;
+        
+
+        
+        do ie = 1,ne_loc
+            im = cs_loc(cs_loc(ie -1) +0);
+            nn = sdeg_mat(im) +1
+            do ip = 1, nl_poiY   
+
+               do k = 1,nn
+                  do j = 1,nn
+                     do i = 1,nn
+                        is = nn*nn*(k -1) +nn*(j -1) +i
+                        in = cs_loc(cs_loc(ie -1) +is)
+
+                        if (local_n_num(in) .eq. node_poiY(ip)) then
+                            node_counter_poiY(ip) = node_counter_poiZ(ip) + 1  
+                        endif
+                     enddo
+                  enddo
+               enddo
+           enddo    
+
+         enddo
+      
+      
+
+!      write(*,*) mpi_id, node_counter_poiZ
+      call MPI_BARRIER(mpi_comm,mpi_ierr)
+      call MPI_ALLREDUCE(node_counter_poiZ,node_counter_poiY, nl_poiY, SPEED_INTEGER, MPI_SUM, mpi_comm, mpi_ierr)
         
       endif
       
@@ -720,10 +786,42 @@
            node_poiZ = ind_gloZ(ind_locZ(i))
         enddo
 
-
         deallocate(ind_locZ, val_locZ, ind_gloZ, val_gloZ)        
+        allocate(node_counter_poiZ(nl_poiZ))
+        node_counter_poiZ = 0;
         
+
+        
+        do ie = 1,ne_loc
+            im = cs_loc(cs_loc(ie -1) +0);
+            nn = sdeg_mat(im) +1
+            do ip = 1, nl_poiZ   
+
+               do k = 1,nn
+                  do j = 1,nn
+                     do i = 1,nn
+                        is = nn*nn*(k -1) +nn*(j -1) +i
+                        in = cs_loc(cs_loc(ie -1) +is)
+
+                        if (local_n_num(in) .eq. node_poiZ(ip)) then
+                            node_counter_poiZ(ip) = node_counter_poiZ(ip) + 1  
+                        endif
+                     enddo
+                  enddo
+               enddo
+           enddo    
+
+         enddo
+      
+
+!      write(*,*) mpi_id, node_counter_poiZ
+      call MPI_BARRIER(mpi_comm,mpi_ierr)
+      call MPI_ALLREDUCE(node_counter_poiZ,node_counter_poiZ, nl_poiZ, SPEED_INTEGER, MPI_SUM, mpi_comm, mpi_ierr)
+      
       endif
+!      write(*,*) mpi_id, node_counter_poiZ
+!      call MPI_BARRIER(mpi_comm,mpi_ierr)
+!      stop
       
       ! Travelling load
 !      if (nl_traX .gt. 0 .or. nl_traY .gt. 0 .or. nl_traZ .gt. 0) then 
@@ -862,6 +960,11 @@
       ne_loc = cs_loc(0) -1
 
 
+
+
+
+
+
      
          
          do ie = 1,ne_loc
@@ -897,7 +1000,8 @@
 
                                       if (local_n_num(in) .eq. node_poiX(ip)) then
                                       
-                                         fmat(fn,(3*(in -1) +1)) = val_poiX(ip,4)                                    
+                                         fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + val_poiX(ip,4)  
+                                      ! node_counter_poiX = node_counter_poiX + 1;                                   
                                       endif
                                    enddo
                                 enddo
@@ -930,7 +1034,8 @@
                                  
                                        if (local_n_num(in) .eq. node_poiY(ip)) then
                                        
-                                          fmat(fn,(3*(in -1) +2)) = val_poiY(ip,4)
+                                          fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) + val_poiY(ip,4)
+                                       !node_counter_poiY = node_counter_poiY + 1;
                                        
                                        endif
                                      enddo
@@ -957,16 +1062,20 @@
                             do k = 1,nn
                                do j = 1,nn
                                   do i = 1,nn
+
                                  
-                                     is = nn*nn*(k -1) +nn*(j -1) +i
-                                     in = cs_loc(cs_loc(ie -1) +is)
-                                 
+                                 is = nn*nn*(k -1) +nn*(j -1) +i                        
+                                 in = cs_loc(cs_loc(ie -1) +is)                                        
+                                                                
                                      if (local_n_num(in) .eq. node_poiZ(ip)) then
                                        
-                                       fmat(fn,(3*(in -1) +3)) = val_poiZ(ip,4)
-                                     
+                                       fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) &
+                                                            + val_poiZ(ip,4)/node_counter_poiZ(ip) 
+                                       !node_counter_poiZ = node_counter_poiZ + 1;
+
                                      endif
-                                  enddo
+
+                                   enddo
                                enddo
                             enddo
                           endif            
@@ -3369,8 +3478,10 @@
       endif
       
      if (nl_neuN.gt.0) deallocate(i4normal, normal_nx_el_neuN, normal_ny_el_neuN, normal_nz_el_neuN)
-     
-     
+     if (nl_poiZ.gt.0) deallocate(node_counter_poiZ)
+     if (nl_poiY.gt.0) deallocate(node_counter_poiY)
+     if (nl_poiX.gt.0) deallocate(node_counter_poiX)
+               
 !      deallocate(ct,ww,dd)
       
 !      do i = 1, nfunc 
