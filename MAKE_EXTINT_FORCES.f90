@@ -233,8 +233,10 @@
       integer*4, dimension(max_num_ns,nl_sism) :: sour_ns                        
       integer*4, dimension(max_num_ne,nl_expl) :: sour_ne                 
 
-      integer*4, dimension(:), allocatable :: node_counter_poiX,node_counter_poiY,node_counter_poiZ
-      
+      integer*4, dimension(:), allocatable :: node_counter_poiX,node_counter_poiY,&
+                                              node_counter_poiZ, recv_poiZ, &
+                                              recv_poiY, recv_poiX
+                                              
       real*8 :: dxdx,dxdy,dxdz,dydx,dydy,dydz,dzdx,dzdy,dzdz,det_j
       real*8 :: lambda,mu,alpha,tref,pi,lambda2, mu2, rho2
       real*8 :: rho,ellez                                                         
@@ -674,7 +676,7 @@
         enddo
         
         deallocate(ind_locX, val_locX, ind_gloX, val_gloX)        
-        allocate(node_counter_poiX(nl_poiX))
+        allocate(node_counter_poiX(nl_poiX),recv_poiX(nl_poiX))
         node_counter_poiX = 0;
         
 
@@ -703,8 +705,10 @@
 
 !      write(*,*) mpi_id, node_counter_poiX
       call MPI_BARRIER(mpi_comm,mpi_ierr)
-      call MPI_ALLREDUCE(node_counter_poiZ,node_counter_poiX, nl_poiX, SPEED_INTEGER, MPI_SUM, mpi_comm, mpi_ierr)
-                
+      call MPI_ALLREDUCE(node_counter_poiX,recv_poiX, nl_poiX, SPEED_INTEGER, MPI_SUM, mpi_comm, mpi_ierr)
+      node_counter_poiX = recv_poiX;
+      deallocate(recv_poiX);
+                      
       endif
 
 
@@ -731,7 +735,7 @@
         enddo
 
         deallocate(ind_locY, val_locY, ind_gloY, val_gloY)        
-        allocate(node_counter_poiY(nl_poiY))
+        allocate(node_counter_poiY(nl_poiY),recv_poiY(nl_poiY))
         node_counter_poiY = 0;
         
 
@@ -748,7 +752,7 @@
                         in = cs_loc(cs_loc(ie -1) +is)
 
                         if (local_n_num(in) .eq. node_poiY(ip)) then
-                            node_counter_poiY(ip) = node_counter_poiZ(ip) + 1  
+                            node_counter_poiY(ip) = node_counter_poiY(ip) + 1  
                         endif
                      enddo
                   enddo
@@ -759,9 +763,11 @@
       
       
 
-!      write(*,*) mpi_id, node_counter_poiZ
       call MPI_BARRIER(mpi_comm,mpi_ierr)
-      call MPI_ALLREDUCE(node_counter_poiZ,node_counter_poiY, nl_poiY, SPEED_INTEGER, MPI_SUM, mpi_comm, mpi_ierr)
+      call MPI_ALLREDUCE(node_counter_poiY,recv_poiY, nl_poiY, SPEED_INTEGER, MPI_SUM, mpi_comm, mpi_ierr)
+      node_counter_poiY = recv_poiY;
+      deallocate(recv_poiY);
+
         
       endif
       
@@ -787,7 +793,7 @@
         enddo
 
         deallocate(ind_locZ, val_locZ, ind_gloZ, val_gloZ)        
-        allocate(node_counter_poiZ(nl_poiZ))
+        allocate(node_counter_poiZ(nl_poiZ),recv_poiZ(nl_poiZ))
         node_counter_poiZ = 0;
         
 
@@ -814,10 +820,15 @@
          enddo
       
 
-!      write(*,*) mpi_id, node_counter_poiZ
+      !write(*,*) mpi_id, node_counter_poiZ
       call MPI_BARRIER(mpi_comm,mpi_ierr)
-      call MPI_ALLREDUCE(node_counter_poiZ,node_counter_poiZ, nl_poiZ, SPEED_INTEGER, MPI_SUM, mpi_comm, mpi_ierr)
-      
+      call MPI_ALLREDUCE(node_counter_poiZ, recv_poiZ, nl_poiZ, SPEED_INTEGER, MPI_SUM, mpi_comm, mpi_ierr)
+      node_counter_poiZ = recv_poiZ;
+      deallocate(recv_poiZ);
+      !write(*,*) mpi_id, node_counter_poiZ
+      !call MPI_BARRIER(mpi_comm,mpi_ierr)
+
+      !stop
       endif
 !      write(*,*) mpi_id, node_counter_poiZ
 !      call MPI_BARRIER(mpi_comm,mpi_ierr)

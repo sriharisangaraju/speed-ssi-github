@@ -90,27 +90,15 @@
           if (mpi_id.eq.0) write(*,'(A)')
           deallocate(con) 
           
-          if(mpi_id.eq.0) then
-          do i = 1, nfunc
-             do j = 1, 3*nnod_loc
-                if (Fel(i,j) .ne. 0) then 
-                  print*, mpi_id, i,j, Fel(i,j)
-                endif
-              enddo
-           enddo 
-           endif
-           call MPI_BARRIER(mpi_comm, mpi_ierr)
-          if(mpi_id.eq.1) then
-          do i = 1, nfunc
-             do j = 1, 3*nnod_loc
-                if (Fel(i,j) .ne. 0) then 
-                  print*, mpi_id, i,j, Fel(i,j)
-                endif
-              enddo
-           enddo 
-           endif
-           call MPI_BARRIER(mpi_comm, mpi_ierr)
-!stop
+!          do i = 1, nfunc
+!             do j = 1, 3*nnod_loc
+!                if (Fel(i,j) .ne. 0) then 
+!                  print*, i,j, Fel(i,j)
+!                endif
+!              enddo
+!           enddo 
+!           read(*,*)
+
 !**********************************************************************************************************
 !                                  SEISMIC MOMENT                           
 !**********************************************************************************************************
