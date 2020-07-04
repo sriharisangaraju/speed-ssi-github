@@ -672,7 +672,7 @@
         call GET_MINVALUES(ind_gloX, val_gloX, nl_poiX*mpi_np, ind_locX, nl_poiX, mpi_np)
         
         do i = 1, nl_poiX
-           node_poiX = ind_gloX(ind_locX(i))
+           node_poiX(i) = ind_gloX(ind_locX(i))
         enddo
         
         deallocate(ind_locX, val_locX, ind_gloX, val_gloX)        
@@ -731,7 +731,7 @@
 
 
         do i = 1, nl_poiY
-           node_poiY = ind_gloY(ind_locY(i))
+           node_poiY(i) = ind_gloY(ind_locY(i))
         enddo
 
         deallocate(ind_locY, val_locY, ind_gloY, val_gloY)        
@@ -778,20 +778,26 @@
         do i = 1,nl_poiZ
             call GET_NEAREST_NODE(nnod_loc,xs_loc,ys_loc,zs_loc, val_poiZ(i,1),val_poiZ(i,2),val_poiZ(i,3),node_poiZ(i), dist)
             val_locZ(i) = dist
-            ind_locZ(i) = local_n_num(node_poiZ(i))   !local_n_num(i)             
+            ind_locZ(i) = local_n_num(node_poiZ(i))   !local_n_num(i)      
+           ! write(*,*) val_locZ(i), local_n_num(node_poiZ(i)), xs_loc (node_poiZ(i)), ys_loc (node_poiZ(i)), zs_loc (node_poiZ(i))       
         enddo
 
         call MPI_BARRIER(mpi_comm,mpi_ierr)
       
         call MPI_ALLGATHER(val_locZ, nl_poiZ, SPEED_DOUBLE, val_gloZ, nl_poiZ, SPEED_DOUBLE, mpi_comm, mpi_ierr)
+       ! write(*,*) val_gloZ
         call MPI_ALLGATHER(ind_locZ, nl_poiZ, SPEED_INTEGER, ind_gloZ, nl_poiZ, SPEED_INTEGER, mpi_comm, mpi_ierr)                
-        
-        call GET_MINVALUES(ind_gloZ,val_gloZ, nl_poiZ*mpi_np, ind_locZ, nl_poiZ, mpi_np)
-
+       ! write(*,*) ind_gloZ
+        call GET_MINVALUES(ind_gloZ, val_gloZ, nl_poiZ*mpi_np, ind_locZ, nl_poiZ, mpi_np)
+       ! write(*,*) ind_locZ
+       ! write(*,*) '----------------------------'
+       ! write(*,*)        ind_gloZ
         do i = 1, nl_poiZ
-           node_poiZ = ind_gloZ(ind_locZ(i))
+           node_poiZ(i) = ind_gloZ(ind_locZ(i))
+       !    write(*,*) i, ind_locZ(i), ind_gloZ(ind_locZ(i)), node_poiZ(i)
         enddo
-
+       ! write(*,*) node_poiZ
+ 
         deallocate(ind_locZ, val_locZ, ind_gloZ, val_gloZ)        
         allocate(node_counter_poiZ(nl_poiZ),recv_poiZ(nl_poiZ))
         node_counter_poiZ = 0;
@@ -826,7 +832,7 @@
       node_counter_poiZ = recv_poiZ;
       deallocate(recv_poiZ);
       !write(*,*) mpi_id, node_counter_poiZ
-      !call MPI_BARRIER(mpi_comm,mpi_ierr)
+      call MPI_BARRIER(mpi_comm,mpi_ierr)
 
       !stop
       endif
@@ -979,6 +985,7 @@
      
          
          do ie = 1,ne_loc
+         !write(*,*) ie, '/', ne_loc
             im = cs_loc(cs_loc(ie -1) +0);
 
             nn = sdeg_mat(im) +1
@@ -1082,6 +1089,7 @@
                                        
                                        fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) &
                                                             + val_poiZ(ip,4)/node_counter_poiZ(ip) 
+                                       !write(*,*) local_n_num(in),xs_loc(in),ys_loc(in),zs_loc(in)                     
                                        !node_counter_poiZ = node_counter_poiZ + 1;
 
                                      endif
@@ -3501,7 +3509,7 @@
 !         enddo
 !         read(*,*)
 !      enddo 
-
+!stop
       
       
       return

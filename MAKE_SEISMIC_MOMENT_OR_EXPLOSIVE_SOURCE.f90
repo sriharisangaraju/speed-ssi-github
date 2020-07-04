@@ -118,18 +118,54 @@
                                           
                  
                 !global numeration 
+                !write(*,*) mpi_id, 'coord', xx_spx_loc(sour_node_sism(1,i)), yy_spx_loc(sour_node_sism(1,i)), zz_spx_loc(sour_node_sism(1,i)) 
+                !write(*,*) mpi_id, 'local index', sour_node_sism(1,i)
+                !write(*,*) mpi_id, 'local dist', dist_sour_node_sism(1,i) 
+                
+                pos_sour_node_x(1,i) = xx_spx_loc(sour_node_sism(1,i));
+                pos_sour_node_y(1,i) = yy_spx_loc(sour_node_sism(1,i));
+                pos_sour_node_z(1,i) = zz_spx_loc(sour_node_sism(1,i));
+                
+                
+                
+                
                 sour_node_sism(1,i) = local_node_num(sour_node_sism(1,i))
+                j = 1;
 
+                
                 allocate(sism_el_glo(mpi_np), dist_el_glo(mpi_np))
+                allocate(posx_el_glo(mpi_np), posy_el_glo(mpi_np),posz_el_glo(mpi_np))                
+                
                 call MPI_BARRIER(mpi_comm, mpi_ierr)                  
                 call MPI_ALLGATHER(sour_node_sism(1,i), 1, SPEED_INTEGER, sism_el_glo, 1, SPEED_INTEGER, mpi_comm, mpi_ierr)
                 call MPI_ALLGATHER(dist_sour_node_sism(1,i), 1, SPEED_DOUBLE, dist_el_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
+                call MPI_ALLGATHER(pos_sour_node_x(1,i), 1, SPEED_DOUBLE, posx_el_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
+                call MPI_ALLGATHER(pos_sour_node_y(1,i), 1, SPEED_DOUBLE, posy_el_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
+                call MPI_ALLGATHER(pos_sour_node_z(1,i), 1, SPEED_DOUBLE, posz_el_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_ierr)
+
+
                 
+                !if(mpi_id .eq. 0) then 
+                !   write(*,*) 'global index' , sism_el_glo
+                !   write(*,*) 'global distances', dist_el_glo
+                !endif
 
                                
-                call GET_MINVALUES(sism_el_glo, dist_el_glo, mpi_np, sour_node_sism(1,i), 1, mpi_np)               
-                dist_sour_node_sism(1,i) = 0 
-                deallocate(sism_el_glo, dist_el_glo) 
+                call GET_MINVALUES(sism_el_glo, dist_el_glo, mpi_np, k, 1, mpi_np)     
+
+                 
+                sour_node_sism(1,i) =  sism_el_glo(k);         
+                dist_sour_node_sism(1,i) =  dist_el_glo(k)
+                pos_sour_node_x(1,i) = posx_el_glo(k);
+                pos_sour_node_y(1,i) = posy_el_glo(k);
+                pos_sour_node_z(1,i) = posz_el_glo(k);
+                
+                
+                
+                !write(*,*) mpi_id, 'min ind', sour_node_sism(1,i), 'min dist', dist_sour_node_sism(1,i) 
+                
+
+                deallocate(sism_el_glo, dist_el_glo, posx_el_glo, posy_el_glo, posz_el_glo) 
                                    
 
                                    
@@ -228,7 +264,8 @@
       endif                                                 
 
        if ((mpi_id.eq.0).and.(nload_sism_el.gt.0)) write(*,'(A)')'Seismic Moment vector built'
-       call MPI_BARRIER(mpi_comm, mpi_ierr)                  
+       call MPI_BARRIER(mpi_comm, mpi_ierr)    
+       !stop              
 
 !*****************************************************************************************
 !                                EXPLOSIVE SOURCE
