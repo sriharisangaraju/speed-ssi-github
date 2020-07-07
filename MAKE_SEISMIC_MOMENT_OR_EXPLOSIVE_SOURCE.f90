@@ -155,7 +155,7 @@
 
                  
                 sour_node_sism(1,i) =  sism_el_glo(k);         
-                dist_sour_node_sism(1,i) =  dist_el_glo(k)
+                dist_sour_node_sism(1,i) =  dsqrt(dist_el_glo(k))
                 pos_sour_node_x(1,i) = posx_el_glo(k);
                 pos_sour_node_y(1,i) = posy_el_glo(k);
                 pos_sour_node_z(1,i) = posz_el_glo(k);
@@ -213,7 +213,7 @@
                        
                           j = j + 1 
                           sour_node_sism(j,i) = sism_el_glo(k)
-                          dist_sour_node_sism(j,i) = dist_el_glo(k)
+                          dist_sour_node_sism(j,i) = dsqrt(dist_el_glo(k))
                           pos_sour_node_x(j,i) = posx_el_glo(k)
                           pos_sour_node_y(j,i) = posy_el_glo(k)
                           pos_sour_node_z(j,i) = posz_el_glo(k)

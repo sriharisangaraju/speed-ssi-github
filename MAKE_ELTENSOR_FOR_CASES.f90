@@ -223,6 +223,11 @@
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
 
+                   elseif (tcase.eq.19) then
+                   ! CASE 19: SALONICCO
+                        call MAKE_MECH_PROP_CASE_019(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                      xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
+                                                      vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
 
                    elseif (tcase.eq.20) then
                    ! CASE 20: ATENE  
