@@ -91,7 +91,7 @@
       real*8, dimension(nl_sism,1) :: tausmom                        
 
       real*8, dimension(nn,nn,nn) :: sxx,syy,szz,syz,szx,sxy
- 
+      logical :: exist 
                                                                                         
       if ((ielem .ge. check_ns(1,4)) .and. (ielem .le. check_ns(length_cns,4))) then        
       
