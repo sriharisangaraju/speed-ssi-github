@@ -185,15 +185,17 @@
             read(inline(5:),*) lab_fnc, type_fnc
             
             select case (type_fnc)
-               case(0)              
+               case(0,32)
+                ! Case 32 - Ramp Source Time Function
                  nb_func_data = nb_func_data + 0
                case(1) 
                  ! RICKER WAVELET
                  nb_func_data = nb_func_data + 2
                case(2) 
                  nb_func_data = nb_func_data + 2
-               case(3,30) 
+               case(3,30,32) 
                    ! TIME SERIES
+                   ! Case 31 - Text File with Source Time Function
                  read(inline(5:),*) lab_fnc, type_fnc, ndat_fnc
                  nb_func_data = nb_func_data + 2*ndat_fnc
                 

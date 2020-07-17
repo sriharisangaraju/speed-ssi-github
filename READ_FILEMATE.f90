@@ -520,7 +520,7 @@
             
             select case (type_fnc(ifunc))
             
-               case(0)
+               case(0,32)
                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + 0 
                
                case(1,2)
@@ -529,7 +529,7 @@
                      (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)
                
                     
-               case(3,30)
+               case(3,30,31)
                  read(inline(ileft:iright),*)dummy,dummy,ndat_fnc,fileinput
                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + 2*ndat_fnc
 
