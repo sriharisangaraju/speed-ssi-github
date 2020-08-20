@@ -246,6 +246,20 @@
  
     endif
 
+
+!*****************************************************************************************
+!   Not Honoring Enhanced (Reading Material properties from Tomo File)          
+!*****************************************************************************************
+    if (nmat_nhe .gt. 0) then
+        allocate(lambda_nhe(nnod_loc),mu_nhe(nnod_loc),rho_nhe(nnod_loc))
+        
+        call MAKE_NH_Enhanced(local_node_num, nnod_loc, nmat_nhe, nhe_mat, &
+                               xx_spx_loc, yy_spx_loc, zz_spx_loc, &
+                               lambda_nhe, mu_nhe, rho_nhe, mpi_id)
+ 
+    endif
+
+
 !*****************************************************************************************
 !    SETUP FOR BOUNDARY CONDITIONS    
 !*****************************************************************************************

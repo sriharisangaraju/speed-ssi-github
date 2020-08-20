@@ -121,6 +121,9 @@
                 lambda_el = pm(im,2)
                 mu_el = pm(im,3)
                 gamma_el = pm(im,4)        
+
+                ! qs_loc is unknown??
+                ! Quality factors and Gamma are not used in this subroutine
                 QS(im) = qs_loc
                 QP(im) = qp_loc
             
