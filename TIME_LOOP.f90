@@ -425,6 +425,15 @@
                 enddo 
                   
              endif                
+
+             !!!!!!!!!!!       NOT-HONORING ENHANCED     !!!!!!!!!!!!!!!!!!!!!!
+             if (nmat_nhe.gt.0)
+                QS_nh = Qs_nhe_el(ie)
+                QP_nh = Qs_nhe_el(ie)
+                call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, con_nnz_loc, con_spx_loc, &
+                                              rho_nhe, lambda_nhe, mu_nhe, &
+                                              rho_el, lambda_el, mu_el)!gamma_el
+             endif
                 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 !Random materials begin
@@ -557,6 +566,16 @@
                 enddo  
                           
              endif                
+
+             !!!!!!!!!!!   NOT-HONORING ENHANCED     !!!!!!!!!!!!!!!!!!!!!!
+             if (nmat_nhe.gt.0)
+                QS_nh = Qs_nhe_el(ie)
+                QP_nh = Qs_nhe_el(ie)
+                ! Currently Only Supports Damping Type -2 . (Gamma Not defined)
+                call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, con_nnz_loc, con_spx_loc, &
+                                              rho_nhe, lambda_nhe, mu_nhe, &
+                                              rho_el, lambda_el, mu_el)!gamma_el
+             endif
                
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 !Random materials begin
@@ -1010,7 +1029,7 @@
                   allocate(ct(nn),ww(nn),dd(nn,nn))
                   allocate(ux_el(nn,nn,nn),uy_el(nn,nn,nn),uz_el(nn,nn,nn))
                   allocate(duxdx_el(nn,nn,nn),duydx_el(nn,nn,nn),duzdx_el(nn,nn,nn)) 
-                  allocate(duxdy_el(nn,nn,nn),duydy_el(nn,nn,nn),duzdy_el(nn,nn,nn)) 
+                  allocate(duxdy_el(nn,nn,nn),duydy_el(n             n,nn,nn),duzdy_el(nn,nn,nn)) 
                   allocate(duxdz_el(nn,nn,nn),duydz_el(nn,nn,nn),duzdz_el(nn,nn,nn)) 
                   allocate(sxx_el(nn,nn,nn),syy_el(nn,nn,nn),szz_el(nn,nn,nn))
                   allocate(syz_el(nn,nn,nn),szx_el(nn,nn,nn),sxy_el(nn,nn,nn))
@@ -1126,6 +1145,16 @@
                   endif
                 enddo  
              endif                
+
+             !!!!!!!!!!!   NOT-HONORING ENHANCED     !!!!!!!!!!!!!!!!!!!!!!
+             if (nmat_nhe.gt.0)
+                QS_nh = Qs_nhe_el(ie)
+                QP_nh = Qs_nhe_el(ie)
+                ! Currently Only Supports Damping Type -2 . (Gamma Not defined)
+                call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, con_nnz_loc, con_spx_loc, &
+                                              rho_nhe, lambda_nhe, mu_nhe, &
+                                              rho_el, lambda_el, mu_el)!gamma_el
+             endif
               
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1528,6 +1557,16 @@
                 enddo  
              endif                
               
+
+              !!!!!!!!!!!   NOT-HONORING ENHANCED     !!!!!!!!!!!!!!!!!!!!!!
+             if (nmat_nhe.gt.0)
+                QS_nh = Qs_nhe_el(ie)
+                QP_nh = Qs_nhe_el(ie)
+                ! Currently Only Supports Damping Type -2 . (Gamma Not defined)
+                call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, con_nnz_loc, con_spx_loc, &
+                                              rho_nhe, lambda_nhe, mu_nhe, &
+                                              rho_el, lambda_el, mu_el)!gamma_el
+             endif
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 !Random materials begin
