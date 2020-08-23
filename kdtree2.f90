@@ -20,10 +20,10 @@ module kdtree2_precision_module
   !
 
   ! Single precision
-  integer, parameter :: kdkind = sp  
+  !integer, parameter :: kdkind = sp  
 
   ! Double Precision
-  ! integer, parameter :: kdkind = dp  
+  integer, parameter :: kdkind = dp  
 
   public :: kdkind
 

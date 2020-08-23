@@ -50,12 +50,10 @@
 !> @param[out] gamma_dmp_nhe damping coefficient gamma (Kosloff&Kosloff)
 
 
-     subroutine   MAKE_NH_Enhanced(loc_n_num, nn_loc, nmat_nhe, nhe_mat, &
-                               xs_loc, ys_loc, zs_loc, lambda_nhe, mu_nhe,&
-                                rho_nhe, Qs_nhe, Qp_nhe, gamma_dmp_nhe, &
-                                mpi_id)
-
-     use kdtree2_module
+     subroutine   MAKE_NH_Enhanced(nn_loc, nmat, tag_mat, prop_mat, &
+                               node_nhe_flag, count, NN_src_ind_loc, QS, QP, &
+                               lambda_nhe, mu_nhe, rho_nhe, &
+                               Qs_nhe_el, Qp_nhe_el, mpi_id, mpi_comm) !gamma_dmp_nhe
 
      use speed_par
 
@@ -63,34 +61,22 @@
 
      include 'SPEED.MPI'
     
-     integer*4 :: nn_loc, mpi_id ,nmat_rhe
-     integer*4, dimension(nmat_rhe) :: nhe_mat
-     integer*4, dimension(nn_loc) :: loc_n_num, nn_ind
-
-     real*8, dimension(nn_loc) :: xs_loc, ys_loc, zs_loc 
+     integer*4 :: nn_loc, mpi_id, nmat, count, mpi_comm, mpi_ierr
+     integer*4, dimension(nmat) :: tag_mat, QS, QP
+     integer*4, dimension(nn_loc) :: node_nhe_flag
+     integer*4, dimension(count) ::  NN_src_ind_loc
+     
      real*8, dimension(nn_loc), intent(inout) :: lambda_nhe, mu_nhe, rho_nhe
-     real*8, dimension(nn_loc), intent(inout) :: Qs_nhe, mu_nhe, gamma_dmp_nhe
+     real*8, dimension(nn_loc), intent(inout) :: Qs_nhe, Qp_nhe !gamma_dmp_nhe
    
      character*70 :: file_tomo
-     integer*4 :: npts_tomo, stat, error, n_neighbours
-     real(kdkind) :: query_vec(3)
-     real(kdkind), dimension(:,:), allocatable :: nodes_in_xyz, mech_prop
+     integer*4 :: npts_tomo, stat, error
+     real*4, dimension(:), allocatable :: tomo_rho, tomo_vs, tomo_vp, tomo_qs, tomo_qp
+     real*8, dimension(nmat,4) :: prop_mat
 
-     type(kdtree2), pointer :: kd2_obj
-     type(kdtree2_result) :: result_temp(1)
-
-     real*8 :: t0, t1, time_elapsed
-     integer*4 :: i, j, ipt, inode
-     
-
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     ! Making GLL node list which falls inside NHE-specified Blocks
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-     !do ie = 1,nelem_loc
-        !check material block. if is NHE block-go ahead, otherwise exit
-        !loop over all nodes. prepare a list. no repetitions
-        ! map them back to index in loc_n_num
+     real*8 :: t0, t1, time_elapsed, dummy, vs_dum, vp_dum
+     integer*4 :: i, j, ipt, inode, ie
+     integer*4 :: im, istart, iend
 
 
      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -107,52 +93,137 @@
       read(124,*) 
       read(124,*) npts_tomo
      endif
-     call MPI_BCAST(npts_tomo,1,SPEED_INTEGER,0,MPI_COMM_WORLD,mpi_ierr)
-
-     allocate(nodes_in_xyz(3,npts_tomo),stat=error)
-     allocate(mech_prop(5,npts_tomo),stat=error)
+     call MPI_BCAST(npts_tomo,1,SPEED_INTEGER,0,mpi_comm,mpi_ierr)
 
      if(mpi_id.eq.0) then
-      do ipt = 1, npts_in
-        read(24,*)(nodes_in_xyz(i,ipt), i=1,3), (mech_prop(j,ipt), j=1,5)
-      enddo
-      close(24)
+        allocate(tomo_rho(npts_tomo),tomo_vs(npts_tomo),tomo_vp(npts_tomo),tomo_qs(npts_tomo),tomo_qp(npts_tomo))
+        do ipt = 1, npts_in
+          read(124,*)dummy, dummy, dummy, tomo_rho, tomo_vs, tomo_vp, tomo_qs, tomo_qp
+        enddo
+        close(124)
      endif
-
-     call MPI_BCAST(nodes_in_xyz,,SPEED_INTEGER,0,MPI_COMM_WORLD,mpi_ierr)
-     call MPI_BCAST(mech_prop,,SPEED_INTEGER,0,MPI_COMM_WORLD,mpi_ierr)
-
-     call MPI_BARRIER(mpi_comm, mpi_ierr)
-
-
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     ! Defining Kd-tree Object and then search
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-     kd2_obj => kdtree2_create(nodes_in_xyz,sort=.false.,rearrange=.true.)
-
-     deallocate(nodes_in_xyz)
-
-     n_neighbours = 1
-
-     do inode = 1,nn_loc
-        query_vec(1) = xs_loc(inode)
-        query_vec(2) = ys_loc(inode)
-        query_vec(3) = zs_loc(inode)
-        call kdtree2_n_nearest(kd2_obj,query_vec,n_neighbours,result_temp)
-        nn_ind(inode) = result_temp(1)%idx    ! Inder of Nearest Neighbor in Tomo Points
-     enddo
-
-     call kdtree2_destroy(kd2_obj)
 
 
      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      ! Assigning Properties to Each node based on Their Nearest Neighbor
      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+      !!!!!!!!!!!!!!! Rho !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      if (mpi_id.ne.0) then
+        allocate(tomo_rho(npts_tomo))
+      endif
+
+      call MPI_BARRIER(mpi_comm, mpi_ierr)
+      call MPI_BCAST(tomo_rho, npts_tomo, SPEED_INTEGER, 0, mpi_comm, mpi_ierr)
+
+      i = 0
+      do inode=1,nn_loc
+          if ((node_nhe_flag(inode).eq.999))
+            i = i + 1
+            rho_nhe(inode) = tomo_rho(NN_src_ind_loc(i))
+          else
+            rho_nhe(inode) = prop_mat(node_nhe_flag(inode),1)
+          endif
+      enddo
+      deallocate(tomo_rho)
 
 
+      !!!!!!!!!!!!!!!!!!!!!!!!!!  Mu !!!!!!!!!!!!!!!!!!!!!!!
+      if (mpi_id.ne.0) then
+        allocate(tomo_vs(npts_tomo))
+      endif
+
+      call MPI_BARRIER(mpi_comm, mpi_ierr)
+      call MPI_BCAST(tomo_vs, npts_tomo, SPEED_INTEGER, 0, mpi_comm, mpi_ierr)
+
+      i = 0
+      do inode=1,nn_loc
+          if ((node_nhe_flag(inode).eq.999))
+            i = i + 1
+            vs_dum = tomo_vs(NN_src_ind_loc(i))
+            mu_nhe(inode) = rho_nhe(inode) * vs_dum**2
+          else
+            mu_nhe(inode) = prop_mat(node_nhe_flag(inode),3)
+          endif
+      enddo
+      deallocate(tomo_vs)
+
+      !!!!!!!!!!!!!!!!!!!!!!!!!!  Lambda !!!!!!!!!!!!!!!!!!!!!!!
+      if (mpi_id.ne.0) then
+        allocate(tomo_vp(npts_tomo))
+      endif
+
+      call MPI_BARRIER(mpi_comm, mpi_ierr)
+      call MPI_BCAST(tomo_vp, npts_tomo, SPEED_INTEGER, 0, mpi_comm, mpi_ierr)
+
+      i = 0
+      do inode=1,nn_loc
+          if ((node_nhe_flag(inode).eq.999))
+            i = i + 1
+            vp_dum = tomo_vp(NN_src_ind_loc(i))
+            vs_dum = mu_nhe(inode)/rho_nhe(inode)
+            lambda_nhe(inode) = rho_nhe(inode) * (vp_dum**2 - 2*vs_dum) 
+          else
+            lambda_nhe(inode) = prop_mat(node_nhe_flag(inode),2)
+          endif
+      enddo
+      deallocate(tomo_vp)
+
+
+      !!!!!!!!!!!!!!!!!!!!!!!!!! Qs !!!!!!!!!!!!!!!!!!!!!!!
+      if (mpi_id.ne.0) then
+        allocate(tomo_qs(npts_tomo))
+      endif
+
+      call MPI_BARRIER(mpi_comm, mpi_ierr)
+      call MPI_BCAST(tomo_qs, npts_tomo, SPEED_INTEGER, 0, mpi_comm, mpi_ierr)
+
+      i = 0
+      do inode=1,nn_loc
+          if ((node_nhe_flag(inode).eq.999))
+            i = i + 1
+            Qs_nhe(inode) = tomo_qs(NN_src_ind_loc(i))
+          else
+            Qs_nhe(inode) = QS(node_nhe_flag(inode),1)
+          endif
+      enddo
+      deallocate(tomo_qs)
+
+      !!!!!!!!!!!!!!!!!!!!!!!!!! Qp !!!!!!!!!!!!!!!!!!!!!!!
+      if (mpi_id.ne.0) then
+        allocate(tomo_qp(npts_tomo))
+      endif
+
+      call MPI_BARRIER(mpi_comm, mpi_ierr)
+      call MPI_BCAST(tomo_qp, npts_tomo, SPEED_INTEGER, 0, mpi_comm, mpi_ierr)
+
+      i = 0
+      do inode=1,nn_loc
+          if ((node_nhe_flag(inode).eq.999))
+            i = i + 1
+            Qp_nhe(inode) = tomo_qp(NN_src_ind_loc(i))
+          else
+            Qp_nhe(inode) = QP(node_nhe_flag(inode),1)
+          endif
+      enddo
+      deallocate(tomo_qp)
      
+     !!!!!!!!!!!!!!!!!!!!!!!!!! Gamma !!!!!!!!!!!!!!!!!!!!!!!!
+     ! Only For Damping Type - 1 (Elastic case)
+     ! For other Damping Types Its not needed or = 0
 
-     end subroutine MAKE_RANDOM_PARAM
+     !do im = 1, nmat
+     !       if(QS(im) .eq. 0.d0) then 
+     !          prop_mat(im,4) = 0.d0;
+     !       else
+     !          prop_mat(im,4) = 4.d0*datan(1.d0)*(fmax)/QS(im)
+     !       endif   
+     !enddo
+
+     !! IF Gamma > 10^(-5) make_damp_yes_or_no = true.
+     !! If Gamma < 10^(-5) damping is not assumed
+
+     call MPI_BARRIER(mpi_comm, mpi_ierr)
+
+     end subroutine MAKE_NH_Enhanced
      

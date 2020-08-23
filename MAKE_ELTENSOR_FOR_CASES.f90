@@ -365,6 +365,7 @@
      
        if (check_case .eq. 1) close (1000+mpi_id)
 
+       ! Why this?? 10% of Vs Vp??
        if (damping_type .eq. 2) then
            qs = 0; qp = 0;
            vs_all = 0.d0; vp_all=0.d0;
