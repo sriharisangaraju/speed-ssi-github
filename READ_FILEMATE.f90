@@ -165,6 +165,7 @@
                                   nb_sism,val_sism,fnc_sism,lab_sism, & 
                                   nb_expl,val_expl,fnc_expl,lab_expl, & 
                                   nb_case,val_case,lab_case,tol_case, & 
+                                  nb_nhee,val_nhe,tol_nhe, &
                                   nb_fnc,type_fnc,ind_fnc,dat_fnc,lab_fnc,nb_fnc_data, &
                                   fmax,fpeak)
                                   
@@ -179,7 +180,7 @@
       character*4 :: keyword
 
       integer*4 :: nb_mate,nb_fnc, nb_fnc_data, nb_frac
-      integer*4 :: nb_mate_nle, nb_mate_rnd        
+      integer*4 :: nb_mate_nle, nb_mate_rnd, nb_nhee
       integer*4 :: nb_diriX,nb_diriY,nb_diriZ,nb_neuX,nb_neuY,nb_neuZ
       integer*4 :: nb_neuN 
       integer*4 :: nb_poiX,nb_poiY,nb_poiZ,nb_forX,nb_forY,nb_forZ,nb_forF
@@ -190,7 +191,7 @@
       integer*4 :: iexpl,nb_expl                                        
       integer*4 :: icase,nb_case                                        
       
-      integer*4 :: im,ifunc,idf,ndat_fnc,file_nd
+      integer*4 :: im,ifunc,idf,ndat_fnc,file_nd, inhee
       integer*4 :: im_nle, im_rnd        
       integer*4 :: idX,idY,idZ,inX,inY,inZ, itX, itY, itZ
       integer*4 :: inN, itest 
@@ -239,13 +240,15 @@
       
       integer*4, dimension(nb_mate_nle) :: type_mat_nle                
       integer*4, dimension(nb_mate_nle,1) :: char_mat_nle        
-      integer*4, dimension(nb_case) :: val_case                        
+      integer*4, dimension(nb_case) :: val_case
+      integer*4, dimension(nb_nhee) :: val_nhe
 
       real*8 :: fmax                                                                
       real*8 :: fpeak                                                                
       real*8 :: rho, VS, VP
       
-      real*8, dimension(nb_case) :: tol_case                                
+      real*8, dimension(nb_case) :: tol_case
+      real*8, dimension(nb_nhee) :: tol_nhe
       real*8, dimension(nb_fnc_data) :: dat_fnc
       real*8, dimension(nb_mate) :: trefm, Qua_S, Qua_P
       
@@ -294,6 +297,8 @@
       
       ifunc = 0
       fmax = 0.d0
+
+      inhee = 0;
   
       
       
@@ -504,6 +509,11 @@
                  !case tag, block id, tolerance                                             
                  lab_case(icase),val_case(icase),tol_case(icase)                                
                  !lab_case,val_case,tol_case
+
+            case('NHEE')
+              inhee = inhee + 1
+              tol_nhe(inhee) = 0.0
+              read(inline(ileft:iright),*) val_nhe(inhee), tol_case(inhee)
 
            case('FMAX') 
               read(inline(ileft:iright),*) fmax                                        

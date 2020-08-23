@@ -1,4 +1,3 @@
-
 !    Copyright (C) 2012 The SPEED FOUNDATION
 !    Author: Ilario Mazzieri
 !
@@ -50,180 +49,57 @@
 !> @param[out] gamma_dmp_nhe damping coefficient gamma (Kosloff&Kosloff)
 
 
-     subroutine   MAKE_NH_Enhanced(nn_loc, nmat, tag_mat, prop_mat, &
-                               node_nhe_flag, count, NN_src_ind_loc, QS, QP, &
-                               lambda_nhe, mu_nhe, rho_nhe, &
-                               Qs_nhe_el, Qp_nhe_el, mpi_id, mpi_comm) !gamma_dmp_nhe
+     subroutine   MAKE_NH_Enhanced()
 
-     use speed_par
+     	use speed_par
 
-     implicit none
+     	implicit none
+ 
+      	include 'SPEED.MPI'
 
-     include 'SPEED.MPI'
-    
-     integer*4 :: nn_loc, mpi_id, nmat, count, mpi_comm, mpi_ierr
-     integer*4, dimension(nmat) :: tag_mat, QS, QP
-     integer*4, dimension(nn_loc) :: node_nhe_flag
-     integer*4, dimension(count) ::  NN_src_ind_loc
-     
-     real*8, dimension(nn_loc), intent(inout) :: lambda_nhe, mu_nhe, rho_nhe
-     real*8, dimension(nn_loc), intent(inout) :: Qs_nhe, Qp_nhe !gamma_dmp_nhe
-   
-     character*70 :: file_tomo
-     integer*4 :: npts_tomo, stat, error
-     real*4, dimension(:), allocatable :: tomo_rho, tomo_vs, tomo_vp, tomo_qs, tomo_qp
-     real*8, dimension(nmat,4) :: prop_mat
-
-     real*8 :: t0, t1, time_elapsed, dummy, vs_dum, vp_dum
-     integer*4 :: i, j, ipt, inode, ie
-     integer*4 :: im, istart, iend
+      	integer*4 :: count
+      	integer*4, dimension(:), allocatable :: node_nhe_flag, NN_src_ind_loc
 
 
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     ! Reading Tomography Grid Points data
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     ! tomo_xyz_mech.in = text file with tomography data
-     ! 1st Line = No. of Tomo Points (npts_tomo)
-     ! 2nd to (npts_tomo+1)th line contains 8 columns:
-     ! x_cord y_cord z_cord Rho Vs Vp Qs Qp    (Units must be same as given in *.mate file)
-     file_tomo = 'tomo_xyz_mech.in'
 
-     if(mpi_id .eq.0) then
-      open(124,file=file_tomo)
-      read(124,*) 
-      read(124,*) npts_tomo
-     endif
-     call MPI_BCAST(npts_tomo,1,SPEED_INTEGER,0,mpi_comm,mpi_ierr)
+      	if (mpi_id.eq.0) write(*,'(A)')
+        if (mpi_id.eq.0) write(*,'(A)')'---------------Setup Not-Honoring Enhanced ---------------' 
 
-     if(mpi_id.eq.0) then
-        allocate(tomo_rho(npts_tomo),tomo_vs(npts_tomo),tomo_vp(npts_tomo),tomo_qs(npts_tomo),tomo_qp(npts_tomo))
-        do ipt = 1, npts_in
-          read(124,*)dummy, dummy, dummy, tomo_rho, tomo_vs, tomo_vp, tomo_qs, tomo_qp
-        enddo
-        close(124)
-     endif
+        mpi_comm = SPEED_COMM
 
 
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     ! Assigning Properties to Each node based on Their Nearest Neighbor
-     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        allocate(node_nhe_flag(nnod_loc))
+        call MAKE_NH_Enhanced_initialise(nnod_loc, nmat_nhe, val_nhe, &
+                               nmat, tag_mat, nelem_loc, con_nnz_loc, con_spx_loc, &
+                               xx_spx_loc, yy_spx_loc, zz_spx_loc, &
+                               count, &
+                               node_nhe_flag, mpi_id, mpi_comm, mpi_file)
 
-      !!!!!!!!!!!!!!! Rho !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      if (mpi_id.ne.0) then
-        allocate(tomo_rho(npts_tomo))
-      endif
-
-      call MPI_BARRIER(mpi_comm, mpi_ierr)
-      call MPI_BCAST(tomo_rho, npts_tomo, SPEED_INTEGER, 0, mpi_comm, mpi_ierr)
-
-      i = 0
-      do inode=1,nn_loc
-          if ((node_nhe_flag(inode).eq.999))
-            i = i + 1
-            rho_nhe(inode) = tomo_rho(NN_src_ind_loc(i))
-          else
-            rho_nhe(inode) = prop_mat(node_nhe_flag(inode),1)
-          endif
-      enddo
-      deallocate(tomo_rho)
+        ! count, node_nhe_flag
 
 
-      !!!!!!!!!!!!!!!!!!!!!!!!!!  Mu !!!!!!!!!!!!!!!!!!!!!!!
-      if (mpi_id.ne.0) then
-        allocate(tomo_vs(npts_tomo))
-      endif
-
-      call MPI_BARRIER(mpi_comm, mpi_ierr)
-      call MPI_BCAST(tomo_vs, npts_tomo, SPEED_INTEGER, 0, mpi_comm, mpi_ierr)
-
-      i = 0
-      do inode=1,nn_loc
-          if ((node_nhe_flag(inode).eq.999))
-            i = i + 1
-            vs_dum = tomo_vs(NN_src_ind_loc(i))
-            mu_nhe(inode) = rho_nhe(inode) * vs_dum**2
-          else
-            mu_nhe(inode) = prop_mat(node_nhe_flag(inode),3)
-          endif
-      enddo
-      deallocate(tomo_vs)
-
-      !!!!!!!!!!!!!!!!!!!!!!!!!!  Lambda !!!!!!!!!!!!!!!!!!!!!!!
-      if (mpi_id.ne.0) then
-        allocate(tomo_vp(npts_tomo))
-      endif
-
-      call MPI_BARRIER(mpi_comm, mpi_ierr)
-      call MPI_BCAST(tomo_vp, npts_tomo, SPEED_INTEGER, 0, mpi_comm, mpi_ierr)
-
-      i = 0
-      do inode=1,nn_loc
-          if ((node_nhe_flag(inode).eq.999))
-            i = i + 1
-            vp_dum = tomo_vp(NN_src_ind_loc(i))
-            vs_dum = mu_nhe(inode)/rho_nhe(inode)
-            lambda_nhe(inode) = rho_nhe(inode) * (vp_dum**2 - 2*vs_dum) 
-          else
-            lambda_nhe(inode) = prop_mat(node_nhe_flag(inode),2)
-          endif
-      enddo
-      deallocate(tomo_vp)
+        allocate(NN_src_ind_loc(count))
+        call MAKE_NH_Enhanced_NNSearch(nnod_loc, count, mpi_id, mpi_comm, &
+                                      mpi_file, NN_src_ind_loc)
 
 
-      !!!!!!!!!!!!!!!!!!!!!!!!!! Qs !!!!!!!!!!!!!!!!!!!!!!!
-      if (mpi_id.ne.0) then
-        allocate(tomo_qs(npts_tomo))
-      endif
+        ! NN_src_ind_loc
 
-      call MPI_BARRIER(mpi_comm, mpi_ierr)
-      call MPI_BCAST(tomo_qs, npts_tomo, SPEED_INTEGER, 0, mpi_comm, mpi_ierr)
 
-      i = 0
-      do inode=1,nn_loc
-          if ((node_nhe_flag(inode).eq.999))
-            i = i + 1
-            Qs_nhe(inode) = tomo_qs(NN_src_ind_loc(i))
-          else
-            Qs_nhe(inode) = QS(node_nhe_flag(inode),1)
-          endif
-      enddo
-      deallocate(tomo_qs)
+        allocate(lambda_nhe(nnod_loc), mu_nhe(nnod_loc), rho_nhe(nnod_loc))
+        allocate(Qs_nhe_el(nelem_loc), Qp_nhe_el(nelem_loc)) ! gamma_nhe_el(nelem_loc))
 
-      !!!!!!!!!!!!!!!!!!!!!!!!!! Qp !!!!!!!!!!!!!!!!!!!!!!!
-      if (mpi_id.ne.0) then
-        allocate(tomo_qp(npts_tomo))
-      endif
+        call MAKE_NH_Enhanced_ASSIGN_PROP(nnod_loc, nmat, prop_mat, sdeg_mat, &
+        					   nelem_loc, con_nnz_loc, con_spx_loc, &
+                               node_nhe_flag, count, NN_src_ind_loc, QS, QP
+                               lambda_nhe, mu_nhe, rho_nhe, Qs_nhe_el, Qp_nhe_el, &
+                               mpi_id, mpi_comm)
 
-      call MPI_BARRIER(mpi_comm, mpi_ierr)
-      call MPI_BCAST(tomo_qp, npts_tomo, SPEED_INTEGER, 0, mpi_comm, mpi_ierr)
 
-      i = 0
-      do inode=1,nn_loc
-          if ((node_nhe_flag(inode).eq.999))
-            i = i + 1
-            Qp_nhe(inode) = tomo_qp(NN_src_ind_loc(i))
-          else
-            Qp_nhe(inode) = QP(node_nhe_flag(inode),1)
-          endif
-      enddo
-      deallocate(tomo_qp)
-     
-     !!!!!!!!!!!!!!!!!!!!!!!!!! Gamma !!!!!!!!!!!!!!!!!!!!!!!!
-     ! Only For Damping Type - 1 (Elastic case)
-     ! For other Damping Types Its not needed or = 0
+        deallocate(node_nhe_flag, NN_src_ind_loc)
 
-     !do im = 1, nmat
-     !       if(QS(im) .eq. 0.d0) then 
-     !          prop_mat(im,4) = 0.d0;
-     !       else
-     !          prop_mat(im,4) = 4.d0*datan(1.d0)*(fmax)/QS(im)
-     !       endif   
-     !enddo
 
-     !! IF Gamma > 10^(-5) make_damp_yes_or_no = true.
-     !! If Gamma < 10^(-5) damping is not assumed
-
-     call MPI_BARRIER(mpi_comm, mpi_ierr)
+      	if (mpi_id.eq.0) write(*,'(A)')
+        if (mpi_id.eq.0) write(*,'(A)')'--------------- Completed ---------------' 
 
      end subroutine MAKE_NH_Enhanced
-     

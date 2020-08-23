@@ -64,7 +64,7 @@
                                     nb_load_forX,nb_load_forY,nb_load_forZ, &
                                     nb_load_forc,nb_load_pres,nb_load_shea, &
                                     nb_load_abc,nb_load_dg,nb_func,nb_func_data,&
-                                    nb_load_sism,nb_load_expl,nb_case,n_test,nb_frac)  
+                                    nb_load_sism,nb_load_expl,nb_case,nb_nhee,n_test,nb_frac)  
                                                                                                                            
 
       implicit none
@@ -86,7 +86,7 @@
       integer*4 :: nb_load_abc, nb_load_dg
       integer*4 :: nb_load_sism
       integer*4 :: nb_load_expl
-      integer*4 :: nb_case, n_test, nb_frac 
+      integer*4 :: nb_case, nb_nhee, n_test, nb_frac 
       integer*4 :: nb_func,nb_func_data
       integer*4 :: status
       integer*4 :: lab_fnc, type_fnc, ndat_fnc
@@ -101,6 +101,7 @@
       nb_load_shea = 0;      nb_load_abc = 0;       nb_load_dg = 0
       nb_load_sism = 0;      nb_load_expl = 0;       nb_frac = 0;
       nb_load_traX = 0;      nb_load_traY = 0;      nb_load_traZ = 0
+      nb_nhee = 0;
                  
       nb_func = 0;   nb_func_data = 0
       n_test = 0;
@@ -176,6 +177,9 @@
             nb_load_expl = nb_load_expl + 1                
            case('CASE')        
             nb_case = nb_case + 1
+           case('NHEE')        
+            ! Not-honoring Enhanced - Elastic- damping type 2
+            nb_nhee = nb_nhee + 1
            case('TEST')
             n_test = n_test + 1         
            case('FRAC')

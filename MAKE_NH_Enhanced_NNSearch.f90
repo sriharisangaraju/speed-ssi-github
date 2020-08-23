@@ -40,7 +40,7 @@
 
      use kdtree2_module
 
-     use speed_par
+     !use speed_par
 
      use speed_exit_codes
 

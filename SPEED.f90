@@ -251,22 +251,8 @@
 !   Not Honoring Enhanced (Reading Material properties from Tomo File)          
 !*****************************************************************************************
     if (nmat_nhe .gt. 0) then
-        allocate(lambda_nhe(nnod_loc),mu_nhe(nnod_loc),rho_nhe(nnod_loc))
-        
-        call MAKE_NH_Enhanced_initialise(nnod_loc, nmat_nhe, val_nhe, &
-                               nmat, tag_mat, nelem_loc, con_nnz_loc, con_spx_loc, &
-                               xx_spx_loc, yy_spx_loc, zz_spx_loc, &
-                               count, &
-                               node_nhe_flag, mpi_id, mpi_comm, mpi_file)
-
-        call MAKE_NH_Enhanced_NNSearch(nnod_loc, count, mpi_id, mpi_comm, &
-                                      mpi_file, NN_src_ind_loc)
-
-        call MAKE_NH_Enhanced(local_node_num, nnod_loc, nmat, tag_mat, prop_mat, &
-                               node_nhe_flag, count, NN_src_ind_loc, QS, QP
-                               lambda_nhe, mu_nhe, rho_nhe, Qs_nhe, Qp_nhe, &
-                               mpi_id, mpi_comm)
- 
+        call MAKE_NH_Enhanced()
+        call MPI_BARRIER(mpi_comm, mpi_ierr)
     endif
 
 

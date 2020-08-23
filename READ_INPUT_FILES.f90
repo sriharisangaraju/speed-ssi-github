@@ -135,7 +135,7 @@
                             nload_abc_el,nload_dg_el,nfunc,nfunc_data,&
                             nload_sism_el,&                                                                 
                             nload_expl_el,&                                                                
-                            n_case,n_test,n_frac)                   
+                            n_case, nmat_nhe, n_test,n_frac)                   
                                                                                                                             
       if(n_test.gt.0 .and. mpi_id .eq. 0)  write(*,'(A)')'*********TEST MODE*********'
 
@@ -175,6 +175,10 @@
             write(*,'(A)')'              only the 1st case will be adopted'  
          endif
          write(*,'(A,I8)') 'CASE             : ',n_case                               
+
+         if(nmat_nhe.gt.0) then
+            write(*,'(A,I8)')     'Not_Honoring Enhanced Blocks : ',nmat_rnd        
+          endif
       endif
       
       if (nmat.le.0) then
@@ -232,6 +236,8 @@
       
       if (n_case.gt.0) allocate (val_case(n_case), tag_case(n_case), tol_case(n_case))
       if (n_case .eq. 0) allocate(tag_case(1)); tag_case(1)=0;
+
+      if (nmat_nhe.gt.0) allocate (val_nhe(nmat_nhe), tol_nhe(nmat_nhe))
       
       if (nfunc.gt.0) allocate (tag_func(nfunc), func_type(nfunc), func_indx(nfunc +1), func_data(nfunc_data))
       
@@ -268,7 +274,8 @@
                 nload_dg_el,tag_dg_el,tag_dg_yn, tag_dg_frc, val_dg_frc, n_frac, &
                 nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el, &                 
                 nload_expl_el,val_expl_el,fun_expl_el,tag_expl_el, &                 
-                n_case,val_case,tag_case,tol_case, &                                 
+                n_case,val_case,tag_case,tol_case, &
+                nmat_nhe,val_nhe,tol_nhe, &                                 
                 nfunc,func_type,func_indx,func_data,tag_func,nfunc_data, &
                 fmax,fpeak)
                 
