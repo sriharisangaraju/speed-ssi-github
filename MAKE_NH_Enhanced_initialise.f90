@@ -55,10 +55,10 @@
                                count, &
                                node_nhe_flag, mpi_id, mpi_comm, mpi_file)
 
-     implicit none
-    
      use kdtree2_module
 
+     implicit none
+    
      integer*4 :: nn_loc, mpi_id , nmat_nhe, nmat
      integer*4, dimension(nmat_nhe) :: val_nhe
      integer*4, dimension(nmat) :: tag_mat
@@ -76,7 +76,7 @@
      integer*4 :: i, j, ipt, inode, ie
      integer*4 :: im, istart, iend, mpi_ierr, mpi_comm, unit_mpi
      
-     character*70 :: file_nhe_proc, mpi_file
+     character*70 :: file_nhe_proc, file_nhe_new, mpi_file
      
 
      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

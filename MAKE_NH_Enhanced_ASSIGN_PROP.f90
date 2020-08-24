@@ -189,7 +189,7 @@
             i = i + 1
             Qs_nhe(inode) = tomo_qs(NN_src_ind_loc(i))
           else
-            Qs_nhe(inode) = QS(node_nhe_flag(inode),1)
+            Qs_nhe(inode) = QS(node_nhe_flag(inode))
           endif
       enddo
       deallocate(tomo_qs)
@@ -208,7 +208,7 @@
             i = i + 1
             Qp_nhe(inode) = tomo_qp(NN_src_ind_loc(i))
           else
-            Qp_nhe(inode) = QP(node_nhe_flag(inode),1)
+            Qp_nhe(inode) = QP(node_nhe_flag(inode))
           endif
       enddo
       deallocate(tomo_qp)
