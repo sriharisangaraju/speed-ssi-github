@@ -28,11 +28,11 @@
 
     implicit none
 
-    integer*4 :: ie, cs_nnz_loc, nn
-    integer*4 :: r, q, p
+    integer*4 :: ie, cs_nnz_loc, nn, nn_loc
+    integer*4 :: r, q, p, is, ic
     integer*4, dimension(cs_nnz_loc) :: cs_loc
     
-    real*8, dimension(nn,nn,nn) :: rho_el, lambda_el, gamma_el
+    real*8, dimension(nn,nn,nn) :: rho_el, lambda_el, mu_el	!gamma_el
     real*8, dimension(nn_loc) :: rho_nhe, lambda_nhe, mu_nhe
 
 

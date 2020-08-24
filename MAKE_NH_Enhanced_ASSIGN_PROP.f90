@@ -102,8 +102,8 @@
 
      if(mpi_id.eq.0) then
         allocate(tomo_rho(npts_tomo),tomo_vs(npts_tomo),tomo_vp(npts_tomo),tomo_qs(npts_tomo),tomo_qp(npts_tomo))
-        do ipt = 1, npts_in
-          read(124,*)dummy, dummy, dummy, tomo_rho, tomo_vs, tomo_vp, tomo_qs, tomo_qp
+        do ipt = 1, npts_tomo
+          read(124,*)dummy, dummy, dummy, tomo_rho(ipt), tomo_vs(ipt), tomo_vp(ipt), tomo_qs(ipt), tomo_qp(ipt)
         enddo
         close(124)
      endif
@@ -123,7 +123,7 @@
 
       i = 0
       do inode=1,nn_loc
-          if ((node_nhe_flag(inode).eq.999))
+          if ((node_nhe_flag(inode).eq.999)) then
             i = i + 1
             rho_nhe(inode) = tomo_rho(NN_src_ind_loc(i))
           else
@@ -143,7 +143,7 @@
 
       i = 0
       do inode=1,nn_loc
-          if ((node_nhe_flag(inode).eq.999))
+          if ((node_nhe_flag(inode).eq.999)) then 
             i = i + 1
             vs_dum = tomo_vs(NN_src_ind_loc(i))
             mu_nhe(inode) = rho_nhe(inode) * vs_dum**2
@@ -163,7 +163,7 @@
 
       i = 0
       do inode=1,nn_loc
-          if ((node_nhe_flag(inode).eq.999))
+          if ((node_nhe_flag(inode).eq.999)) then
             i = i + 1
             vp_dum = tomo_vp(NN_src_ind_loc(i))
             vs_dum = mu_nhe(inode)/rho_nhe(inode)
@@ -185,7 +185,7 @@
 
       i = 0
       do inode=1,nn_loc
-          if ((node_nhe_flag(inode).eq.999))
+          if ((node_nhe_flag(inode).eq.999)) then
             i = i + 1
             Qs_nhe(inode) = tomo_qs(NN_src_ind_loc(i))
           else
@@ -204,7 +204,7 @@
 
       i = 0
       do inode=1,nn_loc
-          if ((node_nhe_flag(inode).eq.999))
+          if ((node_nhe_flag(inode).eq.999)) then
             i = i + 1
             Qp_nhe(inode) = tomo_qp(NN_src_ind_loc(i))
           else

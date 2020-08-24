@@ -513,7 +513,7 @@
             case('NHEE')
               inhee = inhee + 1
               tol_nhe(inhee) = 0.0
-              read(inline(ileft:iright),*) val_nhe(inhee), tol_case(inhee)
+              read(inline(ileft:iright),*) val_nhe(inhee) !, tol_case(inhee)
 
            case('FMAX') 
               read(inline(ileft:iright),*) fmax                                        

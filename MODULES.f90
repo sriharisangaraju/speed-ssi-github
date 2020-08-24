@@ -520,7 +520,7 @@ module speed_timeloop
                         nmat_rnd, rand_mat, lambda_rnd, mu_rnd, rho_rnd, &
 
                         ! Not-Honoring Enhanced
-                        nmat_nhe, rho_nhe, lambda_nhe, mu_nhe, Qs_nhe_el, Qp_nhe_el &
+                        nmat_nhe, rho_nhe, lambda_nhe, mu_nhe, Qs_nhe_el, Qp_nhe_el, &
                         
                         !EXTERNAL LOADS
                          nload_traX_el, nload_traY_el, nload_traZ_el, &                  

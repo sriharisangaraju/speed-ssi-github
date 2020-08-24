@@ -55,51 +55,41 @@
 
      	implicit none
  
-      	include 'SPEED.MPI'
+      include 'SPEED.MPI'
 
-      	integer*4 :: count
-      	integer*4, dimension(:), allocatable :: node_nhe_flag, NN_src_ind_loc
-
-
-
-      	if (mpi_id.eq.0) write(*,'(A)')
-        if (mpi_id.eq.0) write(*,'(A)')'---------------Setup Not-Honoring Enhanced ---------------' 
-
-        mpi_comm = SPEED_COMM
+      integer*4 :: count
+      integer*4, dimension(:), allocatable :: node_nhe_flag, NN_src_ind_loc
 
 
-        allocate(node_nhe_flag(nnod_loc))
-        call MAKE_NH_Enhanced_initialise(nnod_loc, nmat_nhe, val_nhe, &
-                               nmat, tag_mat, nelem_loc, con_nnz_loc, con_spx_loc, &
-                               xx_spx_loc, yy_spx_loc, zz_spx_loc, &
-                               count, &
-                               node_nhe_flag, mpi_id, mpi_comm, mpi_file)
-
-        ! count, node_nhe_flag
+    	if (mpi_id.eq.0) write(*,'(A)')
+      if (mpi_id.eq.0) write(*,'(A)')'---------------Setup Not-Honoring Enhanced ---------------' 
 
 
-        allocate(NN_src_ind_loc(count))
-        call MAKE_NH_Enhanced_NNSearch(nnod_loc, count, mpi_id, mpi_comm, &
-                                      mpi_file, NN_src_ind_loc)
+      allocate(node_nhe_flag(nnod_loc))
+      call MAKE_NH_Enhanced_initialise(nnod_loc, nmat_nhe, val_nhe, &
+                             nmat, tag_mat, nelem_loc, con_nnz_loc, con_spx_loc, &
+                             xx_spx_loc, yy_spx_loc, zz_spx_loc, &
+                             count, &
+                             node_nhe_flag, mpi_id, mpi_comm, mpi_file)
 
 
-        ! NN_src_ind_loc
+      allocate(NN_src_ind_loc(count))
+      call MAKE_NH_Enhanced_NNSearch(nnod_loc, count, mpi_id, mpi_np, mpi_comm, &
+                                    mpi_file, NN_src_ind_loc)
 
 
-        allocate(lambda_nhe(nnod_loc), mu_nhe(nnod_loc), rho_nhe(nnod_loc))
-        allocate(Qs_nhe_el(nelem_loc), Qp_nhe_el(nelem_loc)) ! gamma_nhe_el(nelem_loc))
+      allocate(lambda_nhe(nnod_loc), mu_nhe(nnod_loc), rho_nhe(nnod_loc))
+      allocate(Qs_nhe_el(nelem_loc), Qp_nhe_el(nelem_loc)) ! gamma_nhe_el(nelem_loc))
 
-        call MAKE_NH_Enhanced_ASSIGN_PROP(nnod_loc, nmat, prop_mat, sdeg_mat, &
-        					   nelem_loc, con_nnz_loc, con_spx_loc, &
-                               node_nhe_flag, count, NN_src_ind_loc, QS, QP
-                               lambda_nhe, mu_nhe, rho_nhe, Qs_nhe_el, Qp_nhe_el, &
-                               mpi_id, mpi_comm)
-
-
-        deallocate(node_nhe_flag, NN_src_ind_loc)
+      call MAKE_NH_Enhanced_ASSIGN_PROP(nnod_loc, nmat, prop_mat, sdeg_mat, &
+      					   nelem_loc, con_nnz_loc, con_spx_loc, &
+                             node_nhe_flag, count, NN_src_ind_loc, QS, QP, &
+                             lambda_nhe, mu_nhe, rho_nhe, Qs_nhe_el, Qp_nhe_el, &
+                             mpi_id, mpi_comm)
 
 
-      	if (mpi_id.eq.0) write(*,'(A)')
-        if (mpi_id.eq.0) write(*,'(A)')'--------------- Completed ---------------' 
+      deallocate(node_nhe_flag, NN_src_ind_loc)
+
+      if (mpi_id.eq.0) write(*,'(A)')'Completed.' 
 
      end subroutine MAKE_NH_Enhanced

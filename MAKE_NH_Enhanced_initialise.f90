@@ -59,8 +59,8 @@
     
      use kdtree2_module
 
-     integer*4 :: nn_loc, mpi_id ,nmat_rhe
-     integer*4, dimension(nmat_rhe) :: val_case
+     integer*4 :: nn_loc, mpi_id , nmat_nhe, nmat
+     integer*4, dimension(nmat_nhe) :: val_nhe
      integer*4, dimension(nmat) :: tag_mat
      
 
@@ -74,7 +74,7 @@
 
      real*8 :: t0, t1, time_elapsed
      integer*4 :: i, j, ipt, inode, ie
-     integer*4 :: im, istart, iend, mpi_ierr, mpi_comm
+     integer*4 :: im, istart, iend, mpi_ierr, mpi_comm, unit_mpi
      
      character*70 :: file_nhe_proc, mpi_file
      
@@ -114,12 +114,12 @@
       enddo
 
       if (count.gt.0) then
-        allocate(xs_loc_nhe(count),ys_loc_nhe(count),zs_loc_nhe(count),loc_nod_num_nhe(count))
+        allocate(xs_loc_nhe(count),ys_loc_nhe(count),zs_loc_nhe(count))
       endif
 
       count = 0
       do inode =1,nn_loc
-          if ((node_nhe_flag(inode).eq.999))
+          if ((node_nhe_flag(inode).eq.999)) then
               count = count + 1
               xs_loc_nhe(count) = xs_loc(inode)
               ys_loc_nhe(count) = ys_loc(inode)

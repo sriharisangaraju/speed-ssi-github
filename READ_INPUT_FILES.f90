@@ -177,7 +177,7 @@
          write(*,'(A,I8)') 'CASE             : ',n_case                               
 
          if(nmat_nhe.gt.0) then
-            write(*,'(A,I8)')     'Not_Honoring Enhanced Blocks : ',nmat_rnd        
+            write(*,'(A,I8)')     'Not_Honoring Enhanced Blocks : ',nmat_nhe        
           endif
       endif
       

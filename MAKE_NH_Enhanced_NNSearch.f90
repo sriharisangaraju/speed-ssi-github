@@ -54,6 +54,7 @@
      integer*4, dimension(mpi_np) :: count_proc_nhe
    
      character*70 :: file_tomo, mpi_file, file_nhe_nnind, file_nhe_proc
+     character*70 :: file_nhe_new, file_nhe_nnind_new
      integer*4 :: npts_tomo, stat, error, n_neighbours
      real(kdkind) :: query_vec(3)
      real(kdkind), dimension(:), allocatable :: xs_ip, ys_ip, zs_ip
@@ -64,7 +65,7 @@
 
      real*8 :: t0, t1, time_elapsed
      real*8, dimension(5) :: dummy
-     integer*4 :: i, j, ipt, inode, ip, ncount
+     integer*4 :: i, j, ipt, inode, ip, ncount, unit_mpi
 
 
      call MPI_BARRIER(mpi_comm, mpi_ierr)
@@ -92,12 +93,10 @@
           call EXIT(EXIT_NORMAL)
        endif
 
-       if(mpi_id.eq.0) then
-        do ipt = 1, npts_in
+        do ipt = 1, npts_tomo
           read(124,*)(nodes_in_xyz(i,ipt), i=1,3), (dummy(j), j=1,5)
         enddo
         close(124)
-       endif
 
 
        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -147,7 +146,7 @@
          
           open(unit_mpi,file=file_nhe_new)
           read(unit_mpi,*) ncount                
-          if(ncount.ne.count_proc_nhe(ip+1) then
+          if(ncount.ne.count_proc_nhe(ip+1)) then
             write(*,*)'ncount in NHE_proc files are not consistent'
             call EXIT(EXIT_NO_NODES)
           endif
@@ -167,8 +166,8 @@
           if (ncount.gt.0) then
             do inode = 1,ncount
               query_vec(1) = xs_ip(inode)
-              query_vec(2) = xs_ip(inode)
-              query_vec(3) = xs_ip(inode)
+              query_vec(2) = ys_ip(inode)
+              query_vec(3) = zs_ip(inode)
               call kdtree2_n_nearest(kd2_obj,query_vec,n_neighbours,result_temp)
               NN_src_ind_ip(inode) = result_temp(1)%idx    ! Inder of Nearest Neighbor in Tomo Points
            enddo
@@ -200,19 +199,19 @@
      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       file_nhe_nnind = 'nhenni000000.mpi'
-      unit_mpi = 1500 + ip
-      if (ip.lt. 10) then
-          write(file_nhe_nnind(12:12),'(i1)') ip
-      else if (ip .lt. 100) then
-          write(file_nhe_nnind(11:12),'(i2)') ip
-      else if (ip .lt. 1000) then 
-          write(file_nhe_nnind(10:12),'(i3)') ip
-      else if (ip .lt. 10000) then
-          write(file_nhe_nnind(9:12),'(i4)') ip
-      else if (ip .lt. 100000) then
-          write(file_nhe_nnind(8:12),'(i5)') ip
-      else if (ip .lt. 1000000) then 
-          write(file_nhe_nnind(7:12),'(i6)') ip
+      unit_mpi = 1500 + mpi_id
+      if (mpi_id.lt. 10) then
+          write(file_nhe_nnind(12:12),'(i1)') mpi_id
+      else if (mpi_id .lt. 100) then
+          write(file_nhe_nnind(11:12),'(i2)') mpi_id
+      else if (mpi_id .lt. 1000) then 
+          write(file_nhe_nnind(10:12),'(i3)') mpi_id
+      else if (mpi_id .lt. 10000) then
+          write(file_nhe_nnind(9:12),'(i4)') mpi_id
+      else if (mpi_id .lt. 100000) then
+          write(file_nhe_nnind(8:12),'(i5)') mpi_id
+      else if (mpi_id .lt. 1000000) then 
+          write(file_nhe_nnind(7:12),'(i6)') mpi_id
       endif
         
       if(len_trim(mpi_file) .ne. 70) then
