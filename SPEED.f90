@@ -175,7 +175,16 @@
          
      endif   
       
-           
+
+!*****************************************************************************************
+!   Not Honoring Enhanced (Reading Material properties from Tomo File)          
+!*****************************************************************************************
+    if (nmat_nhe .gt. 0) then
+        call MAKE_NH_Enhanced()
+        call MPI_BARRIER(mpi_comm, mpi_ierr)
+    endif
+
+
 !*****************************************************************************************
 !   BUILD LOAD MATRIX AND SEISMIC MOMENT TENSOR OR EXPLOSIVE SOURCE
 !*****************************************************************************************
@@ -244,15 +253,6 @@
                                xx_spx_loc, yy_spx_loc, zz_spx_loc, &
                                lambda_rnd, mu_rnd, rho_rnd, mpi_id)
  
-    endif
-
-
-!*****************************************************************************************
-!   Not Honoring Enhanced (Reading Material properties from Tomo File)          
-!*****************************************************************************************
-    if (nmat_nhe .gt. 0) then
-        call MAKE_NH_Enhanced()
-        call MPI_BARRIER(mpi_comm, mpi_ierr)
     endif
 
 

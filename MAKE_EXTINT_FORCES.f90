@@ -135,7 +135,8 @@
                           length_cne,&                                        
                           sour_ne,max_num_ne,num_ne,&                        
                           facsexpl,&                                        
-                          mpi_comm, mpi_np, mpi_id,testmode)
+                          mpi_comm, mpi_np, mpi_id,testmode, &
+                          nmat_nhe, rho_nhe, lambda_nhe, mu_nhe)
             
       use speed_exit_codes
 
@@ -175,7 +176,7 @@
       integer*4 :: max_num_ne                                                 
       integer*4 :: nnode_neuN,nelem_neuN                                
       integer*4 :: ne1,ne2,ne3,ne4                                        
-      integer*4 :: index_vector,index, testmode, prova                                        
+      integer*4 :: index_vector,index, testmode, prova, nmat_nhe
 
       integer*4, dimension(:), allocatable :: i4count        
       integer*4, dimension(:), allocatable :: i4normal
@@ -268,6 +269,8 @@
       real*8, dimension(:), allocatable :: xt_tra,yt_tra,zt_tra,xt_tra_glo,yt_tra_glo,zt_tra_glo
       real*8, dimension(:), allocatable :: dist_tra_real
       real*8, dimension(nnod_loc) :: xs_loc,ys_loc,zs_loc
+      real*8, dimension(nnod_loc) :: lambda_nhe, rho_nhe, mu_nhe
+      real*8, dimension(:,:,:), allocatable :: lambda_el, rho_el, mu_el
       real*8, dimension(nm) :: tref_mat
       real*8, dimension(ne_loc) :: alfa11,alfa12,alfa13, alfa21,alfa22,alfa23, alfa31,alfa32,alfa33
       real*8, dimension(ne_loc) :: beta11,beta12,beta13, beta21,beta22,beta23, beta31,beta32,beta33
@@ -996,7 +999,18 @@
             lambda = prop_mat(im,2)
             mu = prop_mat(im,3)
 
-               
+            if (nmat_nhe.gt.0) then
+              allocate(rho_el(nn,nn,nn), lambda_el(nn,nn,nn), mu_el(nn,nn,nn))
+              call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, cs_nnz_loc, cs_loc, &
+                                              rho_nhe, lambda_nhe, mu_nhe, &
+                                              rho_el, lambda_el, mu_el)
+              rho = sum(rho_el)/(nn*nn*nn)
+              lambda = sum(lambda_el)/(nn*nn*nn)
+              mu = sum(mu_el)/(nn*nn*nn)
+              deallocate(rho_el, lambda_el, mu_el)
+            endif
+
+
                if (nl_poiX.gt.0) then    ! Point load X
                   do ip = 1,nl_poiX
                      fn = 0
@@ -2456,7 +2470,18 @@
              lambda = prop_mat(im,2)
              mu = prop_mat(im,3)
 
-                        
+             if (nmat_nhe.gt.0) then
+              allocate(rho_el(nn,nn,nn), lambda_el(nn,nn,nn), mu_el(nn,nn,nn))
+              call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, cs_nnz_loc, cs_loc, &
+                                              rho_nhe, lambda_nhe, mu_nhe, &
+                                              rho_el, lambda_el, mu_el)
+              rho = sum(rho_el)/(nn*nn*nn)
+              lambda = sum(lambda_el)/(nn*nn*nn)
+              mu = sum(mu_el)/(nn*nn*nn)
+              deallocate(rho_el, lambda_el, mu_el)
+            endif
+
+
                if (nl_pres.gt.0) then    ! Pressure load
                   do ip = 1,nl_pres
                      fn = 0

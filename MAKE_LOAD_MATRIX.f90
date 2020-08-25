@@ -80,7 +80,8 @@
                     length_check_node_expl,&                                 
                     sour_node_expl,max_num_node_expl,num_node_expl,&         
                     factor_explosive_source,&                                  
-                    mpi_comm, mpi_np, mpi_id, testmode)
+                    mpi_comm, mpi_np, mpi_id, testmode, &
+                    nmat_nhe, rho_nhe, lambda_nhe, mu_nhe)
 
           
           
