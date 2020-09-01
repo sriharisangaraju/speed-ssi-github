@@ -104,8 +104,11 @@
 !    BUILD SEISMIC MOMENT
 !*****************************************************************************************
 
-
-      call MAKE_SEISMIC_MOMENT_OR_EXPLOSIVE_SOURCE()
+      if (srcmodflag.eq.0) then
+          call MAKE_SEISMIC_MOMENT_OR_EXPLOSIVE_SOURCE()
+      elseif (srcmodflag.eq.1) then
+          call MAKE_SEISMIC_MOMENT_POINTSOURCES_NHFAULT()
+      endif
 
 
 !*****************************************************************************************

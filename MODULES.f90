@@ -285,7 +285,7 @@ module speed_par
                    nnode_abc, nelem_abc, nnode_dg, nelem_dg, nelem_dg_glo, &
                    nnod_loc, nelem_loc, nface_loc, &
                    dime_js, dime_jr, &
-                   max_num_node_sism, length_check_node_sism, &                
+                   szsism, max_num_node_sism, length_check_node_sism, &                
                    max_num_node_expl, length_check_node_expl, &
                    nsend,nrecv, nsend_jump, nrecv_jump, &
                    nnode_dom, nelem_dom, edgecut, &
@@ -296,7 +296,7 @@ module speed_par
 ! 0/1 INTERGERS
       integer*4 :: file_mon_pgm, file_mon_lst, &
                    find, torf, trof, make_damping_yes_or_not, &
-                   mpi_ierr
+                   mpi_ierr, srcmodflag
       
 ! DAMPING
       integer*4 :: damping_type
@@ -505,7 +505,7 @@ module speed_timeloop
 
   use speed_par, only:  &
                         !SLIP DISTRIBUTION
-                         slip_type, &
+                         slip_type, srcmodflag, szsism,&
   
                         !CONNECTIVITY 
                          nnod, nnode_dom,  nnod_loc, local_node_num, xx_spx_loc, yy_spx_loc, zz_spx_loc, &

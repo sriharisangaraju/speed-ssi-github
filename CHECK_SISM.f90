@@ -53,7 +53,7 @@
                           length_cns,&
                           check_pos_ns, &
                           fun_sism,nf,tag_func,val_sism,&
-                          nn_loc, local_n_num)
+                          nn_loc, local_n_num,srcmodflag,szsism)
 
 
 
@@ -67,7 +67,7 @@
       integer*4 :: is,in,ip
       integer*4 :: i,j,k,h
       integer*4 :: fn
-      integer*4 :: length_cns
+      integer*4 :: length_cns,srcmodflag,szsism,val_st
             
       integer*4, dimension(0:cs_nnz) :: cs
       integer*4, dimension(nm) :: tm,sd
@@ -88,7 +88,7 @@
       real*8, dimension(max_num_ns,nl_sism) :: pos_sour_nx, pos_sour_ny, pos_sour_nz 
       real*8, dimension(length_cns,1) :: check_dist_ns
       real*8, dimension(length_cns,3) :: check_pos_ns
-      real*8, dimension(nl_sism,21) :: val_sism
+      real*8, dimension(nl_sism,szsism) :: val_sism
       
       
       
@@ -96,6 +96,12 @@
       h = 0
       nn = 2
       ne = cs(0) -1
+
+      if (srcmodflag.eq.0) then
+        val_st = 12
+      elseif (srcmodflag.eq.1) then
+        val_st = 6
+      endif
       
       allocate(ct(nn),ww(nn),dd(nn,nn))
       call MAKE_LGL_NW(nn,ct,ww,dd)
@@ -138,7 +144,7 @@
                                      !   !check_dist_ns(h,1) = dist_sour_ns(ip,isism) / val_sism(isism,19)
                                      !   !old version val_sism(isism,19) = vrup
                                      !   !new_version val_sism(isism,19) = trup
-                                     check_dist_ns(h,1) = val_sism(isism,19)  ! Trupt for the baricenter of the triangle
+                                     check_dist_ns(h,1) = val_sism(isism,val_st+7)  ! Trupt for the baricenter of the triangle
                                      !!elseif (slip_type .eq. 'ARC') then
                                      !!   check_dist_ns(h,1) = val_sism(isism,19)
                                      !!elseif (slip_type .eq. 'GAL') then
@@ -146,26 +152,34 @@
                                      !!endif
                                      !! New implementation for trup (node by node)
                                      !trup_b : dist_b = trup_p : dist_p --> trup_p = (trup_b * dist_p)/dist_b
-                                     xb = (val_sism(isism,4) + val_sism(isism,7) + val_sism(isism,10))/3.d0;
-                                     yb = (val_sism(isism,5) + val_sism(isism,8) + val_sism(isism,11))/3.d0;
-                                     zb = (val_sism(isism,6) + val_sism(isism,9) + val_sism(isism,12))/3.d0;
-                                     
-                                     trup_b = val_sism(isism,19)                                   
-                                     dist_b = dsqrt((val_sism(isism,1)-xb)**2.d0+(val_sism(isism,2)-yb)**2.d0+(val_sism(isism,3)-zb)**2.d0);
-                                     dist_p = dsqrt((val_sism(isism,1)-check_pos_ns(h,1))**2.d0 & 
-                                                   +(val_sism(isism,2)-check_pos_ns(h,2))**2.d0 & 
-                                                   +(val_sism(isism,3)-check_pos_ns(h,3))**2.d0); 
-                                                   
-                                     trup_p = trup_b*dist_p/dist_b;              
-                                     
-                                     !write(*,*) h, dist_b, trup_b, dist_p, trup_p
+                                     if (srcmodflag.eq.0) then
+                                         xb = (val_sism(isism,4) + val_sism(isism,7) + val_sism(isism,10))/3.d0;
+                                         yb = (val_sism(isism,5) + val_sism(isism,8) + val_sism(isism,11))/3.d0;
+                                         zb = (val_sism(isism,6) + val_sism(isism,9) + val_sism(isism,12))/3.d0;
+                                         
+                                         trup_b = val_sism(isism,19)                                   
+                                         dist_b = dsqrt((val_sism(isism,1)-xb)**2.d0+(val_sism(isism,2)-yb)**2.d0+(val_sism(isism,3)-zb)**2.d0);
+                                         dist_p = dsqrt((val_sism(isism,1)-check_pos_ns(h,1))**2.d0 & 
+                                                       +(val_sism(isism,2)-check_pos_ns(h,2))**2.d0 & 
+                                                       +(val_sism(isism,3)-check_pos_ns(h,3))**2.d0); 
+                                                       
+                                         trup_p = trup_b*dist_p/dist_b;              
+                                         
+                                         !write(*,*) h, dist_b, trup_b, dist_p, trup_p
+
+                                         if (dabs(dist_b) .le. 100) then
+                                            check_dist_ns(h,1) =  val_sism(isism,19)
+                                         else
+                                            check_dist_ns(h,1) = (val_sism(isism,19) * dist_sour_ns(ip,isism)) / dist_b;
+                                         endif
+
+                                     elseif (srcmodflag.eq.1) then
+                                          !dist_b = dsqrt((val_sism(isism,1)-xb)**2.d0+(val_sism(isism,2)-yb)**2.d0+(val_sism(isism,3)-zb)**2.d0);
+                                          check_dist_ns(h,1) =  val_sism(isism,val_st+7)
+                                     endif
                                      
                                                                           
-                                     if (dabs(dist_b) .le. 100) then
-                                        check_dist_ns(h,1) =  val_sism(isism,19)
-                                     else
-                                        check_dist_ns(h,1) = (val_sism(isism,19) * dist_sour_ns(ip,isism)) / dist_b;
-                                     endif
+                                     
                                      
                                  endif
 

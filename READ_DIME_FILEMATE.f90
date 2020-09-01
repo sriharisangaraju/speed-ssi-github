@@ -64,12 +64,13 @@
                                     nb_load_forX,nb_load_forY,nb_load_forZ, &
                                     nb_load_forc,nb_load_pres,nb_load_shea, &
                                     nb_load_abc,nb_load_dg,nb_func,nb_func_data,&
-                                    nb_load_sism,nb_load_expl,nb_case,nb_nhee,n_test,nb_frac)  
+                                    nb_load_sism,nb_load_expl,nb_case,nb_nhee,&
+                                    n_test,nb_frac,srcmodflag)  
                                                                                                                            
 
       implicit none
       
-      character*70   :: filemate   
+      character*70   :: filemate, srcname
       character*100000 :: inline
       character*4 :: keyword
 
@@ -89,7 +90,7 @@
       integer*4 :: nb_case, nb_nhee, n_test, nb_frac 
       integer*4 :: nb_func,nb_func_data
       integer*4 :: status
-      integer*4 :: lab_fnc, type_fnc, ndat_fnc
+      integer*4 :: lab_fnc, type_fnc, ndat_fnc, srcmodflag
       
       nb_mat = 0;            nb_mat_nle = 0;        nb_case = 0;           nb_mat_rnd = 0;        
       nb_load_dirX = 0;      nb_load_dirY = 0;      nb_load_dirZ = 0
@@ -102,6 +103,7 @@
       nb_load_sism = 0;      nb_load_expl = 0;       nb_frac = 0;
       nb_load_traX = 0;      nb_load_traY = 0;      nb_load_traZ = 0
       nb_nhee = 0;
+      srcmodflag = 0;
                  
       nb_func = 0;   nb_func_data = 0
       n_test = 0;
@@ -180,6 +182,12 @@
            case('NHEE')        
             ! Not-honoring Enhanced - Elastic- damping type 2
             nb_nhee = nb_nhee + 1
+           case('SLIP')        
+            ! Not-honoring Fault Plane
+            read(inline(5:),*) srcname
+            if (srcname.eq.'LOAD-SRCMOD2') then
+              srcmodflag = 1;
+            endif
            case('TEST')
             n_test = n_test + 1         
            case('FRAC')

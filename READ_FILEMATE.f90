@@ -162,7 +162,7 @@
                                   ntest,ftest, & !valftest,&
                                   nb_abc,lab_abc, &
                                   nb_dg,lab_dg,lab_dg_yn, lab_dg_frc, val_dg_frc, nb_frac,& 
-                                  nb_sism,val_sism,fnc_sism,lab_sism, & 
+                                  srcmodflag, szsism, nb_sism,val_sism,fnc_sism,lab_sism, & 
                                   nb_expl,val_expl,fnc_expl,lab_expl, & 
                                   nb_case,val_case,lab_case,tol_case, & 
                                   nb_nhee,val_nhe,tol_nhe, &
@@ -200,7 +200,7 @@
       integer*4 :: ipr,ish,iabc,idg
       integer*4 :: ileft,iright
       integer*4 :: i,j,dummy,status
-      integer*4 :: ntest
+      integer*4 :: ntest, srcmodflag, szsism
 
       integer*4, dimension(nb_diriX) :: fnc_diriX,lab_diriX
       integer*4, dimension(nb_diriY) :: fnc_diriY,lab_diriY
@@ -274,7 +274,7 @@
       real*8, dimension(nb_forF,10) :: val_forF
       real*8, dimension(nb_pre,10) :: val_pre
       real*8, dimension(nb_she,10) :: val_she
-      real*8, dimension(nb_sism,21) :: val_sism                        
+      real*8, dimension(nb_sism,szsism) :: val_sism                        
       real*8, dimension(nb_expl,20) :: val_expl                        
       real*8, dimension(nb_mate_nle,1) :: val_mat_nle                
       real*8, dimension(nb_mate,4) :: char_mat
@@ -481,16 +481,25 @@
                         
            case('SISM')        
               isism = isism + 1                                                                
-              read(inline(ileft:iright),*) fnc_sism(isism),&                                
-                         lab_sism(isism),val_sism(isism,1),val_sism(isism,2),&                        
-                         val_sism(isism,3),val_sism(isism,4),val_sism(isism,5),&                
-                         val_sism(isism,6),val_sism(isism,7),val_sism(isism,8),&                
-                         val_sism(isism,9),val_sism(isism,10),val_sism(isism,11),&                
-                         val_sism(isism,12),val_sism(isism,13),val_sism(isism,14),&        
-                         val_sism(isism,15),val_sism(isism,16),val_sism(isism,17),&        
-                         val_sism(isism,18),val_sism(isism,19),val_sism(isism,20),&        
-                         val_sism(isism,21)
-
+              if (srcmodflag.eq.0) then
+                  read(inline(ileft:iright),*) fnc_sism(isism),&                                
+                             lab_sism(isism),val_sism(isism,1),val_sism(isism,2),&                        
+                             val_sism(isism,3),val_sism(isism,4),val_sism(isism,5),&                
+                             val_sism(isism,6),val_sism(isism,7),val_sism(isism,8),&                
+                             val_sism(isism,9),val_sism(isism,10),val_sism(isism,11),&                
+                             val_sism(isism,12),val_sism(isism,13),val_sism(isism,14),&        
+                             val_sism(isism,15),val_sism(isism,16),val_sism(isism,17),&        
+                             val_sism(isism,18),val_sism(isism,19),val_sism(isism,20),&        
+                             val_sism(isism,21)
+              elseif (srcmodflag.eq.1) then
+                  read(inline(ileft:iright),*) fnc_sism(isism),&                                
+                             lab_sism(isism),val_sism(isism,1),val_sism(isism,2),&                        
+                             val_sism(isism,3),val_sism(isism,4),val_sism(isism,5),&                
+                             val_sism(isism,6),val_sism(isism,7),val_sism(isism,8),&                
+                             val_sism(isism,9),val_sism(isism,10),val_sism(isism,11),&                
+                             val_sism(isism,12),val_sism(isism,13),val_sism(isism,14),&        
+                             val_sism(isism,15)
+              endif
 
            case('EXPL')                                                        
               iexpl = iexpl + 1                                                                

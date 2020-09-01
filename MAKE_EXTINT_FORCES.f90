@@ -116,7 +116,7 @@
                           nl_plaX,val_plaX,fun_plaX,tag_plaX,&                 
                           nl_plaY,val_plaY,fun_plaY,tag_plaY,&                 
                           nl_plaZ,val_plaZ,fun_plaZ,tag_plaZ,&                 
-                          nl_sism,val_sism,fun_sism,tag_sism,&                 
+                          srcmodflag,szsism,nl_sism,val_sism,fun_sism,tag_sism,&                 
                           nl_expl,val_expl,fun_expl,tag_expl,&                 
                           nl_forX,val_forX,fun_forX,&
                           nl_forY,val_forY,fun_forY,&
@@ -152,13 +152,13 @@
       integer*4 :: nl_neuN                                                  
       integer*4 :: nl_poiX,nl_poiY,nl_poiZ,nl_forX,nl_forY,nl_forZ
       integer*4 :: nl_plaX,nl_plaY,nl_plaZ,nl_traX,nl_traY,nl_traZ                                 
-      integer*4 :: nl_sism                                                 
+      integer*4 :: nl_sism, srcmodflag, szsism
       integer*4 :: nl_expl                                                 
       integer*4 :: nl_forc,nl_pres,nl_shea, n_test
       integer*4 :: nfunc, nfunc_data
       integer*4 :: im,ifun,ie,ip,il,nface_loc,nn,fn
       integer*4 :: is,in,id
-      integer*4 :: i,j,k
+      integer*4 :: i,j,k, val_st
       integer*4 :: ipl, nb_tra_load                                                                
       integer*4 :: nhexa                                                        
       integer*4 :: sum_node_bottom,sum_node_bottom1,sum_node_bottom2                
@@ -295,7 +295,7 @@
       real*8, dimension(nl_plaX,1) :: val_plaX                                 
       real*8, dimension(nl_plaY,1) :: val_plaY                                 
       real*8, dimension(nl_plaZ,1) :: val_plaZ                                 
-      real*8, dimension(nl_sism,21) :: val_sism                         
+      real*8, dimension(nl_sism,szsism) :: val_sism                         
       real*8, dimension(nl_expl,20) :: val_expl                         
       real*8, dimension(nl_forX,4) :: val_forX
       real*8, dimension(nl_forY,4) :: val_forY
@@ -2319,18 +2319,23 @@
 
 
           if (nl_sism.gt.0) then                                                                        
+                 if (srcmodflag.eq.0) then
+                    val_st = 12
+                  elseif (srcmodflag.eq.1) then
+                    val_st = 6
+                  endif
                  do isism = 1,nl_sism                                                                
-                     slip1_sism = val_sism(isism,13)                                                
-                     slip2_sism = val_sism(isism,14)                                                
-                     slip3_sism = val_sism(isism,15)                                                
+                     slip1_sism = val_sism(isism,val_st + 1)                                                
+                     slip2_sism = val_sism(isism,val_st + 2)                                                
+                     slip3_sism = val_sism(isism,val_st + 3)                                                
                      
-                     norm1_sism = val_sism(isism,16)                                                
-                     norm2_sism = val_sism(isism,17)                                                
-                     norm3_sism = val_sism(isism,18)                                                
+                     norm1_sism = val_sism(isism,val_st + 4)                                                
+                     norm2_sism = val_sism(isism,val_st + 5)                                                
+                     norm3_sism = val_sism(isism,val_st + 6)                                                
                      
-                     amp_sism = val_sism(isism,20)
+                     amp_sism = val_sism(isism,val_st + 8)
                                          
-                     tau_sism = val_sism(isism,21)                                                        
+                     tau_sism = val_sism(isism,val_st + 9)                                                        
 
                     ! Seismic Tensor is given is terms of norma and slip vector:
                                         ! nx, ny, nz and sx, sy, sz

@@ -61,7 +61,7 @@
                     nload_plaX_el,val_plaX_el,fun_plaX_el,tag_plaX_el,&
                     nload_plaY_el,val_plaY_el,fun_plaY_el,tag_plaY_el,&
                     nload_plaZ_el,val_plaZ_el,fun_plaZ_el,tag_plaZ_el,&
-                    nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el,&
+                    srcmodflag,szsism,nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el,&
                     nload_expl_el,val_expl_el,fun_expl_el,tag_expl_el,&
                     nload_forX_el,val_forX_el,fun_forX_el,&
                     nload_forY_el,val_forY_el,fun_forY_el,&
@@ -147,7 +147,7 @@
                          length_check_node_sism,& 
                          check_pos_sism, &               
                          fun_sism_el, nfunc, tag_func, val_sism_el, &
-                         nnod_loc, local_node_num)
+                         nnod_loc, local_node_num, srcmodflag,szsism)
 
 ! uncomment this to check kinematic source parameters
 !          filename = 'SISM00000.dat';

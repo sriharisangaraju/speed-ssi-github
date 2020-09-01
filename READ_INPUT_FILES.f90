@@ -135,7 +135,7 @@
                             nload_abc_el,nload_dg_el,nfunc,nfunc_data,&
                             nload_sism_el,&                                                                 
                             nload_expl_el,&                                                                
-                            n_case, nmat_nhe, n_test,n_frac)                   
+                            n_case, nmat_nhe, n_test,n_frac,srcmodflag)                   
                                                                                                                             
       if(n_test.gt.0 .and. mpi_id .eq. 0)  write(*,'(A)')'*********TEST MODE*********'
 
@@ -168,6 +168,7 @@
          if(nload_abc_el.gt.0)  write(*,'(A,I8)')'ABSO Boundaries  : ',nload_abc_el
          if(nload_dg_el.gt.0)   write(*,'(A,I8)')'DG Interfaces    : ',nload_dg_el
          if(nfunc.gt.0)         write(*,'(A,I8)')'Functions        : ',nfunc
+         if(srcmodflag.eq.1) write(*,*)'Using Not Honoring Fault Method For Siesmic Sources'
          if(nload_sism_el.gt.0) write(*,'(A,I8)')'Seis. Mom. Load  : ',nload_sism_el        
          if(nload_expl_el.gt.0) write(*,'(A,I8)')'Explosive Load   : ',nload_expl_el            
          if (n_case.gt.1) then
@@ -229,8 +230,18 @@
       if (nload_dg_el .gt. 0) then
               tag_dg_frc=0; val_dg_frc=0;
       endif
-      if (nload_sism_el.gt.0) allocate (val_sism_el(nload_sism_el,21), &
-                                        fun_sism_el(nload_sism_el), tag_sism_el(nload_sism_el))     
+
+      if (srcmodflag.eq.0) then
+          szsism = 21
+          if (nload_sism_el.gt.0) allocate (val_sism_el(nload_sism_el,21), &
+                                            fun_sism_el(nload_sism_el), tag_sism_el(nload_sism_el))
+      elseif (srcmodflag.eq.1) then
+          szsism = 15
+          if (nload_sism_el.gt.0) allocate (val_sism_el(nload_sism_el,15), &
+                                            fun_sism_el(nload_sism_el), tag_sism_el(nload_sism_el))
+      endif
+
+
       if (nload_expl_el.gt.0) allocate (val_expl_el(nload_expl_el,20), &
                                         fun_expl_el(nload_expl_el), tag_expl_el(nload_expl_el))
       
@@ -272,7 +283,7 @@
                 n_test,fun_test,& !val_fun_test,&
                 nload_abc_el,tag_abc_el,&
                 nload_dg_el,tag_dg_el,tag_dg_yn, tag_dg_frc, val_dg_frc, n_frac, &
-                nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el, &                 
+                srcmodflag, szsism, nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el, &                 
                 nload_expl_el,val_expl_el,fun_expl_el,tag_expl_el, &                 
                 n_case,val_case,tag_case,tol_case, &
                 nmat_nhe,val_nhe,tol_nhe, &                                 
