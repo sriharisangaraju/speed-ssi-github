@@ -174,8 +174,18 @@
                                          endif
 
                                      elseif (srcmodflag.eq.1) then
-                                          !dist_b = dsqrt((val_sism(isism,1)-xb)**2.d0+(val_sism(isism,2)-yb)**2.d0+(val_sism(isism,3)-zb)**2.d0);
-                                          check_dist_ns(h,1) =  val_sism(isism,val_st+7)
+                                          xb = val_sism(isism,4)
+                                          yb = val_sism(isism,5)
+                                          zb = val_sism(isism,6)
+                                          dist_b = dsqrt((val_sism(isism,1)-xb)**2.d0+(val_sism(isism,2)-yb)**2.d0+(val_sism(isism,3)-zb)**2.d0)
+                                          dist_p = dsqrt((val_sism(isism,1)-check_pos_ns(h,1))**2.d0 & 
+                                                       +(val_sism(isism,2)-check_pos_ns(h,2))**2.d0 & 
+                                                       +(val_sism(isism,3)-check_pos_ns(h,3))**2.d0); 
+                                          if (dabs(dist_b) .le. 100) then
+                                            check_dist_ns(h,1) =  val_sism(isism,val_st+7)
+                                         else
+                                            check_dist_ns(h,1) = (val_sism(isism,val_st+7) * dist_p) / dist_b;
+                                         endif
                                      endif
                                      
                                                                           
