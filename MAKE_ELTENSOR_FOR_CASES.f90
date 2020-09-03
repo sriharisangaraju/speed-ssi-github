@@ -264,14 +264,14 @@
 					 
                    elseif (tcase.eq.32) then
                    !------------------------------------------------------------------
-                   ! CASE 31: GRONINGEN - LAYERED MODEL
+                   ! CASE 32: GRONINGEN - LAYERED MODEL
                         call MAKE_MECH_PROP_CASE_032(rho,lambda,mu,gamma,qs,qp, & !outputs
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
 
                    elseif (tcase.eq.33) then
                    !------------------------------------------------------------------
-                   ! CASE 31: GRONINGEN - 2ND LAYERED MODEL
+                   ! CASE 33: GRONINGEN - 2ND LAYERED MODEL
                         call MAKE_MECH_PROP_CASE_033(rho,lambda,mu,gamma,qs,qp, & !outputs
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
@@ -351,7 +351,9 @@
                         
                    if (check_case .eq. 1)  &
                        write(1000+mpi_id,*) xs(ic),ys(ic),zs(ic), &
-                                            VS, VP, rho, lambda, mu, &
+                                            dsqrt(mu/rho), &
+                                            dsqrt((lambda + 2.d0*mu)/rho), &
+                                            rho, lambda, mu, &
                                             qp, qs, gamma, zs_elev(ic), zs_all(ic)                              
 
                         
