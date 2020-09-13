@@ -1018,7 +1018,7 @@
 
                                       if (local_n_num(in) .eq. node_poiX(ip)) then
                                       
-                                         fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + val_poiX(ip,4)  
+                                         fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + val_poiX(ip,4)/node_counter_poiX(ip)  
                                       ! node_counter_poiX = node_counter_poiX + 1;                                   
                                       endif
                                    enddo
@@ -1052,7 +1052,7 @@
                                  
                                        if (local_n_num(in) .eq. node_poiY(ip)) then
                                        
-                                          fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) + val_poiY(ip,4)
+                                          fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) + val_poiY(ip,4)/node_counter_poiY(ip)
                                        !node_counter_poiY = node_counter_poiY + 1;
                                        
                                        endif
