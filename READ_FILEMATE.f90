@@ -614,6 +614,27 @@
                     ind_fnc(ifunc +1) = ind_fnc(ifunc) + 1
                  read(inline(ileft:iright),*) dummy,dummy,&
                     (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)                    
+ 
+              case(773)
+                 read(inline(ileft:iright),*)dummy,dummy,ndat_fnc,fileinput
+                 ind_fnc(ifunc +1) = ind_fnc(ifunc) + ndat_fnc
+
+                 open(24,file=fileinput)
+                 read(24,*) file_nd
+                 if (ndat_fnc .ne. file_nd) then
+                    write(*,*) 'Error reading function ! ndat_fnc .ne. file_nd !'
+                    write(*,*) 'Error reading function from file ', trim(fileinput), '!'
+                    write(*,*) 'Line numbers not consistent with material file.'
+                    call EXIT(EXIT_FUNCTION_ERROR)
+                 endif
+                 do j = 1, file_nd
+                    i = ind_fnc(ifunc) + (j -1)
+                    read(24,*) dat_fnc(i)
+                 enddo
+                 close(24)
+                 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ 
+ 
             
             end select
                                            
