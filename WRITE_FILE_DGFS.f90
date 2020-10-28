@@ -123,8 +123,9 @@
      integer*4, dimension(:,:), allocatable :: DG_CON_ALL 
      integer*4, dimension(3,nel_dg_glo) :: faces
      integer*4, dimension(nel_dg_glo,3) :: mat_el_fac
+     integer*4, dimension(nel_dg_glo)   :: link_faces
 
-     real*8 :: normal_x, normal_y, normal_z
+     real*8 :: normal_x, normal_y, normal_z, dummyreal
      real*8 :: c_alfa11, c_alfa12, c_alfa13, c_alfa21, c_alfa22, c_alfa23, c_alfa31, c_alfa32, c_alfa33
      real*8 :: c_beta11, c_beta12, c_beta13, c_beta21, c_beta22, c_beta23, c_beta31, c_beta32, c_beta33
      real*8 :: c_gamma1, c_gamma2, c_gamma3, c_delta1, c_delta2, c_delta3
@@ -183,7 +184,7 @@
      read(unitnorm,*) nofel
      do i = 1, nofel
        read(unitnorm,*) mat_el_fac(i,1),mat_el_fac(i,2),mat_el_fac(i,3) ,&
-                       normalxyz(i,1), normalxyz(i,2), normalxyz(i,3), dummy
+                       normalxyz(i,1), normalxyz(i,2), normalxyz(i,3), dummy, dummyreal, dummyreal, link_faces(i)
      enddo
      
      close(unitnorm)
@@ -209,7 +210,7 @@
                              
               do while (tt.eq.0 .and. ih.le. nel_dg_glo)   
               
-                 if( faces(1,ih) .ne. dg_els(it)%mat) then
+                 if( (faces(1,ih) .ne. dg_els(it)%mat) .and. (link_faces(ih) .eq. dg_els(it)%link) ) then
                               
                     !ik = faces(2,ih)
                     !il = faces(3,ih)

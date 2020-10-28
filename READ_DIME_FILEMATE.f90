@@ -170,6 +170,8 @@
             nb_load_abc = nb_load_abc + 1
            case('DGIC')
             nb_load_dg = nb_load_dg + 1
+           case('DGIX')
+            nb_load_dg = nb_load_dg + 1
            case('SISM')        
             nb_load_sism = nb_load_sism + 1                
            case('EXPL')        

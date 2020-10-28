@@ -161,7 +161,8 @@
                                   nb_she,val_she,fnc_she, &
                                   ntest,ftest, & !valftest,&
                                   nb_abc,lab_abc, &
-                                  nb_dg,lab_dg,lab_dg_yn, lab_dg_frc, val_dg_frc, nb_frac,& 
+                                  nb_dg,lab_dg,lab_dg_yn,lab_dg_link,&
+                                  lab_dg_frc, val_dg_frc, nb_frac,& 
                                   nb_sism,val_sism,fnc_sism,lab_sism, & 
                                   nb_expl,val_expl,fnc_expl,lab_expl, & 
                                   nb_case,val_case,lab_case,tol_case, & 
@@ -216,7 +217,7 @@
       integer*4, dimension(nb_pre) :: fnc_pre
       integer*4, dimension(nb_she) :: fnc_she     
       integer*4, dimension(nb_abc) :: lab_abc
-      integer*4, dimension(nb_dg) :: lab_dg, lab_dg_yn, lab_dg_frc
+      integer*4, dimension(nb_dg) :: lab_dg, lab_dg_yn, lab_dg_frc, lab_dg_link
       integer*4, dimension(nb_sism) :: fnc_sism,lab_sism                  
       integer*4, dimension(nb_expl) :: fnc_expl,lab_expl                  
       integer*4, dimension(nb_case) :: lab_case                        
@@ -473,6 +474,11 @@
             else
                  read(inline(ileft:iright),*) lab_dg(idg), lab_dg_yn(idg), lab_dg_frc(idg), val_dg_frc(idg,1), val_dg_frc(idg,2)
             endif
+
+           case('DGIX')
+            idg = idg+1
+            read(inline(ileft:iright),*) lab_dg(idg), lab_dg_yn(idg), lab_dg_link(idg)
+           
                         
            case('SISM')        
               isism = isism + 1                                                                

@@ -71,7 +71,7 @@
       if (nload_pres_el.gt.0) deallocate (val_pres_el,fun_pres_el)
       if (nload_shea_el.gt.0) deallocate (val_shea_el,fun_shea_el)
       if (nload_abc_el.gt.0) deallocate (tag_abc_el)
-      if (nload_dg_el.gt.0) deallocate (tag_dg_el, tag_dg_yn)
+      if (nload_dg_el.gt.0) deallocate (tag_dg_el, tag_dg_yn, tag_dg_link)
       if (nfunc.gt.0) deallocate (func_type,func_indx,func_data)
       if (n_case.gt.0) deallocate(zs_elev, zs_all, sub_tag_all,vs_tria, thick) !tag_case, val_case, tol_case
       if (nface.gt.0) deallocate(con_spx_bc_loc,con_bc)
