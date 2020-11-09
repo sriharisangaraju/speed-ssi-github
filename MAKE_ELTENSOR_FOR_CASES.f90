@@ -71,7 +71,7 @@
       integer*4, dimension(0:cs_nnz_loc) :: cs_loc                
 
       real*8 :: Depth, Depth_real, vs_all, vp_all, thickness, vs30, pig
-      real*8 :: VS,VP,rho,lambda,mu,gamma,ni, qs,qp
+      real*8 :: VS,VP, rho,lambda,mu,gamma,ni, qs,qp
       real*8 :: x1,y1,x2,y2,coef_a, coef_b, coef_c, numer, den, distance, f_distance
 
       real*8, dimension(nn_loc) :: zs_elev
