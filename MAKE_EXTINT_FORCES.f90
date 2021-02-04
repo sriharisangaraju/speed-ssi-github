@@ -279,13 +279,28 @@
       real*8, dimension(nl_dirX,4) :: val_dirX
       real*8, dimension(nl_dirY,4) :: val_dirY
       real*8, dimension(nl_dirZ,4) :: val_dirZ
-      real*8, dimension(nl_neuX,4) :: val_neuX
-      real*8, dimension(nl_neuY,4) :: val_neuY
-      real*8, dimension(nl_neuZ,4) :: val_neuZ
-      real*8, dimension(nl_neuN,4) :: val_neuN                 
-      real*8, dimension(nl_poiX,4) :: val_poiX
-      real*8, dimension(nl_poiY,4) :: val_poiY
-      real*8, dimension(nl_poiZ,4) :: val_poiZ
+
+
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
+!      real*8, dimension(nl_neuX,4) :: val_neuX
+!      real*8, dimension(nl_neuY,4) :: val_neuY
+!      real*8, dimension(nl_neuZ,4) :: val_neuZ
+!      real*8, dimension(nl_neuN,4) :: val_neuN                 
+!      real*8, dimension(nl_poiX,4) :: val_poiX
+!      real*8, dimension(nl_poiY,4) :: val_poiY
+!      real*8, dimension(nl_poiZ,4) :: val_poiZ
+
+      real*8, dimension(nl_neuX,6) :: val_neuX
+      real*8, dimension(nl_neuY,6) :: val_neuY
+      real*8, dimension(nl_neuZ,6) :: val_neuZ
+      real*8, dimension(nl_neuN,6) :: val_neuN                 
+      real*8, dimension(nl_poiX,6) :: val_poiX
+      real*8, dimension(nl_poiY,6) :: val_poiY
+      real*8, dimension(nl_poiZ,6) :: val_poiZ
+
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
       real*8, dimension(nl_traX,4) :: val_traX
       real*8, dimension(nl_traY,4) :: val_traY
       real*8, dimension(nl_traZ,4) :: val_traZ
@@ -302,11 +317,18 @@
       real*8, dimension(nl_shea,10) :: val_shea
       !real*8, dimension(n_test,10) :: val_fun_test
       real*8, dimension(nl_expl,6) :: facsexpl                                 
-      real*8, dimension(nfunc,3*nnod_loc) :: fmat
       real*8, dimension(nl_sism,6) :: facsmom                                         
       real*8, dimension(nl_sism,1) :: tausmom                                         
       real*8, dimension(3,3) :: rot
       real*8, dimension(nfunc_data) :: func_data      
+
+
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
+!      real*8, dimension(nfunc,3*nnod_loc) :: fmat
+       real*8, dimension(nfunc,3*nnod_loc,3) :: fmat
+! MAIN DIFFERENCE is that FMAT 2dim --> 3dim
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 
 !***********************************************************************************
       pi = 4.d0*datan(1.d0);
@@ -1017,9 +1039,16 @@
                                       in = cs_loc(cs_loc(ie -1) +is)
 
                                       if (local_n_num(in) .eq. node_poiX(ip)) then
-                                      
-                                         fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + val_poiX(ip,4)/node_counter_poiX(ip)  
-                                      ! node_counter_poiX = node_counter_poiX + 1;                                   
+                                         ! this is the correct implementation of point source
+                                         fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) + val_poiX(ip,4)/node_counter_poiX(ip)  
+                                         !fmat(fn,(3*(in -1) +1),1) = val_poiX(ip,4)   
+                                         
+                                         ! MDOF -- additional parameters
+                                         fmat(fn,(3*(in -1) +1),2) = val_poiX(ip,5)  
+                                         fmat(fn,(3*(in -1) +1),3) = val_poiX(ip,6) 
+                                         ! MDOF -- additional parameters
+                                         
+                                        ! node_counter_poiX = node_counter_poiX + 1;                                   
                                       endif
                                    enddo
                                 enddo
@@ -1052,7 +1081,13 @@
                                  
                                        if (local_n_num(in) .eq. node_poiY(ip)) then
                                        
-                                          fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) + val_poiY(ip,4)/node_counter_poiY(ip)
+                                          fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) + val_poiY(ip,4)/node_counter_poiY(ip)
+                                         ! MDOF -- additional parameters
+                                         fmat(fn,(3*(in -1) +2),2) = val_poiY(ip,5)  
+                                         fmat(fn,(3*(in -1) +2),3) = val_poiY(ip,6) 
+                                         ! MDOF -- additional parameters
+
+
                                        !node_counter_poiY = node_counter_poiY + 1;
                                        
                                        endif
@@ -1087,8 +1122,13 @@
                                                                 
                                      if (local_n_num(in) .eq. node_poiZ(ip)) then
                                        
-                                       fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) &
-                                                            + val_poiZ(ip,4)/node_counter_poiZ(ip) 
+                                         fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) &
+                                                                       + val_poiZ(ip,4)/node_counter_poiZ(ip) 
+                                         ! MDOF -- additional parameters
+                                         fmat(fn,(3*(in -1) +3),2) = val_poiZ(ip,5)  
+                                         fmat(fn,(3*(in -1) +3),3) = val_poiZ(ip,6) 
+                                         ! MDOF -- additional parameters
+
                                        !write(*,*) local_n_num(in),xs_loc(in),ys_loc(in),zs_loc(in)                     
                                        !node_counter_poiZ = node_counter_poiZ + 1;
 
@@ -1187,7 +1227,7 @@
                                        !write(*,*) in
                                  
                                        if (local_n_num(in) .eq. n_tra(ic)) then
-                                           fmat(fn,(3*(in -1) +3)) = val_traZ(ip,2)
+                                           fmat(fn,(3*(in -1) +3),1) = val_traZ(ip,2)
                                            
                                           ! write(*,*) 'local node', in, local_n_num(in), val_traZ(ip,2)
                                           ! read(*,*)
@@ -1464,7 +1504,7 @@
                                       in = cs_loc(cs_loc(ie -1) + is)
                             
                                       term = 4 * C * val_plaX(ipl,1) * ww(i) * ww (j) * dabs(det_j) / ellez
-                                      fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + term
+                                      fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) + term
 
                                      prova = 3*(in -1) +1
                                      
@@ -1547,7 +1587,7 @@
 !                                     endif
 
 
-                                    fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + term
+                                    fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) + term
                                 enddo
                               enddo
                              
@@ -1609,7 +1649,7 @@
                                      in = cs_loc(cs_loc(ie -1) +is)
 
                                      term = 4 * C * val_plaX(ipl,1) * ww(j) * ww (k) * dabs(det_j) / ellez
-                                     fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + term
+                                     fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) + term
                                      
                                      
                                 enddo
@@ -1733,7 +1773,7 @@
                                      in = cs_loc(cs_loc(ie -1) +is)
 
                                      term = 4 * C * val_plaY(ipl,1) * ww(i) * ww (j) * dabs(det_j) / ellez
-                                     fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) + term
+                                     fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) + term
                                 enddo
                             enddo
                               
@@ -1796,7 +1836,7 @@
                                    in = cs_loc(cs_loc(ie -1) +is)
                               
                                    term = 4 * C * val_plaY(ipl,1) * ww(i) * ww (k) * dabs(det_j) / ellez
-                                   fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) + term
+                                   fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) + term
                                 enddo
                               enddo
                              
@@ -1860,7 +1900,7 @@
                                    in = cs_loc(cs_loc(ie -1) +is)
                               
                                    term = 4 * C * val_plaY(ipl,1) * ww(j) * ww (k) * dabs(det_j) / ellez
-                                   fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) + term
+                                   fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) + term
 
                                 enddo
                               enddo
@@ -1980,7 +2020,7 @@
                                         in = cs_loc(cs_loc(ie -1) +is)
                               
                                         term = 4 * C * val_plaZ(ipl,1)  * ww(i) * ww (j) * dabs(det_j) / ellez
-                                        fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) + term
+                                        fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) + term
                                 enddo
                               enddo
                               
@@ -2045,7 +2085,7 @@
                                         in = cs_loc(cs_loc(ie -1) +is)
 
                                         term = 4 * C * val_plaZ(ipl,1) * ww(i) * ww (k) * dabs(det_j) / ellez
-                                        fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) + term
+                                        fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) + term
                                 enddo
                               enddo
                              
@@ -2112,7 +2152,7 @@
                                         in = cs_loc(cs_loc(ie -1) +is)
                               
                                         term = 4 * C * val_plaZ(ipl,1) * ww(j) * ww (k) * dabs(det_j) / ellez
-                                        fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) + term
+                                        fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) + term
                                 enddo
                               enddo
                              
@@ -2535,9 +2575,9 @@
                                     f3 = -2.0*term*x3/(r3**2) * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
                                     
                                    
-                                    fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) +rot(1,1)*f1 +rot(1,2)*f2 +rot(1,3)*f3
-                                    fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) +rot(2,1)*f1 +rot(2,2)*f2 +rot(2,3)*f3
-                                    fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) +rot(3,1)*f1 +rot(3,2)*f2 +rot(3,3)*f3
+                                    fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) +rot(1,1)*f1 +rot(1,2)*f2 +rot(1,3)*f3
+                                    fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) +rot(2,1)*f1 +rot(2,2)*f2 +rot(2,3)*f3
+                                    fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) +rot(3,1)*f1 +rot(3,2)*f2 +rot(3,3)*f3
                                     
                               enddo
                            enddo
@@ -2625,9 +2665,9 @@
                                     f3 = +2.0*term*x2/(r2**2) * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
                                     
                                     
-                                    fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) +rot(1,1)*f1 +rot(1,2)*f2 +rot(1,3)*f3
-                                    fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) +rot(2,1)*f1 +rot(2,2)*f2 +rot(2,3)*f3
-                                    fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) +rot(3,1)*f1 +rot(3,2)*f2 +rot(3,3)*f3
+                                    fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) +rot(1,1)*f1 +rot(1,2)*f2 +rot(1,3)*f3
+                                    fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) +rot(2,1)*f1 +rot(2,2)*f2 +rot(2,3)*f3
+                                    fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) +rot(3,1)*f1 +rot(3,2)*f2 +rot(3,3)*f3
                                     
                               enddo
                            enddo
@@ -2688,12 +2728,12 @@
                                     
                                  if (tag_func(fn) .eq. 100) then
                                                                        
-                                     fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) - dcos(k1*x+k2*y+k3*z) &
+                                     fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) - dcos(k1*x+k2*y+k3*z) &
                                                               *(-k1**2*(lambda+2*mu)-mu*(k2**2+k3**2))* &
                                                                det_j * ww(i)*ww(j)*ww(k)
                                  elseif(tag_func(fn) .eq. 101) then
                                  
-                                     fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) - dcos(k1*x+k2*y+k3*z) &
+                                     fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) - dcos(k1*x+k2*y+k3*z) &
                                                               * rho * &
                                                                det_j * ww(i)*ww(j)*ww(k)
                                                                
@@ -2704,7 +2744,7 @@
                                      
                                      k3 = k3*omega/vp;
                                                              
-                                     fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) - dcos(k1*x+k2*y+k3*z) &
+                                     fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) - dcos(k1*x+k2*y+k3*z) &
                                                         * (k1*k3* (lambda+mu) )* &
                                                                det_j * ww(i)*ww(j)*ww(k)
                                                                
@@ -2777,18 +2817,18 @@
                                     
                                  if (tag_func(fn) .eq. 100) then
                                                                        
-                                     fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) - dcos(k1*x+k2*y+k3*z) &
+                                     fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) - dcos(k1*x+k2*y+k3*z) &
                                                               *(-k1*k2*(lambda+mu))* &
                                                                det_j * ww(i)*ww(j)*ww(k)
                                  elseif(tag_func(fn) .eq. 101) then
                                  
-                                     fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) - 0.d0 * &
+                                     fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) - 0.d0 * &
                                                                det_j * ww(i)*ww(j)*ww(k)
                                  elseif(tag_func(fn) .eq. 102) then
                                      
                                      k3 = k3*omega/vp;
                                                              
-                                     fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) - dcos(k1*x+k2*y+k3*z) &
+                                     fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) - dcos(k1*x+k2*y+k3*z) &
                                                         * (k2*k3* (lambda+ mu) )* &
                                                                det_j * ww(i)*ww(j)*ww(k)
                                                                
@@ -2857,13 +2897,13 @@
 
                                  if (tag_func(fn) .eq. 100) then
                                                                        
-                                     fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) - dcos(k1*x+k2*y+k3*z) &
+                                     fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) - dcos(k1*x+k2*y+k3*z) &
                                                               *(-k1*k2*(lambda+mu))* &
                                                                det_j * ww(i)*ww(j)*ww(k)
                                  elseif(tag_func(fn) .eq. 101) then
                                  
                                  
-                                     fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) - 0.d0 * &
+                                     fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) - 0.d0 * &
                                                                det_j * ww(i)*ww(j)*ww(k)
                                  elseif(tag_func(fn) .eq. 102) then
                                  
@@ -2879,7 +2919,7 @@
                                                                             
                                      k3 = k3*omega/vp;
                                                              
-                                     fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) - dcos(k1*x+k2*y+k3*z) &
+                                     fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) - dcos(k1*x+k2*y+k3*z) &
                                       * (k3**2 * ((lambda-lambda2)+2.d0*(mu-mu2)) &
                                        + k1**2 * (mu-mu2) + k2**2 * (mu-mu2) - (rho-rho2) * omega**2  )* &
                                                                det_j * ww(i)*ww(j)*ww(k)
@@ -2898,7 +2938,7 @@
                                                                             
                                      k3 = k3*omega/vp;
                                                              
-                                     fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) - dsin(k1*x+k2*y+k3*z) &
+                                     fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) - dsin(k1*x+k2*y+k3*z) &
                                       * (k3**2 * ((lambda-lambda2)+2.d0*(mu-mu2)) &
                                        + k1**2 * (mu-mu2) + k2**2 * (mu-mu2) - (rho-rho2) * omega**2  )* &
                                                                det_j * ww(i)*ww(j)*ww(k)
@@ -2908,7 +2948,7 @@
                                      !write(*,*) k3
                                      vp = dsqrt((lambda+2.d0*mu)/rho);
                                      k3 = k3*omega/vp;                                                                                              
-                                     fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) - dcos(k1*x+k2*y+k3*z) &
+                                     fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) - dcos(k1*x+k2*y+k3*z) &
                                       * (k3**2 * (lambda+2.d0*mu) &
                                        + k1**2 * mu + k2**2 * mu - rho * omega**2  )* &
                                                                det_j * ww(i)*ww(j)*ww(k)
@@ -2922,7 +2962,7 @@
 
                                      vp = dsqrt((lambda+2.d0*mu)/rho);                                
                                      k3 = k3*omega/vp;                                                                                              
-                                     fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) - dsin(k1*x+k2*y+k3*z) &
+                                     fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) - dsin(k1*x+k2*y+k3*z) &
                                       * (k3**2 * (lambda+2.d0*mu) &
                                        + k1**2 * mu + k2**2 * mu - rho * omega**2  )* &
                                                                det_j * ww(i)*ww(j)*ww(k)
@@ -3012,9 +3052,9 @@
                                     f1 = term * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
                                     
                                    
-                                    fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) +rot(1,1)*f1
-                                    fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) +rot(2,1)*f1
-                                    fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) +rot(3,1)*f1
+                                    fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) +rot(1,1)*f1
+                                    fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) +rot(2,1)*f1
+                                    fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) +rot(3,1)*f1
                                     
                               enddo
                            enddo
@@ -3115,17 +3155,17 @@
            
            
            !EXTERNAL LOAD PAPER WITH BLANCA
-           fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + det_j * ww(i) * ww(j) * ww(k) * ( &
+           fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) + det_j * ww(i) * ww(j) * ww(k) * ( &
                                      4.d0*pi**2.d0*dcos(pi*y)*dcos(pi*z)*dsin(pi*y)*dsin(pi*z) * &
                                      (2.d0*lambda - 8.d0*mu + 9.d0*rho - 4.d0*lambda*dcos(pi*x)**2.d0 &
                                      + 8.d0*mu*dcos(pi*x)**2.d0 - 9.d0*rho*dcos(pi*x)**2.d0) )
                                      
-           fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) + det_j * ww(i) * ww(j) * ww(k) * ( &
+           fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) + det_j * ww(i) * ww(j) * ww(k) * ( &
                                      4.d0*pi**2.d0*dcos(pi*x)*dcos(pi*z)*dsin(pi*x)*dsin(pi*z) * &
                                      (2.d0*lambda + 12.d0*mu - 9.d0*rho - 4.d0*lambda*dcos(pi*y)**2.d0 &
                                      - 16.d0*mu*dcos(pi*y)**2.d0 + 9.d0*rho*dcos(pi*y)**2.d0) )
  
-           fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) + det_j * ww(i) * ww(j) * ww(k) * (&
+           fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) + det_j * ww(i) * ww(j) * ww(k) * (&
                                      4.d0*pi**2.d0*dcos(pi*x)*dcos(pi*y)*dsin(pi*x)*dsin(pi*y) * & 
                                      (2.d0*lambda + 12.d0*mu - 9.d0*rho - 4.d0*lambda*dcos(pi*z)**2.d0 &
                                      - 16.d0*mu*dcos(pi*z)**2.d0 + 9.d0*rho*dcos(pi*z)**2.d0) ) 
@@ -3214,7 +3254,15 @@
                                  
                                  term = 0.25*area*v * ww(i)*ww(j)
                                                              
-                                 fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + term
+                                 fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) + term
+                                 
+                                 ! MDOF
+                                 fmat(fn,(3*(in -1) +1),2)=val_neuX(il,5)
+                                 fmat(fn,(3*(in -1) +1),3)=val_neuX(il,6)
+                                 ! MDOF
+
+
+                                 
                            enddo
                         enddo
                      endif
@@ -3248,7 +3296,13 @@
                                  
                                  term = 0.25*area*v * ww(i)*ww(j)
                                  
-                                 fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) + term
+                                 fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) + term
+
+                                 ! MDOF
+                                 fmat(fn,(3*(in -1) +2),2)=val_neuY(il,5)
+                                 fmat(fn,(3*(in -1) +2),3)=val_neuY(il,6)
+                                 ! MDOF
+
                            enddo
                         enddo
                      endif
@@ -3282,7 +3336,12 @@
                                  
                                  term = 0.25*area*v * ww(i)*ww(j)
                                  
-                                 fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) + term
+                                 fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) + term
+
+                                 ! MDOF
+                                 fmat(fn,(3*(in -1) +3),2)=val_neuZ(il,5)
+                                 fmat(fn,(3*(in -1) +3),3)=val_neuZ(il,6)
+                                 ! MDOF
                            enddo
                         enddo
                      endif
@@ -3292,7 +3351,114 @@
             
 ! ------------------------------------------------------------------------
 
-        if (nl_neuN.gt.0) then   
+!        if (nl_neuN.gt.0) then   
+!               do il = 1,nl_neuN   
+!                  if (tag_neuN(il).eq.cs_bc_loc(cs_bc_loc(ie -1) +0)) then   
+!                     fn = 0   
+!                     do ifun = 1,nfunc  
+!                        if (fun_neuN(il).eq.tag_func(ifun)) fn = ifun   
+!                     enddo   
+!                     
+!                     if (fn.gt.0) then   
+!                       
+!                        rho = prop_mat(1,1); lambda = prop_mat(1,2); mu = prop_mat(1,3)
+!                        
+!                        k1 = val_neuN(il,1)
+!                        k2 = val_neuN(il,2)
+!                        k3 = val_neuN(il,3)
+!
+!                        omega = val_neuN(il,4)*2*PI
+!
+!                        vp = dsqrt((lambda+2*mu)/rho)
+!                        k3 = k3*omega/vp;
+!                        
+!                        
+!                        v1 = 0; !val_neuN(il,1)  
+!                        v2 = 0 !val_neuN(il,2)  
+!                        v3 = 0 !val_neuN(il,3)   
+!
+!                        
+!                        do j = 1,nn  
+!                           do i = 1,nn   
+!                              is = nn*(j -1) +i  
+!                              in = cs_bc_loc(cs_bc_loc(ie -1) +is)
+!                              
+!                              x =  xs_loc(in); y = ys_loc(in); z = zs_loc(in); 
+!
+!                              do index = 1,nelem_neuN 
+!                                      if (i4normal(index) .eq. ie) index_vector = index
+!                              enddo
+!                              
+!                              n1 = normal_nx_el_neuN(index_vector)
+!                              n2 = normal_ny_el_neuN(index_vector)
+!                              n3 = normal_nz_el_neuN(index_vector)
+!                              
+!                              !write(*,*) area
+!                              !read(*,*)
+!                              
+!                              if (tag_func(fn) .eq. 202) then 
+!                                 v1 = k3*lambda*n1*cos(k1*x + k2*y + k3*z) + k1*mu*n3*cos(k1*x + k2*y + k3*z)
+!                                 v2 = k3*lambda*n2*cos(k1*x + k2*y + k3*z) + k2*mu*n3*cos(k1*x + k2*y + k3*z)
+!                                 v3 = n3*(k3*lambda*cos(k1*x + k2*y + k3*z) + 2*k3*mu*cos(k1*x + k2*y + k3*z)) &
+!                                    + k1*mu*n1*cos(k1*x + k2*y + k3*z) + k2*mu*n2*cos(k1*x + k2*y + k3*z)
+!                                  
+!                                  v1 = -v1; v2 = -v2; v3 = -v3;
+!                                   
+!                              elseif(tag_func(fn) .eq. 203) then 
+!                                 v1 = - k3*lambda*n1*sin(k1*x + k2*y + k3*z) - k1*mu*n3*sin(k1*x + k2*y + k3*z)
+!                                 v2 = - k3*lambda*n2*sin(k1*x + k2*y + k3*z) - k2*mu*n3*sin(k1*x + k2*y + k3*z)
+!                                 v3 = - n3*(k3*lambda*sin(k1*x + k2*y + k3*z) + 2*k3*mu*sin(k1*x + k2*y + k3*z)) &
+!                                      - k1*mu*n1*sin(k1*x + k2*y + k3*z) - k2*mu*n2*sin(k1*x + k2*y + k3*z)
+!                                 
+!                                 v1 = -v1; v2 = -v2; v3 = -v3;
+!                               else
+!                                 write(*,*) 'Case not implemented!!! Check inputs.'
+!                              
+!                              endif
+!                               ! v1 = 0; v2 = 0; v3 = 0;
+!                              if (n_test.gt.0) then
+!                                
+!                               v1 = n1*(lambda*(2*pi*cos(pi*y)*sin(2*pi*x)*sin(pi*y)*sin(2*pi*z) &
+!                                    - 2*pi*cos(pi*x)*sin(pi*x)*sin(2*pi*y)*sin(2*pi*z) &
+!                                    + 2*pi*cos(pi*z)*sin(2*pi*x)*sin(2*pi*y)*sin(pi*z)) - &
+!                                    4*mu*pi*cos(pi*x)*sin(pi*x)*sin(2*pi*y)*sin(2*pi*z)) &
+!                                    + mu*n2*(2*pi*cos(2*pi*x)*sin(pi*y)**2*sin(2*pi*z)  &
+!                                    - 2*pi*cos(2*pi*y)*sin(pi*x)**2*sin(2*pi*z)) &
+!                                    + mu*n3*(2*pi*cos(2*pi*x)*sin(2*pi*y)*sin(pi*z)**2 &
+!                                    - 2*pi*cos(2*pi*z)*sin(pi*x)**2*sin(2*pi*y))
+!                              v2 = n2*(lambda*(2*pi*cos(pi*y)*sin(2*pi*x)*sin(pi*y)*sin(2*pi*z) & 
+!                                 - 2*pi*cos(pi*x)*sin(pi*x)*sin(2*pi*y)*sin(2*pi*z) &
+!                                 + 2*pi*cos(pi*z)*sin(2*pi*x)*sin(2*pi*y)*sin(pi*z)) &
+!                                 + 4*mu*pi*cos(pi*y)*sin(2*pi*x)*sin(pi*y)*sin(2*pi*z)) &
+!                                 + mu*n1*(2*pi*cos(2*pi*x)*sin(pi*y)**2*sin(2*pi*z) &
+!                                 - 2*pi*cos(2*pi*y)*sin(pi*x)**2*sin(2*pi*z)) &
+!                                 + mu*n3*(2*pi*cos(2*pi*y)*sin(2*pi*x)*sin(pi*z)**2 &
+!                                 + 2*pi*cos(2*pi*z)*sin(2*pi*x)*sin(pi*y)**2)
+!                              v3 = n3*(lambda*(2*pi*cos(pi*y)*sin(2*pi*x)*sin(pi*y)*sin(2*pi*z) &
+!                                 - 2*pi*cos(pi*x)*sin(pi*x)*sin(2*pi*y)*sin(2*pi*z) &
+!                                 + 2*pi*cos(pi*z)*sin(2*pi*x)*sin(2*pi*y)*sin(pi*z)) &
+!                                 + 4*mu*pi*cos(pi*z)*sin(2*pi*x)*sin(2*pi*y)*sin(pi*z)) &
+!                                 + mu*n1*(2*pi*cos(2*pi*x)*sin(2*pi*y)*sin(pi*z)**2 &
+!                                 - 2*pi*cos(2*pi*z)*sin(pi*x)**2*sin(2*pi*y)) &
+!                                 + mu*n2*(2*pi*cos(2*pi*y)*sin(2*pi*x)*sin(pi*z)**2 &
+!                                 + 2*pi*cos(2*pi*z)*sin(2*pi*x)*sin(pi*y)**2)
+!                                endif
+!                                 
+!                                 fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) +  0.25*area * v1 * ww(i)*ww(j)  
+!                                 fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) +  0.25*area * v2 * ww(i)*ww(j)  
+!                                 fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) +  0.25*area * v3 * ww(i)*ww(j)   
+!                           enddo  
+!                        enddo   
+!                     endif  
+!                  endif 
+!               enddo  
+!
+!            endif   
+
+             
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!    
+         
+            if (nl_neuN.gt.0) then   
                do il = 1,nl_neuN   
                   if (tag_neuN(il).eq.cs_bc_loc(cs_bc_loc(ie -1) +0)) then   
                      fn = 0   
@@ -3301,94 +3467,37 @@
                      enddo   
                      
                      if (fn.gt.0) then   
-                       
-                        rho = prop_mat(1,1); lambda = prop_mat(1,2); mu = prop_mat(1,3)
-                        
-                        k1 = val_neuN(il,1)
-                        k2 = val_neuN(il,2)
-                        k3 = val_neuN(il,3)
-
-                        omega = val_neuN(il,4)*2*PI
-
-                        vp = dsqrt((lambda+2*mu)/rho)
-                        k3 = k3*omega/vp;
-                        
-                        
-                        v1 = 0; !val_neuN(il,1)  
-                        v2 = 0 !val_neuN(il,2)  
-                        v3 = 0 !val_neuN(il,3)   
-
+                        v1 = val_neuN(il,1)  
+                        v2 = val_neuN(il,2)  
+                        v3 = val_neuN(il,3)   
+                        v4 = val_neuN(il,4) 
                         
                         do j = 1,nn  
                            do i = 1,nn   
                               is = nn*(j -1) +i  
                               in = cs_bc_loc(cs_bc_loc(ie -1) +is)
-                              
-                              x =  xs_loc(in); y = ys_loc(in); z = zs_loc(in); 
-
-                              do index = 1,nelem_neuN 
+                                 v = 0.25*(1.0 -ct(i))*(1.0 -ct(j))*v1 &   
+                                   + 0.25*(1.0 +ct(i))*(1.0 -ct(j))*v2 &   
+                                   + 0.25*(1.0 +ct(i))*(1.0 +ct(j))*v3 &   
+                                   + 0.25*(1.0 -ct(i))*(1.0 +ct(j))*v4  
+                             
+                                  do index = 1,nelem_neuN 
                                       if (i4normal(index) .eq. ie) index_vector = index
-                              enddo
-                              
-                              n1 = normal_nx_el_neuN(index_vector)
-                              n2 = normal_ny_el_neuN(index_vector)
-                              n3 = normal_nz_el_neuN(index_vector)
-                              
-                              !write(*,*) area
-                              !read(*,*)
-                              
-                              if (tag_func(fn) .eq. 202) then 
-                                 v1 = k3*lambda*n1*cos(k1*x + k2*y + k3*z) + k1*mu*n3*cos(k1*x + k2*y + k3*z)
-                                 v2 = k3*lambda*n2*cos(k1*x + k2*y + k3*z) + k2*mu*n3*cos(k1*x + k2*y + k3*z)
-                                 v3 = n3*(k3*lambda*cos(k1*x + k2*y + k3*z) + 2*k3*mu*cos(k1*x + k2*y + k3*z)) &
-                                    + k1*mu*n1*cos(k1*x + k2*y + k3*z) + k2*mu*n2*cos(k1*x + k2*y + k3*z)
-                                  
-                                  v1 = -v1; v2 = -v2; v3 = -v3;
-                                   
-                              elseif(tag_func(fn) .eq. 203) then 
-                                 v1 = - k3*lambda*n1*sin(k1*x + k2*y + k3*z) - k1*mu*n3*sin(k1*x + k2*y + k3*z)
-                                 v2 = - k3*lambda*n2*sin(k1*x + k2*y + k3*z) - k2*mu*n3*sin(k1*x + k2*y + k3*z)
-                                 v3 = - n3*(k3*lambda*sin(k1*x + k2*y + k3*z) + 2*k3*mu*sin(k1*x + k2*y + k3*z)) &
-                                      - k1*mu*n1*sin(k1*x + k2*y + k3*z) - k2*mu*n2*sin(k1*x + k2*y + k3*z)
+                                 enddo
                                  
-                                 v1 = -v1; v2 = -v2; v3 = -v3;
-                               else
-                                 write(*,*) 'Case not implemented!!! Check inputs.'
-                              
-                              endif
-                               ! v1 = 0; v2 = 0; v3 = 0;
-                              if (n_test.gt.0) then
-                                
-                               v1 = n1*(lambda*(2*pi*cos(pi*y)*sin(2*pi*x)*sin(pi*y)*sin(2*pi*z) &
-                                    - 2*pi*cos(pi*x)*sin(pi*x)*sin(2*pi*y)*sin(2*pi*z) &
-                                    + 2*pi*cos(pi*z)*sin(2*pi*x)*sin(2*pi*y)*sin(pi*z)) - &
-                                    4*mu*pi*cos(pi*x)*sin(pi*x)*sin(2*pi*y)*sin(2*pi*z)) &
-                                    + mu*n2*(2*pi*cos(2*pi*x)*sin(pi*y)**2*sin(2*pi*z)  &
-                                    - 2*pi*cos(2*pi*y)*sin(pi*x)**2*sin(2*pi*z)) &
-                                    + mu*n3*(2*pi*cos(2*pi*x)*sin(2*pi*y)*sin(pi*z)**2 &
-                                    - 2*pi*cos(2*pi*z)*sin(pi*x)**2*sin(2*pi*y))
-                              v2 = n2*(lambda*(2*pi*cos(pi*y)*sin(2*pi*x)*sin(pi*y)*sin(2*pi*z) & 
-                                 - 2*pi*cos(pi*x)*sin(pi*x)*sin(2*pi*y)*sin(2*pi*z) &
-                                 + 2*pi*cos(pi*z)*sin(2*pi*x)*sin(2*pi*y)*sin(pi*z)) &
-                                 + 4*mu*pi*cos(pi*y)*sin(2*pi*x)*sin(pi*y)*sin(2*pi*z)) &
-                                 + mu*n1*(2*pi*cos(2*pi*x)*sin(pi*y)**2*sin(2*pi*z) &
-                                 - 2*pi*cos(2*pi*y)*sin(pi*x)**2*sin(2*pi*z)) &
-                                 + mu*n3*(2*pi*cos(2*pi*y)*sin(2*pi*x)*sin(pi*z)**2 &
-                                 + 2*pi*cos(2*pi*z)*sin(2*pi*x)*sin(pi*y)**2)
-                              v3 = n3*(lambda*(2*pi*cos(pi*y)*sin(2*pi*x)*sin(pi*y)*sin(2*pi*z) &
-                                 - 2*pi*cos(pi*x)*sin(pi*x)*sin(2*pi*y)*sin(2*pi*z) &
-                                 + 2*pi*cos(pi*z)*sin(2*pi*x)*sin(2*pi*y)*sin(pi*z)) &
-                                 + 4*mu*pi*cos(pi*z)*sin(2*pi*x)*sin(2*pi*y)*sin(pi*z)) &
-                                 + mu*n1*(2*pi*cos(2*pi*x)*sin(2*pi*y)*sin(pi*z)**2 &
-                                 - 2*pi*cos(2*pi*z)*sin(pi*x)**2*sin(2*pi*y)) &
-                                 + mu*n2*(2*pi*cos(2*pi*y)*sin(2*pi*x)*sin(pi*z)**2 &
-                                 + 2*pi*cos(2*pi*z)*sin(2*pi*x)*sin(pi*y)**2)
-                                endif
-                                 
-                                 fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) +  0.25*area * v1 * ww(i)*ww(j)  
-                                 fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) +  0.25*area * v2 * ww(i)*ww(j)  
-                                 fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) +  0.25*area * v3 * ww(i)*ww(j)   
-                                                        
+                                 term = 0.25*area*v * ww(i)*ww(j) 
+
+                                 fmat(fn,(3*(in -1) +1),1) = fmat(fn,(3*(in -1) +1),1) + term * normal_nx_el_neuN(index_vector) 
+                                 fmat(fn,(3*(in -1) +2),1) = fmat(fn,(3*(in -1) +2),1) + term * normal_ny_el_neuN(index_vector)  
+                                 fmat(fn,(3*(in -1) +3),1) = fmat(fn,(3*(in -1) +3),1) + term * normal_nz_el_neuN(index_vector)  
+                                 fmat(fn,(3*(in -1) +1),2) = val_neuN(il,5)
+                                 fmat(fn,(3*(in -1) +1),3) = val_neuN(il,6) 
+                                 fmat(fn,(3*(in -1) +2),2) = val_neuN(il,5)
+                                 fmat(fn,(3*(in -1) +2),3) = val_neuN(il,6) 
+                                 fmat(fn,(3*(in -1) +3),2) = val_neuN(il,5)
+                                 fmat(fn,(3*(in -1) +3),3) = val_neuN(il,6) 
+
+
                            enddo  
                         enddo   
                      endif  
@@ -3396,8 +3505,13 @@
                enddo  
 
             endif   
+            
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 
-! ------------------------------------------------------------------------
+
+! ------------------------------------------------------------------------           
+             
+             
              
             if (nl_dirX.gt.0) then    ! Dirichlet X
                do il = 1,nl_dirX
@@ -3422,7 +3536,13 @@
                                    + 0.25*(1.0 +ct(i))*(1.0 +ct(j))*v3 &
                                    + 0.25*(1.0 -ct(i))*(1.0 +ct(j))*v4
                                  
-                                 fmat(fn,(3*(in -1) +1)) = v
+
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+                                 fmat(fn,(3*(in -1) +1),1) = v
+                                 fmat(fn,(3*(in -1) +1),2) = 0.d0
+                                 fmat(fn,(3*(in -1) +1),3) = -1.d0
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
                            enddo
                         enddo
                      endif
@@ -3453,7 +3573,12 @@
                                    + 0.25*(1.0 +ct(i))*(1.0 +ct(j))*v3 &
                                    + 0.25*(1.0 -ct(i))*(1.0 +ct(j))*v4
                                  
-                                 fmat(fn,(3*(in -1) +2)) = v
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+                                 fmat(fn,(3*(in -1) +2),1) = v
+                                 fmat(fn,(3*(in -1) +2),2) = 0.d0
+                                 fmat(fn,(3*(in -1) +2),3) = -1.d0
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
                            enddo
                         enddo
                      endif
@@ -3485,7 +3610,12 @@
                                    + 0.25*(1.0 +ct(i))*(1.0 +ct(j))*v3 &
                                    + 0.25*(1.0 -ct(i))*(1.0 +ct(j))*v4
                                  
-                                 fmat(fn,(3*(in -1) +3)) = v
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+                                 fmat(fn,(3*(in -1) +3),1) = v
+                                 fmat(fn,(3*(in -1) +3),2) = 0.d0
+                                 fmat(fn,(3*(in -1) +3),3) = -1.d0
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
                            enddo
                         enddo
                      endif

@@ -253,13 +253,27 @@
       real*8, dimension(nb_diriX,4) :: val_diriX
       real*8, dimension(nb_diriY,4) :: val_diriY
       real*8, dimension(nb_diriZ,4) :: val_diriZ
-      real*8, dimension(nb_neuX,4) :: val_neuX
-      real*8, dimension(nb_neuY,4) :: val_neuY
-      real*8, dimension(nb_neuZ,4) :: val_neuZ
-      real*8, dimension(nb_neuN,4) :: val_neuN                      
-      real*8, dimension(nb_poiX,4) :: val_poiX
-      real*8, dimension(nb_poiY,4) :: val_poiY
-      real*8, dimension(nb_poiZ,4) :: val_poiZ
+
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
+!      real*8, dimension(nb_neuX,4) :: val_neuX
+!      real*8, dimension(nb_neuY,4) :: val_neuY
+!      real*8, dimension(nb_neuZ,4) :: val_neuZ
+!      real*8, dimension(nb_neuN,4) :: val_neuN                      
+!      real*8, dimension(nb_poiX,4) :: val_poiX
+!      real*8, dimension(nb_poiY,4) :: val_poiY
+!      real*8, dimension(nb_poiZ,4) :: val_poiZ
+
+      real*8, dimension(nb_neuX,6) :: val_neuX
+      real*8, dimension(nb_neuY,6) :: val_neuY
+      real*8, dimension(nb_neuZ,6) :: val_neuZ
+      real*8, dimension(nb_neuN,6) :: val_neuN                      
+      real*8, dimension(nb_poiX,6) :: val_poiX
+      real*8, dimension(nb_poiY,6) :: val_poiY
+      real*8, dimension(nb_poiZ,6) :: val_poiZ
+
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
       real*8, dimension(ntX,4) :: valtX
       real*8, dimension(ntY,4) :: valtY
       real*8, dimension(ntZ,4) :: valtZ      
@@ -360,40 +374,86 @@
             read(inline(ileft:iright),*) lab_diriZ(idZ),fnc_diriZ(idZ),&
                  val_diriZ(idZ,1),val_diriZ(idZ,2),val_diriZ(idZ,3),val_diriZ(idZ,4)
 
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
+!           case('NEUX')
+!            inX = inX + 1
+!            read(inline(ileft:iright),*) lab_neuX(inX),fnc_neuX(inX),&
+!                 val_neuX(inX,1),val_neuX(inX,2),val_neuX(inX,3),val_neuX(inX,4)
+!
+!           case('NEUY')
+!            inY = inY + 1
+!            read(inline(ileft:iright),*) lab_neuY(inY),fnc_neuY(inY),&
+!                 val_neuY(inY,1),val_neuY(inY,2),val_neuY(inY,3),val_neuY(inY,4)
+!
+!           case('NEUZ')
+!            inZ = inZ + 1
+!            read(inline(ileft:iright),*) lab_neuZ(inZ),fnc_neuZ(inZ),&
+!                 val_neuZ(inZ,1),val_neuZ(inZ,2),val_neuZ(inZ,3),val_neuZ(inZ,4)
+!
+!           case('NEUN')                                         
+!            inN = inN + 1                                                         
+!            read(inline(ileft:iright),*) lab_neuN(inN),fnc_neuN(inN),&                 
+!                 val_neuN(inN,1),val_neuN(inN,2),val_neuN(inN,3),val_neuN(inN,4)                 
+!
+!           case('PLOX')
+!            ipX = ipX + 1
+!            read(inline(ileft:iright),*) fnc_poiX(ipX),&
+!                 val_poiX(ipX,1),val_poiX(ipX,2),val_poiX(ipX,3),val_poiX(ipX,4)
+!
+!           case('PLOY')
+!            ipY = ipY + 1
+!            read(inline(ileft:iright),*) fnc_poiY(ipY),&
+!                 val_poiY(ipY,1),val_poiY(ipY,2),val_poiY(ipY,3),val_poiY(ipY,4)
+!
+!           case('PLOZ')
+!            ipZ = ipZ + 1
+!            read(inline(ileft:iright),*) fnc_poiZ(ipZ),&
+!                 val_poiZ(ipZ,1),val_poiZ(ipZ,2),val_poiZ(ipZ,3),val_poiZ(ipZ,4)
+!
            case('NEUX')
             inX = inX + 1
             read(inline(ileft:iright),*) lab_neuX(inX),fnc_neuX(inX),&
-                 val_neuX(inX,1),val_neuX(inX,2),val_neuX(inX,3),val_neuX(inX,4)
+                 val_neuX(inX,1),val_neuX(inX,2),val_neuX(inX,3),val_neuX(inX,4),&
+                 val_neuX(inX,5),val_neuX(inX,6)
 
            case('NEUY')
             inY = inY + 1
             read(inline(ileft:iright),*) lab_neuY(inY),fnc_neuY(inY),&
-                 val_neuY(inY,1),val_neuY(inY,2),val_neuY(inY,3),val_neuY(inY,4)
+                 val_neuY(inY,1),val_neuY(inY,2),val_neuY(inY,3),val_neuY(inY,4),&
+                 val_neuY(inY,5),val_neuY(inY,6)
 
            case('NEUZ')
             inZ = inZ + 1
             read(inline(ileft:iright),*) lab_neuZ(inZ),fnc_neuZ(inZ),&
-                 val_neuZ(inZ,1),val_neuZ(inZ,2),val_neuZ(inZ,3),val_neuZ(inZ,4)
+                 val_neuZ(inZ,1),val_neuZ(inZ,2),val_neuZ(inZ,3),val_neuZ(inZ,4),&
+                 val_neuZ(inZ,5),val_neuZ(inZ,6)
 
            case('NEUN')                                         
             inN = inN + 1                                                         
             read(inline(ileft:iright),*) lab_neuN(inN),fnc_neuN(inN),&                 
-                 val_neuN(inN,1),val_neuN(inN,2),val_neuN(inN,3),val_neuN(inN,4)                 
+                 val_neuN(inN,1),val_neuN(inN,2),val_neuN(inN,3),val_neuN(inN,4),&
+                 val_neuN(inN,5),val_neuN(inN,6)             
 
            case('PLOX')
             ipX = ipX + 1
             read(inline(ileft:iright),*) fnc_poiX(ipX),&
-                 val_poiX(ipX,1),val_poiX(ipX,2),val_poiX(ipX,3),val_poiX(ipX,4)
-
+                 val_poiX(ipX,1),val_poiX(ipX,2),val_poiX(ipX,3),val_poiX(ipX,4),&
+                 val_poiX(ipX,5),val_poiX(ipX,6)
            case('PLOY')
             ipY = ipY + 1
             read(inline(ileft:iright),*) fnc_poiY(ipY),&
-                 val_poiY(ipY,1),val_poiY(ipY,2),val_poiY(ipY,3),val_poiY(ipY,4)
+                 val_poiY(ipY,1),val_poiY(ipY,2),val_poiY(ipY,3),val_poiY(ipY,4),&
+                 val_poiY(ipY,5),val_poiY(ipY,6)
 
            case('PLOZ')
             ipZ = ipZ + 1
             read(inline(ileft:iright),*) fnc_poiZ(ipZ),&
-                 val_poiZ(ipZ,1),val_poiZ(ipZ,2),val_poiZ(ipZ,3),val_poiZ(ipZ,4)
+                 val_poiZ(ipZ,1),val_poiZ(ipZ,2),val_poiZ(ipZ,3),val_poiZ(ipZ,4),&
+                 val_poiZ(ipZ,5),val_poiZ(ipZ,6)
+
+
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
  
 !           case('TLOX') 
 !            itX = itX + 1

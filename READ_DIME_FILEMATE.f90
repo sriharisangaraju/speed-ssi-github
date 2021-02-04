@@ -242,11 +242,16 @@
                  nb_func_data = nb_func_data + 2    
                case(100)
                  nb_func_data = nb_func_data + 1  
+
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
                case(773) 
-                   ! TIME SERIES
                  read(inline(5:),*) lab_fnc, type_fnc, ndat_fnc
                  nb_func_data = nb_func_data + ndat_fnc
-                                               
+                case(777) 
+                  read(inline(5:),*) lab_fnc, type_fnc, ndat_fnc
+                  nb_func_data = nb_func_data + 2*ndat_fnc
+
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!                                               
             end select 
          
          end select

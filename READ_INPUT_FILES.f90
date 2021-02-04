@@ -191,14 +191,28 @@
       if (nload_dirY_el.gt.0) allocate (val_dirY_el(nload_dirY_el,4), fun_dirY_el(nload_dirY_el), tag_dirY_el(nload_dirY_el))      
       if (nload_dirZ_el.gt.0) allocate (val_dirZ_el(nload_dirZ_el,4), fun_dirZ_el(nload_dirZ_el), tag_dirZ_el(nload_dirZ_el))
       
-      if (nload_neuX_el.gt.0) allocate (val_neuX_el(nload_neuX_el,4), fun_neuX_el(nload_neuX_el), tag_neuX_el(nload_neuX_el))      
-      if (nload_neuY_el.gt.0) allocate (val_neuY_el(nload_neuY_el,4), fun_neuY_el(nload_neuY_el), tag_neuY_el(nload_neuY_el))      
-      if (nload_neuZ_el.gt.0) allocate (val_neuZ_el(nload_neuZ_el,4), fun_neuZ_el(nload_neuZ_el), tag_neuZ_el(nload_neuZ_el))
-      if (nload_neuN_el.gt.0) allocate (val_neuN_el(nload_neuN_el,4), fun_neuN_el(nload_neuN_el), tag_neuN_el(nload_neuN_el))
+!      if (nload_neuX_el.gt.0) allocate (val_neuX_el(nload_neuX_el,4), fun_neuX_el(nload_neuX_el), tag_neuX_el(nload_neuX_el))      
+!      if (nload_neuY_el.gt.0) allocate (val_neuY_el(nload_neuY_el,4), fun_neuY_el(nload_neuY_el), tag_neuY_el(nload_neuY_el))      
+!      if (nload_neuZ_el.gt.0) allocate (val_neuZ_el(nload_neuZ_el,4), fun_neuZ_el(nload_neuZ_el), tag_neuZ_el(nload_neuZ_el))
+!      if (nload_neuN_el.gt.0) allocate (val_neuN_el(nload_neuN_el,4), fun_neuN_el(nload_neuN_el), tag_neuN_el(nload_neuN_el))
       
-      if (nload_poiX_el.gt.0) allocate (val_poiX_el(nload_poiX_el,4), fun_poiX_el(nload_poiX_el))    
-      if (nload_poiY_el.gt.0) allocate (val_poiY_el(nload_poiY_el,4), fun_poiY_el(nload_poiY_el))   
-      if (nload_poiZ_el.gt.0) allocate (val_poiZ_el(nload_poiZ_el,4), fun_poiZ_el(nload_poiZ_el))
+!      if (nload_poiX_el.gt.0) allocate (val_poiX_el(nload_poiX_el,4), fun_poiX_el(nload_poiX_el))    
+!      if (nload_poiY_el.gt.0) allocate (val_poiY_el(nload_poiY_el,4), fun_poiY_el(nload_poiY_el))   
+!      if (nload_poiZ_el.gt.0) allocate (val_poiZ_el(nload_poiZ_el,4), fun_poiZ_el(nload_poiZ_el))
+
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
+      if (nload_neuX_el.gt.0) allocate (val_neuX_el(nload_neuX_el,6), fun_neuX_el(nload_neuX_el), tag_neuX_el(nload_neuX_el))      
+      if (nload_neuY_el.gt.0) allocate (val_neuY_el(nload_neuY_el,6), fun_neuY_el(nload_neuY_el), tag_neuY_el(nload_neuY_el))      
+      if (nload_neuZ_el.gt.0) allocate (val_neuZ_el(nload_neuZ_el,6), fun_neuZ_el(nload_neuZ_el), tag_neuZ_el(nload_neuZ_el))
+      if (nload_neuN_el.gt.0) allocate (val_neuN_el(nload_neuN_el,6), fun_neuN_el(nload_neuN_el), tag_neuN_el(nload_neuN_el))
+
+      if (nload_poiX_el.gt.0) allocate (val_poiX_el(nload_poiX_el,6), fun_poiX_el(nload_poiX_el))    
+      if (nload_poiY_el.gt.0) allocate (val_poiY_el(nload_poiY_el,6), fun_poiY_el(nload_poiY_el))   
+      if (nload_poiZ_el.gt.0) allocate (val_poiZ_el(nload_poiZ_el,6), fun_poiZ_el(nload_poiZ_el))
+
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
 
 !      if (nload_traX_el.gt.0) allocate (val_traX_el(nload_traX_el,4), fun_traX_el(nload_traX_el))    
 !      if (nload_traY_el.gt.0) allocate (val_traY_el(nload_traY_el,4), fun_traY_el(nload_traY_el))   
@@ -370,7 +384,9 @@
               case(33) 
                 write(*,'(A)')'GRONINGEN-ZE' 
               case(40)
-                write(*,'(A)')'KUTCH BASIN, INDIA'                                            
+                write(*,'(A)')'KUTCH BASIN, INDIA'     
+              case(70)
+                write(*,'(A)')'AQUILA MULTI-BASIN'                                                                          
               case(98,99,100)
                 write(*,'(A)')'TEST MODE'                                
               case default

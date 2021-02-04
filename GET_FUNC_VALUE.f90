@@ -32,9 +32,14 @@
 !> @param[out] GET_FUNC_VALUE value of the time function
 
 
-      real*8 function GET_FUNC_VALUE(nb_fnc, type_fnc, ind_fnc, &
-                                     data_fnc, nb_data_fnc, id_fnc, time, dist,vel, tagty)
+!      real*8 function GET_FUNC_VALUE(nb_fnc, type_fnc, ind_fnc, &
+!                                     data_fnc, nb_data_fnc, id_fnc, time, dist,vel, tagty)
             
+
+      real*8 function GET_FUNC_VALUE(nb_fnc, type_fnc, ind_fnc, &
+                                     data_fnc, nb_data_fnc, id_fnc, time, dist,vel, &
+                                     Mdoftnum,MDOFforcetran,MDOFbid,MDOFbdirct,tagty)
+
 
 
       use binarysearch
@@ -54,7 +59,15 @@
       real*8, dimension(nb_data_fnc) :: data_fnc
       real*8, dimension(1) :: valmax
 !      real*8, dimension(:), allocatable :: timevalues, values
-      integer*4,intent(in)::tagty
+
+
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+      real*8, dimension(6*Mdoftnum) :: MDOFforcetran      !Modified on 26th, Mar. to add moment.
+      real*8                        :: MDOFbid,MDOFbdirct !Modified on 10th, Apr. to reduce memory.
+      integer*4                     :: MDOFbidint,MDOFbdirctint !Modified on 10th, Apr. to reduce memory.
+      integer*4, intent(in)         ::tagty
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
             
       GET_FUNC_VALUE = 0.0d0
 
@@ -337,12 +350,23 @@
          case(101) 
           GET_FUNC_VALUE = time
                
-         ! TIME SERIES ADDED BY TY  !!!!!!!!!!!!!ty!!!!!!!!!!!!!
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
+
+         case(777)
+           MDOFbidint    = nint(MDOFbid)
+           MDOFbdirctint = nint(MDOFbdirct)
+           if(MDOFbidint .gt. 0) then
+               GET_FUNC_VALUE = MDOFforcetran(6*(MDOFbidint-1)+MDOFbdirctint)
+           else
+               GET_FUNC_VALUE=0
+           end if
+
          case(773)
-                  GET_FUNC_VALUE = data_fnc(ind_fnc(id_fnc) + tagty)
+             GET_FUNC_VALUE = data_fnc(ind_fnc(id_fnc) + tagty)
 
-        !!!!!!!!!!!!!!!!!!!
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
 
+ 
          
          case default
            GET_FUNC_VALUE = 0.d0
