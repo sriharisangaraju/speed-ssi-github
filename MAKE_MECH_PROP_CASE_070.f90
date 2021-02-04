@@ -20,7 +20,7 @@
 !> @brief Makes not-honoring technique. Mechanical properties given node by node.
 
 
-     subroutine MAKE_MECH_PROP_CASE_005(rho, lambda, mu, gamma, qs, qp, & !outputs
+     subroutine MAKE_MECH_PROP_CASE_070(rho, lambda, mu, gamma, qs, qp, & !outputs
                                         xs, ys, zs, Depth, zs_all,&
                                         vs30, thickness, sub_tag_all)
               
@@ -138,4 +138,4 @@
      !endif
 
                 
-     end subroutine MAKE_MECH_PROP_CASE_005          
+     end subroutine MAKE_MECH_PROP_CASE_070          

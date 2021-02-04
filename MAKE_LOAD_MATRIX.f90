@@ -35,12 +35,8 @@
      
       if (nfunc.le.0) nfunc = 1
       
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!    
 
-!      allocate (Fel(nfunc,3*nnod_loc))
-      allocate (Fel(nfunc,3*nnod_loc,3))
-
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!          
+      allocate (Fel(nfunc,3*nnod_loc))
 
 
       call MAKE_EXTINT_FORCES(nnod_loc,xx_spx_loc,yy_spx_loc,zz_spx_loc,local_node_num,con_nnz_loc,con_spx_loc,&

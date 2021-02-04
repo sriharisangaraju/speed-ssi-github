@@ -293,7 +293,8 @@
 		 
 		 file_case_xyz ='XYZ.out'								
 
-		zs_elev = -1.0e+30								
+		zs_elev = -1.0e+30
+		zs_all = 0.d0;								
 
 		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)
 		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev))					
@@ -304,16 +305,16 @@
 				  node1_elev,node2_elev,node3_elev,&			
 				  max_elev_spacing)
 				  					
-		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_elev, n_tria_elev, &					
-				  x_elev, y_elev, z_elev, &					
-				  node1_elev, node2_elev, node3_elev,&			
-				  cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
-				  nn_loc, xs_loc, ys_loc, zs_loc, &	
-				  zs_elev, val_case(1), max_all_spacing, tol_case(1))
+		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
+			   x_elev, y_elev, z_elev, &				
+			   node1_elev, node2_elev, node3_elev,&			
+			   cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
+			   nn_loc, xs_loc, ys_loc, zs_loc, &
+			   zs_elev, zs_all, &					
+			   val_case(1), max_elev_spacing, tol_case(1))		
 
    	    deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)
 				  
-
 		sub_tag_all = 3	
 		ival = 3							
 											
