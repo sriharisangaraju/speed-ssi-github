@@ -191,28 +191,14 @@
       if (nload_dirY_el.gt.0) allocate (val_dirY_el(nload_dirY_el,4), fun_dirY_el(nload_dirY_el), tag_dirY_el(nload_dirY_el))      
       if (nload_dirZ_el.gt.0) allocate (val_dirZ_el(nload_dirZ_el,4), fun_dirZ_el(nload_dirZ_el), tag_dirZ_el(nload_dirZ_el))
       
-!      if (nload_neuX_el.gt.0) allocate (val_neuX_el(nload_neuX_el,4), fun_neuX_el(nload_neuX_el), tag_neuX_el(nload_neuX_el))      
-!      if (nload_neuY_el.gt.0) allocate (val_neuY_el(nload_neuY_el,4), fun_neuY_el(nload_neuY_el), tag_neuY_el(nload_neuY_el))      
-!      if (nload_neuZ_el.gt.0) allocate (val_neuZ_el(nload_neuZ_el,4), fun_neuZ_el(nload_neuZ_el), tag_neuZ_el(nload_neuZ_el))
-!      if (nload_neuN_el.gt.0) allocate (val_neuN_el(nload_neuN_el,4), fun_neuN_el(nload_neuN_el), tag_neuN_el(nload_neuN_el))
+      if (nload_neuX_el.gt.0) allocate (val_neuX_el(nload_neuX_el,4), fun_neuX_el(nload_neuX_el), tag_neuX_el(nload_neuX_el))      
+      if (nload_neuY_el.gt.0) allocate (val_neuY_el(nload_neuY_el,4), fun_neuY_el(nload_neuY_el), tag_neuY_el(nload_neuY_el))      
+      if (nload_neuZ_el.gt.0) allocate (val_neuZ_el(nload_neuZ_el,4), fun_neuZ_el(nload_neuZ_el), tag_neuZ_el(nload_neuZ_el))
+      if (nload_neuN_el.gt.0) allocate (val_neuN_el(nload_neuN_el,4), fun_neuN_el(nload_neuN_el), tag_neuN_el(nload_neuN_el))
       
-!      if (nload_poiX_el.gt.0) allocate (val_poiX_el(nload_poiX_el,4), fun_poiX_el(nload_poiX_el))    
-!      if (nload_poiY_el.gt.0) allocate (val_poiY_el(nload_poiY_el,4), fun_poiY_el(nload_poiY_el))   
-!      if (nload_poiZ_el.gt.0) allocate (val_poiZ_el(nload_poiZ_el,4), fun_poiZ_el(nload_poiZ_el))
-
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-
-      if (nload_neuX_el.gt.0) allocate (val_neuX_el(nload_neuX_el,6), fun_neuX_el(nload_neuX_el), tag_neuX_el(nload_neuX_el))      
-      if (nload_neuY_el.gt.0) allocate (val_neuY_el(nload_neuY_el,6), fun_neuY_el(nload_neuY_el), tag_neuY_el(nload_neuY_el))      
-      if (nload_neuZ_el.gt.0) allocate (val_neuZ_el(nload_neuZ_el,6), fun_neuZ_el(nload_neuZ_el), tag_neuZ_el(nload_neuZ_el))
-      if (nload_neuN_el.gt.0) allocate (val_neuN_el(nload_neuN_el,6), fun_neuN_el(nload_neuN_el), tag_neuN_el(nload_neuN_el))
-
-      if (nload_poiX_el.gt.0) allocate (val_poiX_el(nload_poiX_el,6), fun_poiX_el(nload_poiX_el))    
-      if (nload_poiY_el.gt.0) allocate (val_poiY_el(nload_poiY_el,6), fun_poiY_el(nload_poiY_el))   
-      if (nload_poiZ_el.gt.0) allocate (val_poiZ_el(nload_poiZ_el,6), fun_poiZ_el(nload_poiZ_el))
-
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<   MDOF   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>!
-
+      if (nload_poiX_el.gt.0) allocate (val_poiX_el(nload_poiX_el,4), fun_poiX_el(nload_poiX_el))    
+      if (nload_poiY_el.gt.0) allocate (val_poiY_el(nload_poiY_el,4), fun_poiY_el(nload_poiY_el))   
+      if (nload_poiZ_el.gt.0) allocate (val_poiZ_el(nload_poiZ_el,4), fun_poiZ_el(nload_poiZ_el))
 
 !      if (nload_traX_el.gt.0) allocate (val_traX_el(nload_traX_el,4), fun_traX_el(nload_traX_el))    
 !      if (nload_traY_el.gt.0) allocate (val_traY_el(nload_traY_el,4), fun_traY_el(nload_traY_el))   
@@ -235,8 +221,7 @@
       if (nload_shea_el.gt.0) allocate (val_shea_el(nload_shea_el,10), fun_shea_el(nload_shea_el))
       
       if (nload_abc_el.gt.0) allocate (tag_abc_el(nload_abc_el))
-      if (nload_dg_el .gt. 0) allocate (tag_dg_el(nload_dg_el), tag_dg_yn(nload_dg_el), tag_dg_link(nload_dg_el), &
-                                        tag_dg_frc(nload_dg_el), val_dg_frc(nload_dg_el,2))
+      if (nload_dg_el .gt. 0) allocate (tag_dg_el(nload_dg_el), tag_dg_yn(nload_dg_el), tag_dg_frc(nload_dg_el), val_dg_frc(nload_dg_el,2))
       if (nload_dg_el .gt. 0) then
               tag_dg_frc=0; val_dg_frc=0;
       endif
@@ -280,7 +265,7 @@
                 nload_shea_el,val_shea_el,fun_shea_el,&
                 n_test,fun_test,& !val_fun_test,&
                 nload_abc_el,tag_abc_el,&
-                nload_dg_el,tag_dg_el,tag_dg_yn, tag_dg_link, tag_dg_frc, val_dg_frc, n_frac, &
+                nload_dg_el,tag_dg_el,tag_dg_yn, tag_dg_frc, val_dg_frc, n_frac, &
                 nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el, &                 
                 nload_expl_el,val_expl_el,fun_expl_el,tag_expl_el, &                 
                 n_case,val_case,tag_case,tol_case, &                                 
@@ -374,7 +359,11 @@
               case(21)
                 write(*,'(A)')'BEIJING'
               case(22)
-                write(*,'(A)')'NORCIA'                
+                write(*,'(A)')'NORCIA'      
+              case(27)
+                write(*,'(A)')'AQUILA-OB'        
+              case(28)
+                write(*,'(A)')'NORCIA-OB'      
               case(30) 
                 write(*,'(A)')'ATHENS-Parthenon'
               case(31) 
@@ -384,9 +373,7 @@
               case(33) 
                 write(*,'(A)')'GRONINGEN-ZE' 
               case(40)
-                write(*,'(A)')'KUTCH BASIN, INDIA'     
-              case(70)
-                write(*,'(A)')'AQUILA MULTI-BASIN'                                                                          
+                write(*,'(A)')'KUTCH BASIN, INDIA'                                            
               case(98,99,100)
                 write(*,'(A)')'TEST MODE'                                
               case default
