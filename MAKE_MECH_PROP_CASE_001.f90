@@ -26,7 +26,8 @@
                                                       
      real*8, intent(out) :: rho, lambda, mu, gamma, qs, qp
      real*8, intent(in)  :: xs, ys, zs, zs_all,&
-                            vs30, sub_tag_all, thickness
+                            vs30,thickness
+     integer*4           :: sub_tag_all		                            
      real*8, intent(inout) :: Depth                       		
      real*8              :: ni, VS, VP, Depth_real                                                 
                                                       
