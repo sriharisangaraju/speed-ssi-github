@@ -129,7 +129,9 @@
                                    gamma1, gamma2, gamma3, &
                                    delta1, delta2, delta3, &
                                    dg_els, scratch_dg_els, &
-                                   tag_dg_el, tag_dg_yn, tag_dg_frc, val_dg_frc, nload_dg_el, &
+                                   tag_dg_el, tag_dg_yn, &
+                                   tag_dg_link, &
+                                   tag_dg_frc, val_dg_frc, nload_dg_el, &
                                    con_bc, nface, mpi_file)
 
         

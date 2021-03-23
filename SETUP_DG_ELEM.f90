@@ -85,7 +85,8 @@
                            gamma1, gamma2, gamma3, &
                            delta1, delta2, delta3, &
                            dg_els, scratch_dg_els, &
-                           tag_dg_el, tag_dg_yn, tag_dg_frc, val_dg_frc, nload_dg, &
+                           tag_dg_el, tag_dg_yn, tag_dg_link, &
+                           tag_dg_frc, val_dg_frc, nload_dg, &
                            con_bc, nface,mpi_file)
                      
 
@@ -115,8 +116,9 @@
      integer*4, dimension(0:cs_nnz_loc) :: cs_loc
      integer*4, dimension(nn_loc) :: local_n_num, i4count
      integer*4, dimension(ne_loc) :: local_el_num
-     integer*4, dimension(nload_dg) :: tag_dg_el, tag_dg_yn, tag_dg_frc
+     integer*4, dimension(nload_dg) :: tag_dg_el, tag_dg_yn, tag_dg_frc, tag_dg_link
 
+     integer*4, dimension(:), allocatable :: link_glo
      integer*4, dimension(:,:), allocatable :: ielem_dg 
      integer*4, dimension(:,:), allocatable :: mat_el_face
      integer*4, dimension(nface,5) :: con_bc
@@ -181,6 +183,7 @@
                   dg_els(nel_dg_loc)%quad_rule = nofqp
  
                   dg_els(nel_dg_loc)%proj_yn = tag_dg_yn(tag_ind)
+                  dg_els(nel_dg_loc)%link    = tag_dg_link(tag_ind)                  
                   dg_els(nel_dg_loc)%frac_yn = tag_dg_frc(tag_ind)
                   dg_els(nel_dg_loc)%zt = val_dg_frc(tag_ind,1)                  
                   dg_els(nel_dg_loc)%zn = val_dg_frc(tag_ind,2)
@@ -260,6 +263,7 @@
                   dg_els(nel_dg_loc)%quad_rule = nofqp
  
                   dg_els(nel_dg_loc)%proj_yn = tag_dg_yn(tag_ind)
+                  dg_els(nel_dg_loc)%link    = tag_dg_link(tag_ind)                  
                   dg_els(nel_dg_loc)%frac_yn = tag_dg_frc(tag_ind)
                   dg_els(nel_dg_loc)%zt = val_dg_frc(tag_ind,1)                  
                   dg_els(nel_dg_loc)%zn = val_dg_frc(tag_ind,2)
@@ -336,6 +340,7 @@
                   dg_els(nel_dg_loc)%quad_rule = nofqp
 
                   dg_els(nel_dg_loc)%proj_yn = tag_dg_yn(tag_ind)
+                  dg_els(nel_dg_loc)%link    = tag_dg_link(tag_ind)                  
                   dg_els(nel_dg_loc)%frac_yn = tag_dg_frc(tag_ind)
                   dg_els(nel_dg_loc)%zt = val_dg_frc(tag_ind,1)                  
                   dg_els(nel_dg_loc)%zn = val_dg_frc(tag_ind,2)
@@ -412,6 +417,7 @@
                   dg_els(nel_dg_loc)%quad_rule = nofqp
 
                   dg_els(nel_dg_loc)%proj_yn = tag_dg_yn(tag_ind)
+                  dg_els(nel_dg_loc)%link    = tag_dg_link(tag_ind)                  
                   dg_els(nel_dg_loc)%frac_yn = tag_dg_frc(tag_ind)
                   dg_els(nel_dg_loc)%zt = val_dg_frc(tag_ind,1)                  
                   dg_els(nel_dg_loc)%zn = val_dg_frc(tag_ind,2)
@@ -452,7 +458,7 @@
                            + beta32(ie)*ct(i)*ctgl(k) + beta33(ie)*ct(i)*ctgl(j) &
                            + gamma3(ie)*ct(i)*ctgl(j)*ctgl(k) + delta3(ie)
                      
-                               dg_els(nel_dg_loc)%wx_pl(ip) = 1.d0
+                        dg_els(nel_dg_loc)%wx_pl(ip) = 1.d0
                         dg_els(nel_dg_loc)%wy_pl(ip) = wwgl(j)
                         dg_els(nel_dg_loc)%wz_pl(ip) = wwgl(k)                  
 
@@ -487,6 +493,7 @@
                   dg_els(nel_dg_loc)%quad_rule = nofqp
                   
                   dg_els(nel_dg_loc)%proj_yn = tag_dg_yn(tag_ind)
+                  dg_els(nel_dg_loc)%link    = tag_dg_link(tag_ind)                                    
                   dg_els(nel_dg_loc)%frac_yn = tag_dg_frc(tag_ind)
                   dg_els(nel_dg_loc)%zt = val_dg_frc(tag_ind,1)                  
                   dg_els(nel_dg_loc)%zn = val_dg_frc(tag_ind,2)
@@ -562,6 +569,7 @@
                   dg_els(nel_dg_loc)%quad_rule = nofqp
                   
                   dg_els(nel_dg_loc)%proj_yn = tag_dg_yn(tag_ind)
+                  dg_els(nel_dg_loc)%link    = tag_dg_link(tag_ind)                                    
                   dg_els(nel_dg_loc)%frac_yn = tag_dg_frc(tag_ind)
                   dg_els(nel_dg_loc)%zt = val_dg_frc(tag_ind,1)                  
                   dg_els(nel_dg_loc)%zn = val_dg_frc(tag_ind,2)
@@ -647,9 +655,9 @@
        open(unitmpi,file=filempi_new)
        write(unitmpi,*) nel_dg_loc 
        do i = 1, nel_dg_loc
-          write(unitmpi,"(1I2,1X,1I12,1X,1I2,1X,3(1X,ES12.4),1X,1I2,2(1X,ES12.4))") &
+          write(unitmpi,"(1I2,1X,1I12,1X,1I2,1X,3(1X,ES12.4),1X,1I2,2(1X,ES12.4),1X,1I3)") &
                        dg_els(i)%mat, dg_els(i)%ind_el, dg_els(i)%face_el, &
-                       dg_els(i)%nx, dg_els(i)%ny, dg_els(i)%nz, dg_els(i)%frac_yn, dg_els(i)%zt, dg_els(i)%zn  
+                       dg_els(i)%nx, dg_els(i)%ny, dg_els(i)%nz, dg_els(i)%frac_yn, dg_els(i)%zt, dg_els(i)%zn, dg_els(i)%link 
        enddo
        close(unitmpi)     
      
@@ -665,7 +673,8 @@
          write(unitname,*) nel_dg_glo
          !close(unitname)
          
-         allocate(mat_el_face(nel_dg_glo,4), normalxyz(nel_dg_glo,3), zt_glo(nel_dg_glo), zn_glo(nel_dg_glo))
+         allocate(mat_el_face(nel_dg_glo,4), normalxyz(nel_dg_glo,3), zt_glo(nel_dg_glo), zn_glo(nel_dg_glo), &
+                  link_glo(nel_dg_glo))
          k = 1
          
          do i = 1, mpi_np
@@ -697,7 +706,7 @@
                                            
              do j = 1, nel_dg_proc
                  read(unitmpi,*) mat_el_face(k,1),mat_el_face(k,2), mat_el_face(k,3), &
-                                 normalxyz(k,1), normalxyz(k,2), normalxyz(k,3), mat_el_face(k,4), zt_glo(k), zn_glo(k)
+                                 normalxyz(k,1), normalxyz(k,2), normalxyz(k,3), mat_el_face(k,4), zt_glo(k), zn_glo(k), link_glo(k)
                     k=k+1
              enddo
           
@@ -707,7 +716,7 @@
           
           do j = 1, nel_dg_glo
              write(unitname,*) mat_el_face(j,1),mat_el_face(j,2), mat_el_face(j,3), &
-                            normalxyz(j,1), normalxyz(j,2), normalxyz(j,3), mat_el_face(j,4), zt_glo(j), zn_glo(j)
+                            normalxyz(j,1), normalxyz(j,2), normalxyz(j,3), mat_el_face(j,4), zt_glo(j), zn_glo(j), link_glo(j)
           enddo
           
           deallocate(mat_el_face, normalxyz, zn_glo, zt_glo)

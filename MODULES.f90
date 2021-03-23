@@ -94,6 +94,7 @@ module str_mesh
    integer*4:: quad_rule    !< number of quadrature point in 1D
    integer*4:: nofne        !< number of neighbouring elements
    integer*4:: proj_yn      !< 1 if the element project quad nodes 0 otherwise 
+   integer*4:: link         ! link two surfaces to speedup the dg setup
    real*8   :: nx,ny,nz     !< normal to the element
    integer*4::frac_yn
 
@@ -343,7 +344,7 @@ module speed_par
                  tag_dirX_el, tag_neuX_el, tag_dirY_el, tag_neuY_el, tag_dirZ_el, tag_neuZ_el, &
                  tag_neuN_el, &
                  tag_plaY_el, tag_plaX_el, tag_plaZ_el, &
-                 tag_abc_el, tag_dg_el, tag_dg_yn, tag_dg_frc, &
+                 tag_abc_el, tag_dg_el, tag_dg_yn, tag_dg_frc, tag_dg_link, &
                  tag_sism_el, tag_expl_el, &           
                  tag_func, func_type, func_indx
       
