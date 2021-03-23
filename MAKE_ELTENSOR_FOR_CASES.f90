@@ -283,6 +283,12 @@
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
 
+                   elseif (tcase.eq.46) then
+                   !-------------------------------------------------------------------
+                   ! CASE 46: KUMAMOTO
+                        call MAKE_MECH_PROP_CASE_046(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                      xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic))
+
                    elseif (tcase.eq.50) then
                    !-------------------------------------------------------------------
                    ! CASE 50: PLANE-WAVE benchmark -  MULTI NOT honoring

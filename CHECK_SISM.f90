@@ -80,6 +80,7 @@
       integer*4, dimension(length_cns,4) :: check_ns
             
       real*8 :: vel_prop, dist_b, xb, yb, zb, trup_b, dist_p, trup_p
+      real*8 :: dumvr, delay_tr
       
       real*8, dimension(:), allocatable :: ct,ww
       
@@ -181,10 +182,15 @@
                                           dist_p = dsqrt((val_sism(isism,1)-check_pos_ns(h,1))**2.d0 & 
                                                        +(val_sism(isism,2)-check_pos_ns(h,2))**2.d0 & 
                                                        +(val_sism(isism,3)-check_pos_ns(h,3))**2.d0); 
+
                                           if (dabs(dist_b) .le. 100) then
-                                            check_dist_ns(h,1) =  val_sism(isism,val_st+7)
+                                            check_dist_ns(h,1) =  val_sism(isism,val_st+7);
                                          else
-                                            check_dist_ns(h,1) = (val_sism(isism,val_st+7) * dist_p) / dist_b;
+                                            ! delay_tr = Rupture time delay for respective segment + time window delay
+                                            !dumvr = 2500;
+                                            !delay_tr = val_sism(isism,val_st+7) - (dist_b/dumvr);
+                                            !check_dist_ns(h,1) = delay_tr + (dist_p/dumvr);
+                                            check_dist_ns(h,1) = val_sism(isism,val_st+7)*dist_p/dist_b;
                                          endif
                                      endif
                                      

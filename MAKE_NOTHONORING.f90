@@ -71,13 +71,17 @@
   
      character*70 :: file_case_xyz						
      character*70 :: file_case_all	
-     character*70 :: file_case_vs					
+     character*70 :: file_case_vs
+
+     !character*70 :: file_nhe_proc, file_nhe_new
+     !integer*4 :: inode, unit_mpi
+     !real*8 :: rho,lambda,mu,gamma,qs,qp
   
      integer*4 :: n_case, nn_loc, cs_nnz_loc, nm, mpi_id
      integer*4 :: ncase,vcase,tcase						
      integer*4 :: n_elev,n_tria_elev						
      integer*4 :: start,finish							
-     integer*4 :: n_all,n_tria_all, ival, icase	
+     integer*4 :: n_all,n_tria_all, ival, icase
      !integer*4 :: tag_case, val_case					
 
      integer*4, dimension (:), allocatable :: node1_all,node2_all,node3_all	
@@ -163,7 +167,7 @@
 	elseif (tcase .eq. 2 .or. tcase .eq. 3 .or. tcase .eq. 4 .or. tcase .eq. 6 &
 	        .or. tcase .eq. 7 .or. tcase .eq. 8 .or. tcase .eq. 11 .or. tcase .eq. 12 &
 	        .or. tcase .eq. 13 .or. tcase .eq. 14 .or. tcase .eq. 15 .or. tcase .eq. 18 &
-	        .or. tcase .eq. 22  .or. tcase .eq. 40 .or. tcase .eq. 33) then									
+	        .or. tcase .eq. 22  .or. tcase .eq. 40 .or. tcase .eq. 33 .or. tcase .eq. 46) then									
 		if (mpi_id.eq. 0 .and. tcase .eq. 2) then									
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 2: GRENOBLE'					
@@ -223,6 +227,9 @@
 	    elseif(mpi_id .eq. 0 .and. tcase .eq. 40) then		
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 40: KUTCH'	     				
+		elseif(mpi_id .eq. 0 .and. tcase .eq. 46) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 46: KUMAMOTO'
 		endif											
 
 		if(mpi_id .eq. 0) write(*,'(A)')'Reading Topography&Alluvial...'
@@ -278,7 +285,44 @@
 			write(*,'(A)')									
 		endif                                                                                   
 
+		! !Witing File
+		! if (mpi_id.eq.0) then									
+		! 	write(*,'(A)')								
+		! 	write(*,'(A)')'Writing Material Property Files...'									
+		! endif                                                                                   
+		
+		! file_nhe_proc = 'nhcxyz000000.mpi'
+	 !      unit_mpi = 1500 + mpi_id                                 
+	 !      if (mpi_id.lt. 10) then                                        
+	 !          write(file_nhe_proc(12:12),'(i1)') mpi_id                
+	 !      else if (mpi_id .lt. 100) then                                
+	 !          write(file_nhe_proc(11:12),'(i2)') mpi_id                
+	 !      else if (mpi_id .lt. 1000) then                                
+	 !          write(file_nhe_proc(10:12),'(i3)') mpi_id                
+	 !      else if (mpi_id .lt. 10000) then                                
+	 !          write(file_nhe_proc(9:12),'(i4)') mpi_id                
+	 !      else if (mpi_id .lt. 100000) then        
+	 !          write(file_nhe_proc(8:12),'(i5)') mpi_id                
+	 !      else if (mpi_id .lt. 1000000) then                                
+	 !          write(file_nhe_proc(7:12),'(i6)') mpi_id                
+	 !      endif
+	        
+	 !     file_nhe_new = 'FILES_MPI/' // file_nhe_proc
+	      
+	     
+	 !    open(unit_mpi,file=file_nhe_new)
+		! do  inode = 1, nn_loc
+		! 	call MAKE_MECH_PROP_CASE_046(rho,lambda,mu,gamma,qs,qp, &
+		! 								xs_loc(inode),ys_loc(inode),zs_loc(inode), &
+		! 								zs_elev(inode),zs_all(inode))
 
+		! 	write(unit_mpi,*) xs_loc(inode), ys_loc(inode), zs_loc(inode), zs_elev(inode), zs_all(inode), rho
+		! enddo
+		! close(unit_mpi)
+		! if (mpi_id.eq.0) then									
+		! 	write(*,'(A)')'Done'								
+		! 	write(*,'(A)')									
+		! endif                                                                                   
 
 
 

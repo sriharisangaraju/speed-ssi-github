@@ -5,7 +5,7 @@ FC_PC=mpif90
 
 
 FC_PC_FLAGS=-O5 -g -c -cpp -ffree-form -ffree-line-length-none -fopenmp -fbounds-check -DPETSC_AVOID_MPIF_H
-LD_PC_FLAGS=-O5  -fopenmp  /m100_work/IscrB_GMS4RISK_1/metis-4.0.3-gnu/libmetis.a
+LD_PC_FLAGS=-O5  -fopenmp  /m100_work/IscrB_INDQUAKE/metis-4.0.3-gnu/libmetis.a
 
 PETSC_LD_FLAGS=
 PETSC_FC_FLAGS=
