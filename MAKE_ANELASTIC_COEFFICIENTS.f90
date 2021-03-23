@@ -74,18 +74,19 @@
       
       if(mpi_id .eq. 0) then
          write(*,*) 'Frequency range where Quality Factor is assumed to be constant is:'
-         write(*,*) 'FMIN =' ,fmin, '  FMAX =', fmax;
+         write(*,*) 'FMIN =' ,f_val*0.1, '  FMAX =', f_val*10;
       endif
             
      esp1 = LOG10(fmin); esp2 = LOG10(fmax);
      deltax = (esp2-esp1)/(N_SLS-1);
      
-
+     f_val = 1;
+     
      if (N_SLS .eq. 3) then
 
-        frequency_range(1) = 2.*pi*fmin;
-        frequency_range(2) = 2.*pi*10*fmin;
-        frequency_range(3) = 2.*pi*fmax;
+        frequency_range(1) = f_val*0.1!2.*pi*fmin;
+        frequency_range(2) = f_val*1!*fmin;
+        frequency_range(3) = f_val*10!*fmax;
         frequency_range_sampling(1) = frequency_range(1);
         frequency_range_sampling(2) = 0.5*(frequency_range(1)+frequency_range(2))
         frequency_range_sampling(3) = frequency_range(2);
@@ -110,11 +111,11 @@
 
       elseif (N_SLS .eq. 5) then
 
-        frequency_range(1) = 2.*pi*fmin;
-        frequency_range(2) = 2.*pi*10**(esp1+deltax)
-        frequency_range(3) = 2.*pi*10**(esp1+2*deltax)
-        frequency_range(4) = 2.*pi*10**(esp1+3*deltax)
-        frequency_range(5) = 2.*pi*fmax;
+        frequency_range(1) = f_val*0.1 ! 2.*pi*fmin;
+        frequency_range(2) = f_val*0.5 !2.*pi*10**(esp1+deltax)
+        frequency_range(3) = f_val*1   !2.*pi*10**(esp1+2*deltax)
+        frequency_range(4) = f_val*5   !2.*pi*10**(esp1+3*deltax)
+        frequency_range(5) = f_val*10!2.*pi*fmax;
         frequency_range_sampling(1) = frequency_range(1);
         frequency_range_sampling(2) = 0.5*(frequency_range(1)+frequency_range(2))
         frequency_range_sampling(3) = frequency_range(2);
@@ -122,8 +123,8 @@
         frequency_range_sampling(5) = frequency_range(3);
         frequency_range_sampling(6) = 0.5*(frequency_range(3)+frequency_range(4))
         frequency_range_sampling(7) = frequency_range(4);
-        frequency_range_sampling(6) = 0.5*(frequency_range(4)+frequency_range(5))
-        frequency_range_sampling(7) = frequency_range(5);
+        frequency_range_sampling(8) = 0.5*(frequency_range(4)+frequency_range(5))
+        frequency_range_sampling(9) = frequency_range(5);
 
 
       endif           
@@ -143,6 +144,7 @@
          Y_mu(im,:) = 0.d0; Y_lambda(im,:) = 0.d0;
          if (QP(im) .ne. 0.d0 .and. QS(im) .ne. 0.d0) then
  
+ 
            do i = 1, 2*N_SLS-1
               do j = 1, N_SLS
 
@@ -159,11 +161,14 @@
             
            enddo
          
+                  
            !call FACTORIZE_MATRIX(A_QP,N_SLS,PIVOT_QP)
            !call FACTORIZE_MATRIX(A_QS,N_SLS,PIVOT_QS)
          
            !call DIRECT_LU_SOLVER(A_QP,RHS_QP,N_SLS,YP,PIVOT_QP)
            !call DIRECT_LU_SOLVER(A_QS,RHS_QS,N_SLS,YS,PIVOT_QS)
+            
+
             
            call QR_SOLVE(2*N_SLS-1,N_SLS, A_QP, RHS_QP, YP) 
            call QR_SOLVE(2*N_SLS-1,N_SLS, A_QS, RHS_QS, YS) 
