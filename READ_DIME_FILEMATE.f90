@@ -251,7 +251,12 @@
                  ! CASHIMA   
                  nb_func_data = nb_func_data + 2    
                case(100)
-                 nb_func_data = nb_func_data + 1                                
+                 nb_func_data = nb_func_data + 1   
+               case(773) 
+                   ! TIME SERIES
+                 read(inline(5:),*) lab_fnc, type_fnc, ndat_fnc
+                 nb_func_data = nb_func_data + ndat_fnc
+
             end select 
          
          end select
