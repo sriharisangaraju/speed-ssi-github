@@ -488,9 +488,9 @@
                          val_sism(isism,6),val_sism(isism,7),val_sism(isism,8),&                
                          val_sism(isism,9),val_sism(isism,10),val_sism(isism,11),&                
                          val_sism(isism,12),val_sism(isism,13),val_sism(isism,14),&        
-                         val_sism(isism,15)!,val_sism(isism,16),val_sism(isism,17),&        
-                         !val_sism(isism,18),val_sism(isism,19),val_sism(isism,20),&        
-                         !val_sism(isism,21)
+                         val_sism(isism,15),val_sism(isism,16),val_sism(isism,17),&        
+                         val_sism(isism,18),val_sism(isism,19),val_sism(isism,20),&        
+                         val_sism(isism,21)
 
 
            case('EXPL')                                                        

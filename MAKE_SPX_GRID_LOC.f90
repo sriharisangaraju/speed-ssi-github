@@ -123,6 +123,7 @@
                n6 = nn*nn*(nn -1) +nn*(1 -1) +nn
                n7 = nn*nn*(nn -1) +nn*(nn -1) +nn
                n8 = nn*nn*(nn -1) +nn*(nn -1) +1
+
                
                ic1 = cs_loc(cs_loc(ie -1) +n1)
                ic2 = cs_loc(cs_loc(ie -1) +n2)
@@ -165,6 +166,8 @@
                x8 = xx_loc(ic8)
                y8 = yy_loc(ic8)
                z8 = zz_loc(ic8)
+               
+               
                               
                               
                alfa11(ie) = 0.125d0*(-x1 +x2 +x3 -x4 -x5 +x6 +x7 -x8)  !1/8 * e1
@@ -203,6 +206,8 @@
                jac = alfa31(ie)*(alfa12(ie)*alfa23(ie) -alfa13(ie)*alfa22(ie)) &
                    - alfa32(ie)*(alfa11(ie)*alfa23(ie) -alfa13(ie)*alfa21(ie)) &
                    + alfa33(ie)*(alfa11(ie)*alfa22(ie) -alfa12(ie)*alfa21(ie))
+
+
                
 
                if (jac.le.0.d0) then
