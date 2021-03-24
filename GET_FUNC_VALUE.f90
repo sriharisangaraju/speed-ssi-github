@@ -33,7 +33,7 @@
 
 
       real*8 function GET_FUNC_VALUE(nb_fnc, type_fnc, ind_fnc, &
-                                     data_fnc, nb_data_fnc, id_fnc, time, dist,vel,)
+                                     data_fnc, nb_data_fnc, id_fnc, time, dist,vel)
             
 
 
