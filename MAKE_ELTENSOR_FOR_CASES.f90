@@ -296,6 +296,13 @@
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
                     
+                   elseif (tcase.eq.70) then
+                   !-------------------------------------------------------------------
+                   ! CASE 70: L'AQUILA -  MULTI BASINS
+                        call MAKE_MECH_PROP_CASE_070(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                      xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
+                                                      vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
+                   
                    elseif (tcase.eq.98) then
                    !-------------------------------------------------------------------
                    ! CASE 98: TEST honoring (only TOPOGRAPHY)

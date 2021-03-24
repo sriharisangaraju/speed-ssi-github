@@ -285,46 +285,91 @@
 			write(*,'(A)')									
 		endif                                                                                   
 
-		! !Witing File
-		! if (mpi_id.eq.0) then									
-		! 	write(*,'(A)')								
-		! 	write(*,'(A)')'Writing Material Property Files...'									
-		! endif                                                                                   
-		
-		! file_nhe_proc = 'nhcxyz000000.mpi'
-	 !      unit_mpi = 1500 + mpi_id                                 
-	 !      if (mpi_id.lt. 10) then                                        
-	 !          write(file_nhe_proc(12:12),'(i1)') mpi_id                
-	 !      else if (mpi_id .lt. 100) then                                
-	 !          write(file_nhe_proc(11:12),'(i2)') mpi_id                
-	 !      else if (mpi_id .lt. 1000) then                                
-	 !          write(file_nhe_proc(10:12),'(i3)') mpi_id                
-	 !      else if (mpi_id .lt. 10000) then                                
-	 !          write(file_nhe_proc(9:12),'(i4)') mpi_id                
-	 !      else if (mpi_id .lt. 100000) then        
-	 !          write(file_nhe_proc(8:12),'(i5)') mpi_id                
-	 !      else if (mpi_id .lt. 1000000) then                                
-	 !          write(file_nhe_proc(7:12),'(i6)') mpi_id                
-	 !      endif
-	        
-	 !     file_nhe_new = 'FILES_MPI/' // file_nhe_proc
-	      
-	     
-	 !    open(unit_mpi,file=file_nhe_new)
-		! do  inode = 1, nn_loc
-		! 	call MAKE_MECH_PROP_CASE_046(rho,lambda,mu,gamma,qs,qp, &
-		! 								xs_loc(inode),ys_loc(inode),zs_loc(inode), &
-		! 								zs_elev(inode),zs_all(inode))
+!*************************************************************************************************
+!                            L'AQUILA- MULTI BASIN
+!*************************************************************************************************
 
-		! 	write(unit_mpi,*) xs_loc(inode), ys_loc(inode), zs_loc(inode), zs_elev(inode), zs_all(inode), rho
-		! enddo
-		! close(unit_mpi)
-		! if (mpi_id.eq.0) then									
-		! 	write(*,'(A)')'Done'								
-		! 	write(*,'(A)')									
-		! endif                                                                                   
+	elseif (tcase.eq. 70) then									
+		if (mpi_id.eq.0 ) then									
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 70: Aquila-multibasin'	
+				
+		endif											
+								
+		 write(*,'(A)')'Reading Topography&Alluvial...'		
+		 
+		 file_case_xyz ='XYZ.out'								
 
+		zs_elev = -1.0e+30
+		zs_all = 0.d0;								
 
+		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)
+		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev))					
+		allocate(node1_elev(n_tria_elev), node2_elev(n_tria_elev), node3_elev(n_tria_elev))	
+
+		call READ_FILEXYZ(file_case_xyz,n_elev,n_tria_elev,&					
+				  x_elev,y_elev,z_elev,&				
+				  node1_elev,node2_elev,node3_elev,&			
+				  max_elev_spacing)
+				  					
+		call GET_NODE_DEPTH_FROM_CMPLX(loc_n_num, n_elev, n_tria_elev, &					
+			   x_elev, y_elev, z_elev, &				
+			   node1_elev, node2_elev, node3_elev,&			
+			   cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &
+			   nn_loc, xs_loc, ys_loc, zs_loc, &
+			   zs_elev, zs_all, &					
+			   val_case(1), max_elev_spacing, tol_case(1))		
+
+   	    deallocate(x_elev, y_elev, z_elev, node1_elev, node2_elev, node3_elev)
+				  
+		sub_tag_all = 3	
+		ival = 3							
+											
+		do j = 1,2										    
+			if (j.eq.1) then								
+				file_case_all ='ALL1.out'
+			else										
+				file_case_all ='ALL2.out'						
+			endif										
+	
+			zs_all = -1.0e+30
+
+			call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)
+
+			allocate(x_all(n_all), y_all(n_all), z_all(n_all))
+			allocate(node1_all(n_tria_all), node2_all(n_tria_all), node3_all(n_tria_all))
+			
+   		    call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
+			          		  x_all,y_all,z_all,&					
+					          node1_all,node2_all,node3_all,&			
+							  max_all_spacing)				
+							  										  
+
+		    do icase = 1, ncase
+			 
+			 		call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
+							   x_all, y_all, z_all, &					
+							   node1_all, node2_all, node3_all,&			
+				               cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
+	                           nn_loc, xs_loc, ys_loc, zs_loc, &	
+							   zs_all, val_case(icase), max_all_spacing, tol_case(icase))		
+		    enddo    					
+
+		    call MAKE_SUBTAG_ALLUVIAL(nn_loc, zs_all, j, sub_tag_all, xs_loc, ival)
+		        	
+			deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
+			
+			if (mpi_id.eq.0) then	
+				write(*,'(A)')	
+				write(*,'(A,I8)') 'ALLUVIAL Layer # ',j	
+			endif
+
+		enddo      
+                                   
+		if (mpi_id.eq.0) then
+			write(*,'(A)') 'Done'
+			write(*,'(A)')	
+		endif
 
 !*************************************************************************************************
 !                             VOLVI CASHIMA BENCHMARK - NOT honoring

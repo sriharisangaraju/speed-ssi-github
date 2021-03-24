@@ -390,6 +390,8 @@
                 write(*,'(A)')'KUTCH BASIN, INDIA'                                            
               case(46)
                 write(*,'(A)')'KUMAMOTO, JAPAN'
+              case(70)
+                write(*,'(A)')'AQUILA MULTI-BASIN'
               case(98,99,100)
                 write(*,'(A)')'TEST MODE'                                
               case default
