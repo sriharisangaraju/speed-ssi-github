@@ -33,7 +33,7 @@
 
 
       real*8 function GET_FUNC_VALUE(nb_fnc, type_fnc, ind_fnc, &
-                                     data_fnc, nb_data_fnc, id_fnc, time, dist,vel, tagty)
+                                     data_fnc, nb_data_fnc, id_fnc, time, dist,vel,)
             
 
 
@@ -53,8 +53,9 @@
       
       real*8, dimension(nb_data_fnc) :: data_fnc
       real*8, dimension(1) :: valmax
-!      real*8, dimension(:), allocatable :: timevalues, values
-      integer*4,intent(in)::tagty
+
+
+
 
       GET_FUNC_VALUE = 0.0d0
 
@@ -336,13 +337,8 @@
           
          case(101) 
           GET_FUNC_VALUE = time
-               
-         ! TIME SERIES ADDED BY TY  !!!!!!!!!!!!!ty!!!!!!!!!!!!!
-         case(773)
-                  GET_FUNC_VALUE = data_fnc(ind_fnc(id_fnc) + tagty)
 
-        !!!!!!!!!!!!!!!!!!!
-
+        
         
          case default
            GET_FUNC_VALUE = 0.d0

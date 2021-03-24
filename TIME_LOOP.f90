@@ -883,7 +883,7 @@
                        if(local_node_num(id) .eq. node_tra(i) .and. find_tag .ne. 0) then
                           iaz = 3*(id -1) +3; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +3)) * & 
                            GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,&
-                                          nfunc_data,fn,tt_int,dist_tra(i),val_traZ_el(find_tag,1),its)
+                                          nfunc_data,fn,tt_int,dist_tra(i),val_traZ_el(find_tag,1))
                           ! val_debug =   GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,&
                           !                                    nfunc_data,fn,tt_int,dist_tra(i),val_traZ_el(find_tag,1))
                                                                                                 
@@ -896,13 +896,13 @@
                   else  !EXTERNAL FORCES   
                     if    (Fel(fn,(3*(id -1) +1)) .ne. 0.d0) then
                         iaz = 3*(id -1) +1; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +1)) * & 
-                                     GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0,its)
+                                     GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
                     elseif(Fel(fn,(3*(id -1) +2)) .ne. 0.d0) then
                         iaz = 3*(id -1) +2; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +2)) * & 
-                                 GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0,its)
+                                 GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
                     elseif(Fel(fn,(3*(id -1) +3)) .ne. 0.d0) then 
                         iaz = 3*(id -1) +3; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +3)) * & 
-                                 GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0,its)
+                                 GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
                     endif
                   endif
                enddo
@@ -2064,7 +2064,7 @@
       endif                                                                                        
 
       do fn = 1,nfunc
-            func_value(fn) = GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt2,0,0,its)
+            func_value(fn) = GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt2,0,0)
 !            write(*,*) tt2, func_value(fn)
       enddo
 !      read(*,*)
