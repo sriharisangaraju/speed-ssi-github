@@ -223,7 +223,7 @@
       if (nload_abc_el.gt.0) allocate (tag_abc_el(nload_abc_el))
       if (nload_dg_el .gt. 0) allocate (tag_dg_el(nload_dg_el), tag_dg_yn(nload_dg_el),tag_dg_link(nload_dg_el), tag_dg_frc(nload_dg_el), val_dg_frc(nload_dg_el,2))
       if (nload_dg_el .gt. 0) then
-              tag_dg_frc=0; val_dg_frc=0;
+              tag_dg_frc=0; val_dg_frc=0; tag_dg_link =0;
       endif
       if (nload_sism_el.gt.0) allocate (val_sism_el(nload_sism_el,21), &
                                         fun_sism_el(nload_sism_el), tag_sism_el(nload_sism_el))     
