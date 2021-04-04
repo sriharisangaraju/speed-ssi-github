@@ -155,6 +155,36 @@
             endif
 
 
+         case(33) ! Input Source Time function using Text File
+!           Supplied Input Time series file. Sufficient to just define the Unit Value Function
+!           Function Value = Value_from_time_Series*Moment_tensor_component
+!           Starting Time in Time series is 0sec. End Time is Rise Time
+!           At the end of the Rise time, Value_from_time_Series = 1; (Unit Slip)
+            !write(*,*) time, t0_delay, tau_new
+            !read(*,*)
+
+            if (time.lt.t0_delay) then
+              GET_FUNC_VALUE_SISM = 0.d0;
+            elseif ((time.ge.t0_delay).and.(time.le.(t0_delay+tau_new))) then
+              do i = ind_fnc(id_fnc),ind_fnc(id_fnc+1) -3,2
+             !   write(*,*) 'qui'
+                t0 = data_fnc(i)*tau_new + t0_delay
+                t1 = data_fnc(i +2)*tau_new + t0_delay
+                v0 = data_fnc(i +1)
+                v1 = data_fnc(i +3)
+             !   write(*,*) t0,t1,v0,v1
+             !   read(*,*)
+                
+                if ((time.ge.t0).and.(time.le.t1)) then
+                  GET_FUNC_VALUE_SISM = (v1 - v0) / (t1 - t0) * (time - t0)  + v0
+                endif
+              enddo
+            elseif (time.gt.(t0_delay+tau_new)) then
+              GET_FUNC_VALUE_SISM = 1.d0;
+            endif
+
+
+
          case(50) ! - GRENOBLE BENCHMARK - NEW TAU
            TAU =  tau_new
            scaling = data_fnc(ind_fnc(id_fnc) +1)
