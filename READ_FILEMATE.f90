@@ -554,7 +554,7 @@
                      (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)
                
                     
-               case(3,30,31)
+               case(3,30,31,33)
                  read(inline(ileft:iright),*)dummy,dummy,ndat_fnc,fileinput
                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + 2*ndat_fnc
 
