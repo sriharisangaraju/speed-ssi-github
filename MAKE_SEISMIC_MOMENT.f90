@@ -80,7 +80,7 @@
       integer*4, dimension(length_cns,4) :: check_ns        
 
       real*8 :: t_stress                                                                
-      real*8 :: GET_FUNC_VALUE_SISM                                                
+      real*8 :: GET_FUNC_VALUE_SISM, VAL_SISM                                                
 
       real*8, dimension(nn) :: ct,ww
       real*8, dimension(nfdata) :: func_data                                        
@@ -120,30 +120,48 @@
                                     !check_dist_ns(i,1) = rupture time
                                     !tausmom = rise time
                                     !facsmom = seismic moment
-                                    sxx(p,q,r) = sxx(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata, &
+                                    VAL_SISM = GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata, &
                                                                      fn,t_stress,check_dist_ns(i,1), &
-                                                                     tausmom(check_ns(i,3),1)) * facsmom(check_ns(i,3),1)
+                                                                     tausmom(check_ns(i,3),1))
+                                                                     
+                                    write(*,*) VAL_SISM
+                                    !read(*,*)
+                                    
+!                                    sxx(p,q,r) = sxx(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata, &
+!                                                                     fn,t_stress,check_dist_ns(i,1), &
+!                                                                     tausmom(check_ns(i,3),1)) * facsmom(check_ns(i,3),1)
                                                                                
-                                    syy(p,q,r) = syy(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata,&
-                                                                     fn,t_stress,check_dist_ns(i,1), &
-                                                                     tausmom(check_ns(i,3),1)) * facsmom(check_ns(i,3),2)
+!                                    syy(p,q,r) = syy(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata,&
+!                                                                     fn,t_stress,check_dist_ns(i,1), &
+!                                                                     tausmom(check_ns(i,3),1)) * facsmom(check_ns(i,3),2)
                                                                                
-                                    szz(p,q,r) = szz(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata,&
-                                                                     fn,t_stress,check_dist_ns(i,1), &
-                                                                     tausmom(check_ns(i,3),1)) * facsmom(check_ns(i,3),3)
+!                                    szz(p,q,r) = szz(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata,&
+!                                                                     fn,t_stress,check_dist_ns(i,1), &
+!                                                                     tausmom(check_ns(i,3),1)) * facsmom(check_ns(i,3),3)
                                                                                  
-                                    syz(p,q,r) = syz(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata,&
-                                                                     fn,t_stress,check_dist_ns(i,1), &
-                                                                     tausmom(check_ns(i,3),1)) * facsmom(check_ns(i,3),4)
+!                                    syz(p,q,r) = syz(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata,&
+!                                                                     fn,t_stress,check_dist_ns(i,1), &
+!                                                                     tausmom(check_ns(i,3),1)) * facsmom(check_ns(i,3),4)
                                                                                 
-                                    szx(p,q,r) = szx(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata,&
-                                                                     fn,t_stress,check_dist_ns(i,1), &
-                                                                     tausmom(check_ns(i,3),1)) * facsmom(check_ns(i,3),5)
+!                                    szx(p,q,r) = szx(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata,&
+!                                                                     fn,t_stress,check_dist_ns(i,1), &
+!                                                                     tausmom(check_ns(i,3),1)) * facsmom(check_ns(i,3),5)
                                                                                
-                                    sxy(p,q,r) = sxy(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata,&
-                                                                     fn,t_stress,check_dist_ns(i,1), &
-                                                                     tausmom(check_ns(i,3),1)) * facsmom(check_ns(i,3),6)  
+!                                    sxy(p,q,r) = sxy(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata,&
+!                                                                     fn,t_stress,check_dist_ns(i,1), &
+!                                                                     tausmom(check_ns(i,3),1)) * facsmom(check_ns(i,3),6)  
                                                                                          
+                                    sxx(p,q,r) = sxx(p,q,r) - VAL_SISM * facsmom(check_ns(i,3),1)
+                                                                               
+                                    syy(p,q,r) = syy(p,q,r) - VAL_SISM * facsmom(check_ns(i,3),2)
+                                                                               
+                                    szz(p,q,r) = szz(p,q,r) - VAL_SISM * facsmom(check_ns(i,3),3)
+                                                                                 
+                                    syz(p,q,r) = syz(p,q,r) - VAL_SISM * facsmom(check_ns(i,3),4)
+                                                                                
+                                    szx(p,q,r) = szx(p,q,r) - VAL_SISM * facsmom(check_ns(i,3),5)
+                                                                               
+                                    sxy(p,q,r) = sxy(p,q,r) - VAL_SISM * facsmom(check_ns(i,3),6)  
 
 
                                     ! inquire(file="sft_th_debug.txt", exist=exist)
