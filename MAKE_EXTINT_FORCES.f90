@@ -270,7 +270,7 @@
       real*8, dimension(:), allocatable :: dist_tra_real
       real*8, dimension(nnod_loc) :: xs_loc,ys_loc,zs_loc
       real*8, dimension(nnod_loc) :: lambda_nhe, rho_nhe, mu_nhe
-      real*8, dimension(:,:,:), allocatable :: lambda_el, rho_el, mu_el
+      real*8, dimension(:,:,:), allocatable :: lambda_el, rho_el, mu_el, gamma_el
       real*8, dimension(nm) :: tref_mat
       real*8, dimension(ne_loc) :: alfa11,alfa12,alfa13, alfa21,alfa22,alfa23, alfa31,alfa32,alfa33
       real*8, dimension(ne_loc) :: beta11,beta12,beta13, beta21,beta22,beta23, beta31,beta32,beta33
@@ -1000,14 +1000,14 @@
             mu = prop_mat(im,3)
 
             if (nmat_nhe.gt.0) then
-              allocate(rho_el(nn,nn,nn), lambda_el(nn,nn,nn), mu_el(nn,nn,nn))
+              allocate(rho_el(nn,nn,nn), lambda_el(nn,nn,nn), mu_el(nn,nn,nn), gamma_el(nn,nn,nn))
               call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, cs_nnz_loc, cs_loc, &
-                                              rho_nhe, lambda_nhe, mu_nhe, &
-                                              rho_el, lambda_el, mu_el)
+                                              rho_nhe, lambda_nhe, mu_nhe, 100.d0, 3.d0, &
+                                              rho_el, lambda_el, mu_el, gamma_el)
               rho = sum(rho_el)/(nn*nn*nn)
               lambda = sum(lambda_el)/(nn*nn*nn)
               mu = sum(mu_el)/(nn*nn*nn)
-              deallocate(rho_el, lambda_el, mu_el)
+              deallocate(rho_el, lambda_el, mu_el, gamma_el)
             endif
 
 
@@ -2476,14 +2476,14 @@
              mu = prop_mat(im,3)
 
              if (nmat_nhe.gt.0) then
-              allocate(rho_el(nn,nn,nn), lambda_el(nn,nn,nn), mu_el(nn,nn,nn))
+              allocate(rho_el(nn,nn,nn), lambda_el(nn,nn,nn), mu_el(nn,nn,nn), gamma_el(nn,nn,nn))
               call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, cs_nnz_loc, cs_loc, &
-                                              rho_nhe, lambda_nhe, mu_nhe, &
-                                              rho_el, lambda_el, mu_el)
+                                              rho_nhe, lambda_nhe, mu_nhe, 100.d0, 3.d0, &
+                                              rho_el, lambda_el, mu_el, gamma_el)
               rho = sum(rho_el)/(nn*nn*nn)
               lambda = sum(lambda_el)/(nn*nn*nn)
               mu = sum(mu_el)/(nn*nn*nn)
-              deallocate(rho_el, lambda_el, mu_el)
+              deallocate(rho_el, lambda_el, mu_el, gamma_el)
             endif
 
 

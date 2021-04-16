@@ -212,26 +212,11 @@
           endif
       enddo
       deallocate(tomo_qp)
-     
-     !!!!!!!!!!!!!!!!!!!!!!!!!! Gamma !!!!!!!!!!!!!!!!!!!!!!!!
-     ! Only For Damping Type - 1 (Elastic case)
-     ! For other Damping Types Its not needed or = 0
-
-     !do im = 1, nmat
-     !       if(QS(im) .eq. 0.d0) then 
-     !          prop_mat(im,4) = 0.d0;
-     !       else
-     !          prop_mat(im,4) = 4.d0*datan(1.d0)*(fmax)/QS(im)
-     !       endif   
-     !enddo
-
-     !! IF Gamma > 10^(-5) make_damp_yes_or_no = true.
-     !! If Gamma < 10^(-5) damping is not assumed
 
      call MPI_BARRIER(mpi_comm, mpi_ierr)
 
      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     !!!!! Making Qs, Qp for Element instead of Each node
+     !!!!! Making Qs, Qp for Element instead of Each node (To save Memory)
 
      Qs_nhe_el = 0;
      Qp_nhe_el = 0;

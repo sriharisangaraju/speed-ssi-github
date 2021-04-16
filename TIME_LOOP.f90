@@ -431,8 +431,8 @@
                 QS_nh = Qs_nhe_el(ie)
                 QP_nh = Qs_nhe_el(ie)
                 call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, con_nnz_loc, con_spx_loc, &
-                                              rho_nhe, lambda_nhe, mu_nhe, &
-                                              rho_el, lambda_el, mu_el)!gamma_el
+                                              rho_nhe, lambda_nhe, mu_nhe, QS_nh, fmax, &
+                                              rho_el, lambda_el, mu_el, gamma_el)
              endif
                 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -571,10 +571,9 @@
              if (nmat_nhe.gt.0) then
                 QS_nh = Qs_nhe_el(ie)
                 QP_nh = Qs_nhe_el(ie)
-                ! Currently Only Supports Damping Type -2 . (Gamma Not defined)
                 call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, con_nnz_loc, con_spx_loc, &
-                                              rho_nhe, lambda_nhe, mu_nhe, &
-                                              rho_el, lambda_el, mu_el)!gamma_el
+                                              rho_nhe, lambda_nhe, mu_nhe, QS_nh, fmax, &
+                                              rho_el, lambda_el, mu_el, gamma_el)
              endif
                
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1150,10 +1149,9 @@
              if (nmat_nhe.gt.0) then
                 QS_nh = Qs_nhe_el(ie)
                 QP_nh = Qs_nhe_el(ie)
-                ! Currently Only Supports Damping Type -2 . (Gamma Not defined)
                 call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, con_nnz_loc, con_spx_loc, &
-                                              rho_nhe, lambda_nhe, mu_nhe, &
-                                              rho_el, lambda_el, mu_el)!gamma_el
+                                              rho_nhe, lambda_nhe, mu_nhe, QS_nh, fmax, &
+                                              rho_el, lambda_el, mu_el, gamma_el)
              endif
               
 
@@ -1562,10 +1560,9 @@
              if (nmat_nhe.gt.0) then
                 QS_nh = Qs_nhe_el(ie)
                 QP_nh = Qs_nhe_el(ie)
-                ! Currently Only Supports Damping Type -2 . (Gamma Not defined)
                 call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, con_nnz_loc, con_spx_loc, &
-                                              rho_nhe, lambda_nhe, mu_nhe, &
-                                              rho_el, lambda_el, mu_el)!gamma_el
+                                              rho_nhe, lambda_nhe, mu_nhe, QS_nh, fmax, &
+                                              rho_el, lambda_el, mu_el, gamma_el)
              endif
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

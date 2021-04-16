@@ -23,8 +23,8 @@
 !> @version 1.0
 
     subroutine GET_MECH_PROP_NH_ENHANCED(ie, nn, nn_loc, cs_nnz_loc, cs_loc, &
-    									rho_nhe, lambda_nhe, mu_nhe,  &
-                                        rho_el, lambda_el, mu_el)!gamma_el
+    									rho_nhe, lambda_nhe, mu_nhe, QS_nh, fmax, &
+                                        rho_el, lambda_el, mu_el,gamma_el)
 
     implicit none
 
@@ -32,10 +32,11 @@
     integer*4 :: r, q, p, is, ic
     integer*4, dimension(0:cs_nnz_loc) :: cs_loc
     
-    real*8, dimension(nn,nn,nn) :: rho_el, lambda_el, mu_el	!gamma_el
+    real*8 :: Qs_nh, fmax, gamma
+    real*8, dimension(nn,nn,nn) :: rho_el, lambda_el, mu_el, gamma_el
     real*8, dimension(nn_loc) :: rho_nhe, lambda_nhe, mu_nhe
 
-
+    gamma = 4.d0*datan(1.d0)*fmax/QS_nh; 
     do r = 1,nn
 	    do q = 1,nn
 	       do p = 1,nn
@@ -45,7 +46,7 @@
 	          rho_el(p,q,r) = rho_nhe(ic)
 	          lambda_el(p,q,r) = lambda_nhe(ic)
 	          mu_el(p,q,r) = mu_nhe(ic)
-	          !gamma_el(p,q,r) = gamma
+	          gamma_el(p,q,r) = gamma
 	       enddo
 	    enddo
 	enddo
