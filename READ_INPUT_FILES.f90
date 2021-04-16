@@ -354,6 +354,8 @@
                 write(*,'(A)')'ISTANBUL'                     
               case(18)
                 write(*,'(A)')'BEIJING-TUTORIAL'                     
+              case(19)
+                write(*,'(A)')'THESSALONIKI'                     
               case(20)
                 write(*,'(A)')'ATHENS'                     
               case(21)

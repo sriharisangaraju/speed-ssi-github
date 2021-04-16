@@ -248,6 +248,20 @@
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
 
+                   elseif (tcase.eq.27) then
+                   !-------------------------------------------------------------------
+                   ! CASE 27: AQUILA-BEDROCK OUTCROP - TEST 
+                        call MAKE_MECH_PROP_CASE_027(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                     xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
+                                                     vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
+                                     
+                   elseif (tcase.eq.28) then
+                   !-------------------------------------------------------------------
+                   ! CASE 28: NORCIA
+                        call MAKE_MECH_PROP_CASE_028(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                    xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
+                                                    vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
+
                    elseif (tcase.eq.30) then
                    !-------------------------------------------------------------------
                    ! CASE 30: ATHENS - PARTHENON

@@ -125,8 +125,8 @@
                         
 
 
-                        if ((zz_elevation(ic).eq.-1.0e+30).and.(zz_alluvial(ic).ge.0.0d0)) then
-
+!                        if ((zz_elevation(ic).eq.-1.0e+30).and.(zz_alluvial(ic).ge.0.0d0)) then
+                         if (zz_elevation(ic).eq.-1.0e+30) then
                                 do h = 1,nn_elem
 
                                         X1 = xx_elev(node1_elem(h)) 
