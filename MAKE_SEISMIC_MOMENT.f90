@@ -124,7 +124,7 @@
                                                                      fn,t_stress,check_dist_ns(i,1), &
                                                                      tausmom(check_ns(i,3),1))
                                                                      
-                                    write(*,*) VAL_SISM
+                                    !write(*,*) VAL_SISM
                                     !read(*,*)
                                     
 !                                    sxx(p,q,r) = sxx(p,q,r) - GET_FUNC_VALUE_SISM(nf,func_type,func_indx,func_data, nfdata, &
