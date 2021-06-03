@@ -39,25 +39,16 @@
 !> @param[in] mpi_comm  mpi common world
 !> @param[in] mpi_np  total mpi processor number
 !> @param[in] mpi_id  number of mpi process 
-!> @param[in] vcase  case value 
-!> @param[in] tcase  tag case value
-!> @param[in] zs_elev local nodes elevation (z) from the surface
-!> @param[in] zs_all local nodes elevation (z) from the alluvial basin
-!> @param[in] sub_tag_all  see MAKE_NOT_HONORING.f90
 !> @param[in] b_failCFL  fail if CFL does not hold
-!> @param[in] damping_type 1-Kosloff&Kosloff 2-SLS 3-Rayleigh 
-!> @param[in] QS quality factors for S-waves  
-!> @param[in] QP quality factors for P-waves  
 !> @note Compute the CFL condition (deltat <= deltat_max = h_min/(vp_max*N^2)) when the not honoring 
 !!  strategy is applied (material properties given node by node) and print on the screen what is 
 !!  the percent of deltat_max you are using for the time integration
 
-      subroutine GET_CFL4CASES(time_step, nn_loc, loc_n_num, nm, tm, pm, sdeg, &
+      subroutine GET_CFL4NHE(time_step, nn_loc, loc_n_num, nm, tm, pm, sdeg, &
                              xx_loc, yy_loc, zz_loc, cs_nnz_loc, cs_loc, & 
+                             rho_nhe, lambda_nhe, mu_nhe, &
                              time_step_cfl, fmax, deltat_fixed, &
-                             mpi_comm, mpi_np, mpi_id, &
-                             ncase,vcase, tcase, zs_elev, zs_all, vs_tria, thick_tria, sub_tag_all, b_failCFL, &
-                             damping_type, QS, QP)
+                             mpi_comm, mpi_np, mpi_id, b_failCFL)
           
         use speed_exit_codes
 
@@ -69,17 +60,14 @@
 
         integer*4 :: nm, im, nn_loc, cs_nnz_loc, mpi_comm, mpi_np, mpi_err, mpi_id
         integer*4 :: ie, i, j, k, nn, mcode, smcode, sdeg_deltat_cfl, sdeg_npoints
-        integer*4 :: damping_type, ncase, icase
         integer*4 :: nel_loc, ic1, ic2, n1, n2, istart, ifin
 
-       integer*4, dimension(1) :: pos
+        integer*4, dimension(1) :: pos
         integer*4, dimension(nm) :: tm, sdeg
-        integer*4, dimension(nn_loc) :: loc_n_num
-        integer*4, dimension(nn_loc) :: sub_tag_all        
+        integer*4, dimension(nn_loc) :: loc_n_num     
         integer*4, dimension(0:cs_nnz_loc) :: cs_loc
-        integer*4, dimension(ncase) ::  tcase, vcase
 
-        real*8 :: time_step, time_step_cfl, fmax, qs_loc, qp_loc
+        real*8 :: time_step, time_step_cfl, fmax
         real*8 :: length_min,length,vs_length_min,vs_length,length_vp_min,length_vp
         real*8 :: percent_deltat
         real*8 :: num_of_points,vs_npoints,vp_deltat_cfl
@@ -90,14 +78,10 @@
         real*8, dimension(:), allocatable :: ct,ww
         real*8, dimension(:), allocatable :: time_step_glo
         real*8, dimension(nn_loc) :: xx_loc, yy_loc, zz_loc
-        real*8, dimension(nn_loc) :: zs_elev
-        real*8, dimension(nn_loc) :: zs_all
-        real*8, dimension(nn_loc) :: vs_tria, thick_tria
+        real*8, dimension(nn_loc) :: rho_nhe, lambda_nhe, mu_nhe
         
-
         real*8, dimension(nm,4) :: pm
         real*8, dimension(:,:), allocatable :: dd
-        real*8, dimension(nm) :: QS, QP
 
         real*8, dimension(:,:,:), allocatable :: rho_el, lambda_el, mu_el, gamma_el 
 
@@ -108,9 +92,7 @@
         length_vp_min = 1.d30
         vs_length_min = 1.d30
        
-
-    
-          
+        
          do ie = 1, nel_loc
                 im = cs_loc(cs_loc(ie -1) +0)
             
@@ -122,25 +104,10 @@
                 mu_el = pm(im,3)
                 gamma_el = pm(im,4)        
 
-                ! qs_loc is unknown??
-                ! Quality factors and Gamma are not used in this subroutine
-                QS(im) = qs_loc
-                QP(im) = qp_loc
-            
-                do icase = 1, ncase
-                 
-                  if (vcase(icase) .eq. tm(im)) then
-                     call MAKE_ELTENSOR_FOR_CASES(tcase(icase), vcase(icase),&
-                                                  nn, rho_el, lambda_el, mu_el, gamma_el,&  
-                                                  nn_loc, zs_elev, zs_all, vs_tria, thick_tria,&
-                                                  cs_nnz_loc, cs_loc, ie,&
-                                                  sub_tag_all, zz_loc, mpi_id, loc_n_num, &
-                                                  damping_type, qs_loc, qp_loc, &
-                                                  xx_loc, yy_loc,0)
-                  endif
-                enddo    
+                call GET_MECH_PROP_NH_ENHANCED(ie, nn, nn_loc, cs_nnz_loc, cs_loc, &
+                                              rho_nhe, lambda_nhe, mu_nhe, 100.d0, fmax, &
+                                              rho_el, lambda_el, mu_el, gamma_el)
       
-
                 smcode=sdeg(im) 
                 rho = 0.d0
                 lambda = 0.d0
@@ -214,7 +181,7 @@
 
         time_step_cfl=length_vp_min !/((nn-1)**2)
 
-     allocate(time_step_glo(mpi_np))
+        allocate(time_step_glo(mpi_np))
         
         call MPI_BARRIER(mpi_comm, mpi_err)
         call MPI_ALLGATHER(time_step_cfl, 1, SPEED_DOUBLE, time_step_glo, 1, SPEED_DOUBLE, mpi_comm, mpi_err)
@@ -222,7 +189,7 @@
             
         pos = minloc(time_step_glo)
          
-       deallocate(time_step_glo)
+        deallocate(time_step_glo)
 
         if((mpi_id + 1) .eq. pos(1)) then
 
@@ -304,5 +271,5 @@
         
         return
                
-        end subroutine GET_CFL4CASES
+        end subroutine GET_CFL4NHE
 

@@ -425,6 +425,15 @@
                 enddo 
                   
              endif                
+
+             !!!!!!!!!!!       NOT-HONORING ENHANCED     !!!!!!!!!!!!!!!!!!!!!!
+             if (nmat_nhe.gt.0) then
+                QS_nh = Qs_nhe_el(ie)
+                QP_nh = Qs_nhe_el(ie)
+                call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, con_nnz_loc, con_spx_loc, &
+                                              rho_nhe, lambda_nhe, mu_nhe, QS_nh, fmax, &
+                                              rho_el, lambda_el, mu_el, gamma_el)
+             endif
                 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 !Random materials begin
@@ -557,6 +566,15 @@
                 enddo  
                           
              endif                
+
+             !!!!!!!!!!!   NOT-HONORING ENHANCED     !!!!!!!!!!!!!!!!!!!!!!
+             if (nmat_nhe.gt.0) then
+                QS_nh = Qs_nhe_el(ie)
+                QP_nh = Qs_nhe_el(ie)
+                call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, con_nnz_loc, con_spx_loc, &
+                                              rho_nhe, lambda_nhe, mu_nhe, QS_nh, fmax, &
+                                              rho_el, lambda_el, mu_el, gamma_el)
+             endif
                
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 !Random materials begin
@@ -1126,6 +1144,15 @@
                   endif
                 enddo  
              endif                
+
+             !!!!!!!!!!!   NOT-HONORING ENHANCED     !!!!!!!!!!!!!!!!!!!!!!
+             if (nmat_nhe.gt.0) then
+                QS_nh = Qs_nhe_el(ie)
+                QP_nh = Qs_nhe_el(ie)
+                call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, con_nnz_loc, con_spx_loc, &
+                                              rho_nhe, lambda_nhe, mu_nhe, QS_nh, fmax, &
+                                              rho_el, lambda_el, mu_el, gamma_el)
+             endif
               
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1528,6 +1555,15 @@
                 enddo  
              endif                
               
+
+              !!!!!!!!!!!   NOT-HONORING ENHANCED     !!!!!!!!!!!!!!!!!!!!!!
+             if (nmat_nhe.gt.0) then
+                QS_nh = Qs_nhe_el(ie)
+                QP_nh = Qs_nhe_el(ie)
+                call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, con_nnz_loc, con_spx_loc, &
+                                              rho_nhe, lambda_nhe, mu_nhe, QS_nh, fmax, &
+                                              rho_el, lambda_el, mu_el, gamma_el)
+             endif
 
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 !Random materials begin

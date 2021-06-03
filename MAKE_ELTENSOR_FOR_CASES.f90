@@ -297,6 +297,12 @@
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
 
+                   elseif (tcase.eq.46) then
+                   !-------------------------------------------------------------------
+                   ! CASE 46: KUMAMOTO
+                        call MAKE_MECH_PROP_CASE_046(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                      xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic))
+
                    elseif (tcase.eq.50) then
                    !-------------------------------------------------------------------
                    ! CASE 50: PLANE-WAVE benchmark -  MULTI NOT honoring
@@ -310,6 +316,13 @@
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
                     
+                   elseif (tcase.eq.70) then
+                   !-------------------------------------------------------------------
+                   ! CASE 70: L'AQUILA -  MULTI BASINS
+                        call MAKE_MECH_PROP_CASE_070(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                      xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
+                                                      vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
+                   
                    elseif (tcase.eq.98) then
                    !-------------------------------------------------------------------
                    ! CASE 98: TEST honoring (only TOPOGRAPHY)
@@ -387,6 +400,7 @@
      
        if (check_case .eq. 1) close (1000+mpi_id)
 
+       ! Why this?? 10% of Vs Vp??
        if (damping_type .eq. 2) then
            qs = 0; qp = 0;
            vs_all = 0.d0; vp_all=0.d0;

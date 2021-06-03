@@ -71,13 +71,17 @@
   
      character*70 :: file_case_xyz						
      character*70 :: file_case_all	
-     character*70 :: file_case_vs					
+     character*70 :: file_case_vs
+
+     !character*70 :: file_nhe_proc, file_nhe_new
+     !integer*4 :: inode, unit_mpi
+     !real*8 :: rho,lambda,mu,gamma,qs,qp
   
      integer*4 :: n_case, nn_loc, cs_nnz_loc, nm, mpi_id
      integer*4 :: ncase,vcase,tcase						
      integer*4 :: n_elev,n_tria_elev						
      integer*4 :: start,finish							
-     integer*4 :: n_all,n_tria_all, ival, icase	
+     integer*4 :: n_all,n_tria_all, ival, icase
      !integer*4 :: tag_case, val_case					
 
      integer*4, dimension (:), allocatable :: node1_all,node2_all,node3_all	
@@ -160,79 +164,75 @@
 !                                  General not honoring
 !*************************************************************************************************
 
-	 elseif (tcase .eq. 2 .or. tcase .eq. 3 .or. tcase .eq. 4 .or. tcase .eq. 6 &
-		.or. tcase .eq. 7 .or. tcase .eq. 8 .or. tcase .eq. 11 .or. tcase .eq. 12 &
-		.or. tcase .eq. 13 .or. tcase .eq. 14 .or. tcase .eq. 15 .or. tcase .eq. 18 &
-		.or. tcase .eq. 22  .or. tcase .eq. 27 .or. tcase .eq. 28 .or. tcase .eq. 40 &
-			.or. tcase .eq. 33) then									
-	if (mpi_id.eq. 0 .and. tcase .eq. 2) then									
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 2: GRENOBLE'					
-		
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 3) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 3: GUBBIO'	      				
+<<<<<<< HEAD
+	elseif (tcase .eq. 2 .or. tcase .eq. 3 .or. tcase .eq. 4 .or. tcase .eq. 6 &
+	        .or. tcase .eq. 7 .or. tcase .eq. 8 .or. tcase .eq. 11 .or. tcase .eq. 12 &
+	        .or. tcase .eq. 13 .or. tcase .eq. 14 .or. tcase .eq. 15 .or. tcase .eq. 18 &
+	        .or. tcase .eq. 22  .or. tcase .eq. 40 .or. tcase .eq. 33 .or. tcase .eq. 46) then									
+		if (mpi_id.eq. 0 .and. tcase .eq. 2) then									
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 2: GRENOBLE'					
+			
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 3) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 3: GUBBIO'	      				
 
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 4) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 4: SULMONA'	    				
-							
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 6) then							
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 6: FRIULI'	        			
-							
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 7) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 7: AQUILA'	     				
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 4) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 4: SULMONA'	    				
+								
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 6) then							
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 6: FRIULI'	        			
+								
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 7) then		
+	        write(*,'(A)')									
+			write(*,'(A)')'CASE 7: AQUILA'	     				
 
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 8) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 8: SANTIAGO'	     				
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 8) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 8: SANTIAGO'	     				
 
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 11) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 11: CHRISTCHURCH'               			
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 11) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 11: CHRISTCHURCH'               			
 
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 12) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 12: PO PLAIN'               			
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 12) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 12: PO PLAIN'               			
 
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 13) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 13: PO PLAIN-BEDROCK'               			
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 13) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 13: PO PLAIN-BEDROCK'               			
 
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 14) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 14: WELLINGTON'	     				
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 14) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 14: WELLINGTON'	     				
 
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 15) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 15: MARSICA'	     				
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 15) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 15: MARSICA'	     				
 
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 18) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 18: BEIJING-TUTORIAL'	     				
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 18) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 18: BEIJING-TUTORIAL'	     				
 
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 22) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 22: NORCIA'	
- 
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 23) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 33: GRONINGEN-ZE'	
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 22) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 22: NORCIA'	
+	 
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 23) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 33: GRONINGEN-ZE'	
 
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 27) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 27: AQUILA-OB'	
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 40) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 40: KUTCH'	     				
+		elseif(mpi_id .eq. 0 .and. tcase .eq. 46) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 46: KUMAMOTO'
+		endif											
 
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 28) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 28: NORCIA-OB'	
-
-	elseif(mpi_id .eq. 0 .and. tcase .eq. 40) then		
-		write(*,'(A)')									
-		write(*,'(A)')'CASE 40: KUTCH'	     				
-	endif							
 
 		if(mpi_id .eq. 0) write(*,'(A)')'Reading Topography&Alluvial...'
 		file_case_xyz ='XYZ.out'								
@@ -338,6 +338,7 @@
 
 			call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)
 
+
 			allocate(x_all(n_all), y_all(n_all), z_all(n_all))
 			allocate(node1_all(n_tria_all), node2_all(n_tria_all), node3_all(n_tria_all))
 			
@@ -365,6 +366,13 @@
 				write(*,'(A)')	
 				write(*,'(A,I8)') 'ALLUVIAL Layer # ',j	
 			endif
+
+		enddo      
+                                   
+		if (mpi_id.eq.0) then
+			write(*,'(A)') 'Done'
+			write(*,'(A)')	
+		endif
 
 		enddo      
                                    

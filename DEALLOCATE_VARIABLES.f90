@@ -87,7 +87,7 @@
       if (damping_type .eq. 2) deallocate(frequency_range,Y_lambda,Y_mu)
       if (damping_type .eq. 3) deallocate(A0_ray, A1_ray)
       if (nmat_rnd .gt. 0) deallocate(lambda_rnd,mu_rnd,rho_rnd)
-
+      if (nmat_nhe .gt. 0) deallocate(lambda_nhe,mu_nhe,rho_nhe, Qs_nhe_el, Qp_nhe_el) !Gamma_nhe_el)
 
       
       

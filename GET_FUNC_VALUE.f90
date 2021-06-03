@@ -56,7 +56,6 @@
       real*8, dimension(1) :: valmax
 
 
-            
       GET_FUNC_VALUE = 0.0d0
 
       PI = 4.0d0 * datan(1.0d0)
@@ -337,9 +336,6 @@
           
          case(101) 
           GET_FUNC_VALUE = time
-
- 
-         
          case default
            GET_FUNC_VALUE = 0.d0
       

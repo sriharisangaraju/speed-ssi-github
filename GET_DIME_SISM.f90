@@ -32,11 +32,12 @@
 !> @param[in] X3 vertex coordinate (x) of the triangular fault
 !> @param[in] Y3 vertex coordinate (y) of the triangular fault
 !> @param[in] Z3 vertex coordinate (z) of the triangular fault
-!> @param[in] nnod number of local nodes
+!> @param[in] nnod number of local nodes (according to nodedomain.mpi)
+! i.e When a node is at interface of two partitions, it is conunted only in one partition.
 !> @param[in] xs x-coordinate of spectral nodes
 !> @param[in] ys y-coordinate of spectral nodes
 !> @param[in] zs z-coordinate of spectral nodes
-!> @param[in] nn_loc number of local nodes
+!> @param[in] nn_loc Total number of local nodes
 !> @param[in] loc_n_num numeration of local nodes
 !> @param[in] mpi_id id of MPI process
 !> @param[in] ind index dummy

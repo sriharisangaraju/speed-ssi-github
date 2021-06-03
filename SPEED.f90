@@ -104,8 +104,11 @@
 !    BUILD SEISMIC MOMENT
 !*****************************************************************************************
 
-
-      call MAKE_SEISMIC_MOMENT_OR_EXPLOSIVE_SOURCE()
+      if (srcmodflag.eq.0) then
+          call MAKE_SEISMIC_MOMENT_OR_EXPLOSIVE_SOURCE()
+      elseif (srcmodflag.eq.1) then
+          call MAKE_SEISMIC_MOMENT_POINTSOURCES_NHFAULT()
+      endif
 
 
 !*****************************************************************************************
@@ -175,7 +178,16 @@
          
      endif   
       
-           
+
+!*****************************************************************************************
+!   Not Honoring Enhanced (Reading Material properties from Tomo File)          
+!*****************************************************************************************
+    if (nmat_nhe .gt. 0) then
+        call MAKE_NH_Enhanced()
+        call MPI_BARRIER(mpi_comm, mpi_ierr)
+    endif
+
+
 !*****************************************************************************************
 !   BUILD LOAD MATRIX AND SEISMIC MOMENT TENSOR OR EXPLOSIVE SOURCE
 !*****************************************************************************************
@@ -246,6 +258,7 @@
  
     endif
 
+
 !*****************************************************************************************
 !    SETUP FOR BOUNDARY CONDITIONS    
 !*****************************************************************************************
@@ -281,17 +294,22 @@
                       deltat_cfl, fmax, deltat_fixed, mpi_comm, mpi_np, mpi_id, &
                       n_case,val_case, tag_case, zs_elev, zs_all, vs_tria, thick, sub_tag_all, b_failCFL, &
                       damping_type, QS, QP)
-                 
-       else
+
+      else if (nmat_nhe.gt.0) then
+          call GET_CFL4NHE(deltat, nnod_loc, local_node_num, &
+                             nmat, tag_mat, prop_mat, sdeg_mat, &
+                             xx_spx_loc, yy_spx_loc, zz_spx_loc, &
+                             con_nnz_loc, con_spx_loc, & 
+                             rho_nhe, lambda_nhe, mu_nhe, &
+                             deltat_cfl, fmax, deltat_fixed, &
+                             mpi_comm, mpi_np, mpi_id, b_failCFL)
+      else
        
           call GET_CFL(deltat, nnod_loc, local_node_num, &
                       nmat, tag_mat, prop_mat, sdeg_mat,&
                       xx_spx_loc, yy_spx_loc, zz_spx_loc, &
                       con_nnz_loc, con_spx_loc, &
-                      deltat_cfl, fmax, deltat_fixed, mpi_comm, mpi_np, mpi_id, b_failCFL)
-                      
-          
-
+                      deltat_cfl, fmax, deltat_fixed, mpi_comm, mpi_np, mpi_id, b_failCFL) 
        endif
 
 

@@ -286,18 +286,18 @@ module speed_par
                    nnode_abc, nelem_abc, nnode_dg, nelem_dg, nelem_dg_glo, &
                    nnod_loc, nelem_loc, nface_loc, &
                    dime_js, dime_jr, &
-                   max_num_node_sism, length_check_node_sism, &                
+                   szsism, max_num_node_sism, length_check_node_sism, &                
                    max_num_node_expl, length_check_node_expl, &
                    nsend,nrecv, nsend_jump, nrecv_jump, &
                    nnode_dom, nelem_dom, edgecut, &
                    nmat_nle, total_els, nvec, &
                    nargs, ntime_err, n_test, n_frac, &
-                   num_testcase, label_testcase, nmat_rnd 
+                   num_testcase, label_testcase, nmat_rnd, nmat_nhe
                    
 ! 0/1 INTERGERS
       integer*4 :: file_mon_pgm, file_mon_lst, &
                    find, torf, trof, make_damping_yes_or_not, &
-                   mpi_ierr
+                   mpi_ierr, srcmodflag
       
 ! DAMPING
       integer*4 :: damping_type
@@ -370,6 +370,9 @@ module speed_par
       integer*4, dimension (:), allocatable :: itersnap, vec, i4count, &
                                                type_mat_nle, tag_mat_nle, rand_mat
 
+! Not-Honoring Enhanced
+      integer*4, dimension(:), allocatable :: val_nhe, tol_nhe
+
 
 ! MATRICES
       integer*4, dimension (:,:), allocatable :: con, con_bc, & !val_case         
@@ -427,6 +430,10 @@ module speed_par
 
 ! RANDOM 
       real*8, dimension (:), allocatable :: lambda_rnd, rho_rnd, mu_rnd
+
+! Not-Honoring Enhanced
+      real*8, dimension(:), allocatable :: rho_nhe, lambda_nhe, mu_nhe    !size = nnodes in partition
+      real*4, dimension(:), allocatable :: Qs_nhe_el, Qp_nhe_el !Gamma_nhe_el !size = nelem in partition
 
 
 ! OTHER 
@@ -500,7 +507,7 @@ module speed_timeloop
 
   use speed_par, only:  &
                         !SLIP DISTRIBUTION
-                         slip_type, &
+                         slip_type, srcmodflag, szsism,&
   
                         !CONNECTIVITY 
                          nnod, nnode_dom,  nnod_loc, local_node_num, xx_spx_loc, yy_spx_loc, zz_spx_loc, &
@@ -512,7 +519,10 @@ module speed_timeloop
                          nmat_nle,  tag_mat_nle, type_mat_nle, prop_mat_nle, val_mat_nle, fpeak, &
                          
                         !RAND MATERIALS
-                        nmat_rnd,  rand_mat, lambda_rnd, mu_rnd, rho_rnd, &
+                        nmat_rnd, rand_mat, lambda_rnd, mu_rnd, rho_rnd, &
+
+                        ! Not-Honoring Enhanced
+                        nmat_nhe, rho_nhe, lambda_nhe, mu_nhe, Qs_nhe_el, Qp_nhe_el, &
                         
                         !EXTERNAL LOADS
                          nload_traX_el, nload_traY_el, nload_traZ_el, &                  

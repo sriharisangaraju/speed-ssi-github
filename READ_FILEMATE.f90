@@ -163,9 +163,11 @@
                                   nb_abc,lab_abc, &
                                   nb_dg,lab_dg,lab_dg_yn,lab_dg_link,&
                                   lab_dg_frc, val_dg_frc, nb_frac,& 
+                                  srcmodflag, szsism, &
                                   nb_sism,val_sism,fnc_sism,lab_sism, & 
                                   nb_expl,val_expl,fnc_expl,lab_expl, & 
                                   nb_case,val_case,lab_case,tol_case, & 
+                                  nb_nhee,val_nhe,tol_nhe, &
                                   nb_fnc,type_fnc,ind_fnc,dat_fnc,lab_fnc,nb_fnc_data, &
                                   fmax,fpeak)
 
@@ -180,7 +182,7 @@
       character*4 :: keyword
 
       integer*4 :: nb_mate,nb_fnc, nb_fnc_data, nb_frac
-      integer*4 :: nb_mate_nle, nb_mate_rnd        
+      integer*4 :: nb_mate_nle, nb_mate_rnd, nb_nhee
       integer*4 :: nb_diriX,nb_diriY,nb_diriZ,nb_neuX,nb_neuY,nb_neuZ
       integer*4 :: nb_neuN 
       integer*4 :: nb_poiX,nb_poiY,nb_poiZ,nb_forX,nb_forY,nb_forZ,nb_forF
@@ -191,7 +193,7 @@
       integer*4 :: iexpl,nb_expl                                        
       integer*4 :: icase,nb_case                                        
       
-      integer*4 :: im,ifunc,idf,ndat_fnc,file_nd
+      integer*4 :: im,ifunc,idf,ndat_fnc,file_nd, inhee
       integer*4 :: im_nle, im_rnd        
       integer*4 :: idX,idY,idZ,inX,inY,inZ, itX, itY, itZ
       integer*4 :: inN, itest 
@@ -200,7 +202,7 @@
       integer*4 :: ipr,ish,iabc,idg
       integer*4 :: ileft,iright
       integer*4 :: i,j,dummy,status
-      integer*4 :: ntest
+      integer*4 :: ntest, srcmodflag, szsism
 
       integer*4, dimension(nb_diriX) :: fnc_diriX,lab_diriX
       integer*4, dimension(nb_diriY) :: fnc_diriY,lab_diriY
@@ -240,13 +242,15 @@
       
       integer*4, dimension(nb_mate_nle) :: type_mat_nle                
       integer*4, dimension(nb_mate_nle,1) :: char_mat_nle        
-      integer*4, dimension(nb_case) :: val_case                        
+      integer*4, dimension(nb_case) :: val_case
+      integer*4, dimension(nb_nhee) :: val_nhe
 
       real*8 :: fmax                                                                
       real*8 :: fpeak                                                                
       real*8 :: rho, VS, VP
       
-      real*8, dimension(nb_case) :: tol_case                                
+      real*8, dimension(nb_case) :: tol_case
+      real*8, dimension(nb_nhee) :: tol_nhe
       real*8, dimension(nb_fnc_data) :: dat_fnc
       real*8, dimension(nb_mate) :: trefm, Qua_S, Qua_P
       
@@ -272,7 +276,7 @@
       real*8, dimension(nb_forF,10) :: val_forF
       real*8, dimension(nb_pre,10) :: val_pre
       real*8, dimension(nb_she,10) :: val_she
-      real*8, dimension(nb_sism,21) :: val_sism                        
+      real*8, dimension(nb_sism,szsism) :: val_sism                        
       real*8, dimension(nb_expl,20) :: val_expl                        
       real*8, dimension(nb_mate_nle,1) :: val_mat_nle                
       real*8, dimension(nb_mate,4) :: char_mat
@@ -295,6 +299,8 @@
       
       ifunc = 0
       fmax = 0.d0
+
+      inhee = 0;
   
       
       
@@ -337,9 +343,9 @@
                  char_mat(im,3) = rho * VS**2
                                   
            case('MATN')                                                                        
-            im_nle = im_nle + 1                                                                                        
-            read(inline(ileft:iright),*) lab_mat_nle(im_nle),type_mat_nle(im_nle),&                                
-                 char_mat_nle(im_nle,1),val_mat_nle(im_nle,1)                         
+            im_nle = im_nle + 1                                                          
+            read(inline(ileft:iright),*) lab_mat_nle(im_nle),type_mat_nle(im_nle),&                              
+                             char_mat_nle(im_nle,1),val_mat_nle(im_nle,1)                         
          
            case('MATR')                                                                        
             im_rnd = im_rnd + 1                                                                                        
@@ -482,16 +488,25 @@
                         
            case('SISM')        
               isism = isism + 1                                                                
-              read(inline(ileft:iright),*) fnc_sism(isism),&                                
-                         lab_sism(isism),val_sism(isism,1),val_sism(isism,2),&                        
-                         val_sism(isism,3),val_sism(isism,4),val_sism(isism,5),&                
-                         val_sism(isism,6),val_sism(isism,7),val_sism(isism,8),&                
-                         val_sism(isism,9),val_sism(isism,10),val_sism(isism,11),&                
-                         val_sism(isism,12),val_sism(isism,13),val_sism(isism,14),&        
-                         val_sism(isism,15),val_sism(isism,16),val_sism(isism,17),&        
-                         val_sism(isism,18),val_sism(isism,19),val_sism(isism,20),&        
-                         val_sism(isism,21)
-
+              if (srcmodflag.eq.0) then
+                  read(inline(ileft:iright),*) fnc_sism(isism),&                                
+                             lab_sism(isism),val_sism(isism,1),val_sism(isism,2),&                        
+                             val_sism(isism,3),val_sism(isism,4),val_sism(isism,5),&                
+                             val_sism(isism,6),val_sism(isism,7),val_sism(isism,8),&                
+                             val_sism(isism,9),val_sism(isism,10),val_sism(isism,11),&                
+                             val_sism(isism,12),val_sism(isism,13),val_sism(isism,14),&        
+                             val_sism(isism,15),val_sism(isism,16),val_sism(isism,17),&        
+                             val_sism(isism,18),val_sism(isism,19),val_sism(isism,20),&        
+                             val_sism(isism,21)
+              elseif (srcmodflag.eq.1) then
+                  read(inline(ileft:iright),*) fnc_sism(isism),&                                
+                             lab_sism(isism),val_sism(isism,1),val_sism(isism,2),&                        
+                             val_sism(isism,3),val_sism(isism,4),val_sism(isism,5),&                
+                             val_sism(isism,6),val_sism(isism,7),val_sism(isism,8),&                
+                             val_sism(isism,9),val_sism(isism,10),val_sism(isism,11),&                
+                             val_sism(isism,12),val_sism(isism,13),val_sism(isism,14),&        
+                             val_sism(isism,15)
+              endif
 
            case('EXPL')                                                        
               iexpl = iexpl + 1                                                                
@@ -510,6 +525,11 @@
                  !case tag, block id, tolerance                                             
                  lab_case(icase),val_case(icase),tol_case(icase)                                
                  !lab_case,val_case,tol_case
+
+            case('NHEE')
+              inhee = inhee + 1
+              tol_nhe(inhee) = 0.0
+              read(inline(ileft:iright),*) val_nhe(inhee) !, tol_case(inhee)
 
            case('FMAX') 
               read(inline(ileft:iright),*) fmax                                        
@@ -535,7 +555,7 @@
                      (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)
                
                     
-               case(3,30,31)
+               case(3,30,31,33)
                  read(inline(ileft:iright),*)dummy,dummy,ndat_fnc,fileinput
                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + 2*ndat_fnc
 
@@ -611,16 +631,15 @@
                  read(inline(ileft:iright),*)dummy,dummy,dummy,&                 
                     (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)     
                
-                  case(99)
+               case(99)
                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + 2
                  read(inline(ileft:iright),*)dummy,dummy,&
                     (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)
                     
-                  case(100)
+               case(100)
                     ind_fnc(ifunc +1) = ind_fnc(ifunc) + 1
                  read(inline(ileft:iright),*) dummy,dummy,&
                     (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)                    
- 
               case(773)
                  read(inline(ileft:iright),*)dummy,dummy,ndat_fnc,fileinput
                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + ndat_fnc
@@ -639,8 +658,6 @@
                  enddo
                  close(24)
                  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
- 
             
             end select
                                            

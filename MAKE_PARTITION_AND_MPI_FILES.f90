@@ -139,7 +139,8 @@
                 call MAKE_GRID_NODES(nnod_macro,nelem,con,node_weight,nnz_node_weight,node_pointer)
       
                 deallocate(node_weight)
-    
+              
+              ! Why are we not counting nodes in block nmat_nle
                 con_nnz = nelem +1
                 do ie = 1,nelem
                      do j = 1,nmat
@@ -172,7 +173,8 @@
 !     NODE DOMAIN FOR MPI
 
           allocate(node_domain(nnod))
-      
+          
+          ! Will this replace partition of repetiting node with partition where the last element occurs
           do ie = 1, nelem
              do i = con_spx(ie -1) +1, con_spx(ie) -1
                 node_domain(con_spx(i)) = elem_domain(ie)
@@ -209,7 +211,7 @@
               nelem_loc = 0 
               do in = 1,nelem
                  if(elem_domain(in) .eq. ip) nelem_loc = nelem_loc +1
-                    enddo        
+              enddo        
       
               con_nnz_loc = nelem_loc +1
               do ie = 1, nelem
@@ -259,6 +261,7 @@
               enddo
               close(unit_mpi)        
 
+              ! We already have nelem_loc...do we need this again?
               ic = 0
               do in = 1,nelem
                  if (elem_domain(in) .eq. ip) ic = ic +1
@@ -359,7 +362,8 @@
       
 !***************************************************************************************************************
 !     LOCAL NUMERATION FOR ELEMENTS  
-   
+      
+      ! This part runs in all processors.
       ic = 0
       do in = 1,nelem
        

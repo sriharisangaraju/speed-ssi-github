@@ -27,7 +27,8 @@
 !> @param[in] nelem  number of elements
 !> @param[in] nnode  number of mesh nodes
 !> @param[in] nparts  number of processors (number of parts of the partition)
-!> @param[in]  conn  connectivity matrix: conn(i,1) = number of element i
+!> @param[in]  conn  connectivity matrix: i = element number
+!>                                  conn(i,1) = Matrial /Block label
 !!                                  conn(i,2),...,conn(i,9) = nodes of the hex
 !> @param[in]  w  control parameter 1 - different weights for the elements 
 !! 0 - same weight for all elements (for metis-5.0.2 version)
