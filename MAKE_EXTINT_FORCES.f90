@@ -93,7 +93,6 @@
 
 
        subroutine MAKE_EXTINT_FORCES(nnod_loc,xs_loc,ys_loc,zs_loc,local_n_num,cs_nnz_loc,cs_loc,&
-<<<<<<< HEAD
                           nm,tag_mat,type_mat,sdeg_mat,tref_mat,prop_mat,&
                           ne_loc,local_el_num, &
                           alfa11,alfa12,alfa13,alfa21,alfa22,alfa23,&
@@ -655,7 +654,7 @@
             ! load is applied and then compute the nearest global node by comparing the resutls on each 
             ! mpi process
             
-         if (nl_poiX .gt. 0) then
+      if (nl_poiX .gt. 0) then
             
             allocate(val_locX(nl_poiX), val_gloX(nl_poiX*mpi_np), ind_locX(nl_poiX), ind_gloX(nl_poiX*mpi_np))
             
@@ -713,10 +712,10 @@
             node_counter_poiX = recv_poiX;
             deallocate(recv_poiX);
                  
-         endif
+      endif
             
-            
-         if (nl_poiY .gt. 0) then
+             
+      if (nl_poiY .gt. 0) then
             
             allocate(val_locY(nl_poiY), val_gloY(nl_poiY*mpi_np), ind_locY(nl_poiY), ind_gloY(nl_poiY*mpi_np))
             
@@ -773,9 +772,9 @@
             deallocate(recv_poiY);
             
             
-         endif
+      endif
             
-         if (nl_poiZ .gt. 0) then
+      if (nl_poiZ .gt. 0) then
             
             allocate(val_locZ(nl_poiZ), val_gloZ(nl_poiZ*mpi_np), ind_locZ(nl_poiZ), ind_gloZ(nl_poiZ*mpi_np))
             
@@ -834,162 +833,25 @@
             call MPI_BARRIER(mpi_comm,mpi_ierr)
             
             !stop
-         endif
-            !      write(*,*) mpi_id, node_counter_poiZ
-            !      call MPI_BARRIER(mpi_comm,mpi_ierr)
-            !      stop
+      endif
             
-            ! Travelling load
-            !      if (nl_traX .gt. 0 .or. nl_traY .gt. 0 .or. nl_traZ .gt. 0) then 
-         !!   if (nl_traZ .gt. 0) then 
-         !!   
-         !!   !read file TRAVPOINTS.LOAD
-         !!   !1-read nodes defining the curve
-         !!   
-         !!   filename = 'TRAVPOINTS.LOAD'
-         !!   call READ_DIME_FILEPG(filename,nb_tra_load)     
-         !!   
-         !!   !2-read the nodes and store them in the vector travelling_nodes
-         !!   allocate(n_tra(nb_tra_load),dist_tra(nb_tra_load))
-         !!   allocate(x_tra(nb_tra_load),y_tra(nb_tra_load),z_tra(nb_tra_load))
-         !!   allocate(xt_tra(nb_tra_load),yt_tra(nb_tra_load),zt_tra(nb_tra_load))
-         !!      
-         !!   call READ_FILEPG(filename,nb_tra_load,x_tra,y_tra,z_tra)                
-         !!      
-         !!   !3-find nearest node and write all the informations in TRAVPOINTS.INPUT
-         !!   do i = 1, nb_tra_load
-         !!   call GET_NEAREST_NODE_PGM(nnod_loc, xs_loc, ys_loc, zs_loc,&
-         !!                    x_tra(i), y_tra(i), z_tra(i),&
-         !!                    n_tra(i), dist_tra(i), -1.d30)        
-         !!   
-         !!   
-         !!   xt_tra(i) = xs_loc(n_tra(i)); yt_tra(i) = ys_loc(n_tra(i)); zt_tra(i) = zs_loc(n_tra(i))
-         !!   n_tra(i) = local_n_num(n_tra(i))
-         !!   
-         !!   !if(mpi_id .eq. 1) then
-         !!   !    write(*,*) xt_tra(i), yt_tra(i), zt_tra(i), dist_tra(i) 
-         !!   !endif
-         !!   
-         !!   enddo
-         !!   
-         !!   !if (mpi_id .eq. 0) then
-         !!   !write(*,*) mpi_id,'id', n_tra
-         !!   !write(*,*) '======================'
-         !!   !write(*,*) mpi_id,'id', dist_tra
-         !!   !endif
-         !!   !call MPI_BARRIER(mpi_comm, mpi_ierr)          
-         !!   
-         !!   !if (mpi_id .eq. 1) then
-         !!   !write(*,*) mpi_id,'id', n_tra
-         !!   !write(*,*) '======================'
-         !!   !write(*,*) mpi_id,'id', dist_tra
-         !!   !endif
-         !!   !call MPI_BARRIER(mpi_comm, mpi_ierr)          
-         !!   
-         !!   
-         !!   allocate(dist_tra_glo(nb_tra_load*mpi_np),n_tra_glo(nb_tra_load*mpi_np))
-         !!   allocate(xt_tra_glo(nb_tra_load*mpi_np), yt_tra_glo(nb_tra_load*mpi_np),zt_tra_glo(nb_tra_load*mpi_np)) 
-         !!   
-         !!   call MPI_BARRIER(mpi_comm, mpi_ierr)
-         !!   
-         !!   call MPI_ALLGATHER(dist_tra, nb_tra_load, SPEED_DOUBLE, dist_tra_glo, nb_tra_load, &
-         !!                     SPEED_DOUBLE, mpi_comm, mpi_ierr)
-         !!   
-         !!   !if (mpi_id .eq. 1) then
-         !!   !       write(*,*) mpi_id,'id', dist_tra_glo
-         !!   !       write(*,*) '======================'
-         !!   !endif
-         !!   !call MPI_BARRIER(mpi_comm, mpi_ierr)          
-         !!   
-         !!   
-         !!   
-         !!   
-         !!   call MPI_ALLGATHER(n_tra, nb_tra_load, SPEED_INTEGER, n_tra_glo, nb_tra_load, &
-         !!                     SPEED_INTEGER, mpi_comm, mpi_ierr)
-         !!   
-         !!   call MPI_ALLGATHER(x_tra, nb_tra_load, SPEED_DOUBLE, xt_tra_glo, nb_tra_load, &
-         !!                     SPEED_DOUBLE, mpi_comm, mpi_ierr)
-         !!   call MPI_ALLGATHER(y_tra, nb_tra_load, SPEED_DOUBLE, yt_tra_glo, nb_tra_load, &
-         !!                     SPEED_DOUBLE, mpi_comm, mpi_ierr)
-         !!   call MPI_ALLGATHER(z_tra, nb_tra_load, SPEED_DOUBLE, zt_tra_glo, nb_tra_load, &
-         !!                     SPEED_DOUBLE, mpi_comm, mpi_ierr)
-         !!               
-         !!   !if(mpi_id .eq. 0) then                          
-         !!   
-         !!   call GET_MINVALUES(n_tra_glo, dist_tra_glo, nb_tra_load*mpi_np, n_tra, nb_tra_load, mpi_np)
-         !!   
-         !!   !endif    
-         !!   !call MPI_BARRIER(mpi_comm, mpi_ierr)                      
-         !!   
-         !!   !if (mpi_id .eq. 0) then
-         !!   !   do j = 1, nb_tra_load 
-         !!   !       write(*,*) mpi_id,'id', xt_tra_glo(j), yt_tra_glo(j), zt_tra_glo(j)
-         !!   !       write(*,*) mpi_id,'id', dist_tra_glo(j)
-         !!   !       write(*,*) '======================'
-         !!   !      
-         !!   !   enddo      
-         !!   !endif
-         !!   !call MPI_BARRIER(mpi_comm, mpi_ierr)          
-         !!   
-         !!   
-         !!   !         j = 1
-         !!   !         do while(j .le. nb_tra_load)
-         !!   !            call GET_INDLOC_FROM_INDGLO(n_tra_glo, nb_tra_load*mpi_np, n_tra(j), ic)              
-         !!   !            x_tra(j) = xt_tra_glo(ic);  y_tra(j) = yt_tra_glo(ic);  z_tra(j) = zt_tra_glo(ic)
-         !!   !            j=j+1;
-         !!   !         enddo
-         !!   
-         !!   do j = 1, nb_tra_load
-         !!   x_tra(j) = xt_tra_glo(n_tra(j));  y_tra(j) = yt_tra_glo(n_tra(j));  z_tra(j) = zt_tra_glo(n_tra(j))
-         !!   n_tra(j) = n_tra_glo(n_tra(j))
-         !!   enddo
-         !!   
-         !!   
-         !!   
-         !!   deallocate(dist_tra_glo, n_tra_glo, xt_tra_glo, yt_tra_glo, zt_tra_glo)
-         !!   allocate(dist_tra_real(nb_tra_load)); dist_tra_real = 0.d0 
-         !!   
-         !!   do j = 2, nb_tra_load
-         !!   dist_tra_real(j) = dist_tra_real(j-1) + & 
-         !!   dsqrt( (x_tra(j)-x_tra(j-1))**2.d0 + (y_tra(j)-y_tra(j-1))**2.d0 +(z_tra(j)-z_tra(j-1))**2.d0)
-         !!   enddo 
-         !!   
-         !!   if(mpi_id.eq. 0) then 
-         !!   filename = 'TRAVPOINTS.input'
-         !!   open(20,file=filename); write(20,'(I20)') nb_tra_load
-         !!   do i = 1,nb_tra_load
-         !!   write(20,'(1I20,1X,1I20,1X,1E20.12,1X,1E20.12,1X,1E20.12,1X,1E20.12)') &
-         !!       i,n_tra(i),x_tra(i),y_tra(i),z_tra(i),dist_tra_real(i)
-         !!   enddo
-         !!   close(20)                                                                                          
-         !!   endif                                              
-         !!   deallocate(x_tra,y_tra,z_tra,dist_tra_real,dist_tra)
-         !!   
-         !!   call MPI_BARRIER(mpi_comm, mpi_ierr)
-         !!   !stop
-         !!   
-         !!   endif
-            
-            !      write(*,*) 'travelling points', n_tra
-            !      read(*,*)
-            
-            ne_loc = cs_loc(0) -1
+      ne_loc = cs_loc(0) -1
 
 
 
-            do ie = 1,ne_loc
+      do ie = 1, ne_loc
                !write(*,*) ie, '/', ne_loc
-               im = cs_loc(cs_loc(ie -1) +0);
+         im = cs_loc(cs_loc(ie -1) +0);
                
-               nn = sdeg_mat(im) +1
-               allocate(ct(nn),ww(nn),dd(nn,nn))
-               call MAKE_LGL_NW(nn,ct,ww,dd)
+         nn = sdeg_mat(im) +1
+         allocate(ct(nn),ww(nn),dd(nn,nn))
+         call MAKE_LGL_NW(nn,ct,ww,dd)
                
-               rho = prop_mat(im,1) 
-               lambda = prop_mat(im,2)
-               mu = prop_mat(im,3)
+         rho = prop_mat(im,1) 
+         lambda = prop_mat(im,2)
+         mu = prop_mat(im,3)
 
-               if (nmat_nhe.gt.0) then
+         if (nmat_nhe.gt.0) then
                  allocate(rho_el(nn,nn,nn), lambda_el(nn,nn,nn), mu_el(nn,nn,nn), gamma_el(nn,nn,nn))
                  call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, cs_nnz_loc, cs_loc, &
                                                  rho_nhe, lambda_nhe, mu_nhe, 100.d0, 3.d0, &
@@ -998,10 +860,9 @@
                   lambda = sum(lambda_el)/(nn*nn*nn)
                   mu = sum(mu_el)/(nn*nn*nn)
                   deallocate(rho_el, lambda_el, mu_el, gamma_el)
-               endif
+         endif
 
-
-               if (nl_poiX.gt.0) then    ! Point load X
+         if (nl_poiX.gt.0) then    ! Point load X
                   do ip = 1,nl_poiX
                      fn = 0
                      do ifun = 1,nfunc
@@ -1032,11 +893,9 @@
 
                      endif
                   enddo
-               endif  
+         endif  
          
-
-
-               if (nl_poiY.gt.0) then    ! Point load Y
+         if (nl_poiY.gt.0) then    ! Point load Y
                   do ip = 1,nl_poiY
                      fn = 0
                      do ifun = 1,nfunc
@@ -1063,164 +922,98 @@
                         endif   
                      endif
                   enddo
-               endif !(nl_poiY .gt. 0)
-               
-               
-               if (nl_poiZ.gt.0) then    ! Point load Z
-                  do ip = 1,nl_poiZ
-                     fn = 0
-                     do ifun = 1,nfunc
-                        if (fun_poiZ(ip).eq.tag_func(ifun)) fn = ifun
-                     enddo
+         endif !(nl_poiY .gt. 0)
+                            
+         if (nl_poiZ.gt.0) then    ! Point load Z
+            do ip = 1,nl_poiZ
+                  fn = 0
+               do ifun = 1,nfunc
+                  if (fun_poiZ(ip).eq.tag_func(ifun)) fn = ifun
+               enddo
     
-                     if (fn.gt.0) then
+               if (fn.gt.0) then
 
-                        call GET_INDLOC_FROM_INDGLO(local_n_num, nnod_loc, node_poiZ(ip), ic1)
-                        if (ic1 .ne. 0) then
+                  call GET_INDLOC_FROM_INDGLO(local_n_num, nnod_loc, node_poiZ(ip), ic1)
+                  if (ic1 .ne. 0) then
 
-                        do k = 1,nn
-                           do j = 1,nn
-                              do i = 1,nn
+                     do k = 1,nn
+                        do j = 1,nn
+                           do i = 1,nn
 
-                                is = nn*nn*(k -1) +nn*(j -1) +i                        
-                                in = cs_loc(cs_loc(ie -1) +is)                                        
+                              is = nn*nn*(k -1) +nn*(j -1) +i                        
+                              in = cs_loc(cs_loc(ie -1) +is)                                        
                                                
-                                 if (local_n_num(in) .eq. node_poiZ(ip)) then
+                              if (local_n_num(in) .eq. node_poiZ(ip)) then
                       
-                                    fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) &
+                                 fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) &
                                            + val_poiZ(ip,4)/node_counter_poiZ(ip) 
 
-                                 endif
+                              endif
 
-                              enddo
                            enddo
                         enddo
-                     endif            
-                  enddo
-               endif   !(nl_poiZ .gt. 0)
+                     enddo
+                  endif
+               endif               
+            enddo
+         endif   !(nl_poiZ .gt. 0)
 
 
-            !   if (nl_traZ .gt. 0) then    ! Travelling load Z 
-
-            !      do ip = 1,nl_traZ
-            !         fn = 0
-            !         do ifun = 1,nfunc
-            !            if (fun_traZ(ip).eq.tag_func(ifun)) fn = ifun
-            !         enddo
-    
-    
-            !         if (fn.gt.0) then
-    
-            !            do ic = 1, nb_tra_load
-            !               call GET_INDLOC_FROM_INDGLO(local_n_num, nnod_loc, n_tra(ic), ic1)
-    
-            !               if (ic1 .ne. 0) then
-
-            !                  do k = 1,nn
-            !                     do j = 1,nn
-            !                        do i = 1,nn
-            !    
-            !                           is = nn*nn*(k -1) +nn*(j -1) +i
-            !                           in = cs_loc(cs_loc(ie -1) +is)
-            !                           !write(*,*) in
-            !    
-            !                           if (local_n_num(in) .eq. n_tra(ic)) then
-            !                              fmat(fn,(3*(in -1) +3)) = val_traZ(ip,2)
-            !              
-            !             ! write(*,*) 'local node', in, local_n_num(in), val_traZ(ip,2)
-            !             ! read(*,*)
-            !                           endif  
-            !                        enddo
-            !                     enddo
-            !                  enddo
-            !               endif
-            !            enddo               
-            !         endif
-            !      enddo
-            !   endif   !(nl_traZ .gt. 0)
-
-!#############################################################################
-!##################                PLANE WAVE BEGIN             ##############
-!#############################################################################
-!              write(*,*) 'el e nel', ie, ne_loc
-
-                  if (nl_plaX.gt.0) then   ! Plane Wave X
+          !#############################################################################
+          !##################                PLANE WAVE BEGIN             ##############
+          !#############################################################################
+ 
+         if (nl_plaX.gt.0) then   ! Plane Wave X
                               
-                   do ipl = 1,nl_plaX
+            do ipl = 1,nl_plaX
                   
-                      if (tag_mat(im).eq.tag_plaX(ipl)) then  !Check on the Plane Wave Material - start
+               if (tag_mat(im).eq.tag_plaX(ipl)) then  !Check on the Plane Wave Material - start
                                            
-                         ! Recognizing bottom face - begin
-                         sum_node_bottom1 = 0
-                         sum_node_bottom2 = 0
-                         last_node_bottom1 = 0
-                         last_node_bottom2 = 0
+                  ! Recognizing bottom face - begin
+                  sum_node_bottom1 = 0
+                  sum_node_bottom2 = 0
+                  last_node_bottom1 = 0
+                  last_node_bottom2 = 0
                          
-                         do i = 1,8
-                             ie_glob = local_el_num(ie)
+                  do i = 1,8
+                     ie_glob = local_el_num(ie)
                              
-                             call GET_INDLOC_FROM_INDGLO(local_n_num, nnod_loc, con_hexa(ie_glob,2), ic1)
-                             call GET_INDLOC_FROM_INDGLO(local_n_num, nnod_loc, con_hexa(ie_glob,i+1), ic2)
+                     call GET_INDLOC_FROM_INDGLO(local_n_num, nnod_loc, con_hexa(ie_glob,2), ic1)
+                     call GET_INDLOC_FROM_INDGLO(local_n_num, nnod_loc, con_hexa(ie_glob,i+1), ic2)
                              
-                  !                            if(ie_glob .eq. 10277) then
-                  !                              write(*,*) con_hexa(ie_glob,2), con_hexa(ie_glob,i+1)
-                  !                            endif
-                             
-                             if(ic1 .ne. 0 .and. ic2 .ne. 0) then                   
-                             
-                  !                            if(ie_glob .eq. 10277) then
-                  !                              write(*,*) zs_loc(ic1) ,zs_loc(ic2)
-                  !                            endif
-                             
-                                     
-                                 if (dabs(zs_loc(ic1) - zs_loc(ic2)) .le. 1.d-4) then
-                                     last_node_bottom1 = i
-                                     sum_node_bottom1 = sum_node_bottom1 + i
-                                     z_node_bottom1 = zs_loc(ic1)
+                     if(ic1 .ne. 0 .and. ic2 .ne. 0) then                   
+                        if (dabs(zs_loc(ic1) - zs_loc(ic2)) .le. 1.d-4) then
+                           last_node_bottom1 = i
+                           sum_node_bottom1 = sum_node_bottom1 + i
+                           z_node_bottom1 = zs_loc(ic1)
                   
-                  !                            if(ie_glob .eq. 10277) then
-                  !                              write(*,*) 'qui', last_node_bottom1, sum_node_bottom1, z_node_bottom1
-                  !                            endif
-                  
-                                 else
-                                     last_node_bottom2 = i
-                                     sum_node_bottom2 = sum_node_bottom2 + i
-                                     z_node_bottom2 = zs_loc(ic2)
+                        else
+                           last_node_bottom2 = i
+                              sum_node_bottom2 = sum_node_bottom2 + i
+                              z_node_bottom2 = zs_loc(ic2)
                                      
-                  !                            if(ie_glob .eq. 10277) then
-                  !                              write(*,*) 'qua', last_node_bottom2, sum_node_bottom2, z_node_bottom2
-                  !                            endif
-                                     
-                                     
-                                 endif
-                              endif   
+                        endif
+                     endif   
                               
-                          enddo
+                  enddo
                           
-                          if (z_node_bottom1.lt.z_node_bottom2) then
-                                 sum_node_bottom = sum_node_bottom1
-                                 sum_node_bottom_first3 = sum_node_bottom1 - last_node_bottom1
-                          else
-                                 sum_node_bottom = sum_node_bottom2
-                                 sum_node_bottom_first3 = sum_node_bottom2 - last_node_bottom2
-                          endif
+                  if (z_node_bottom1.lt.z_node_bottom2) then
+                     sum_node_bottom = sum_node_bottom1
+                     sum_node_bottom_first3 = sum_node_bottom1 - last_node_bottom1
+                   else
+                     sum_node_bottom = sum_node_bottom2
+                     sum_node_bottom_first3 = sum_node_bottom2 - last_node_bottom2
+                  endif
                          
-                  !                            if(ie_glob .eq. 10277) then
-                  !                              write(*,*) 'quo', sum_node_bottom, sum_node_bottom2, last_node_bottom2
-                  !                            endif
+                  ! Recognizing bottom face - end
+                  C=dsqrt(mu*rho)
+                  ellez=dabs(z_node_bottom1 - z_node_bottom2)
                   
-                         
-                         ! Recognizing bottom face - end
-                         
-                      
-                         C=dsqrt(mu*rho)
-                         ellez=dabs(z_node_bottom1 - z_node_bottom2)
-                  
-                         fn = 0
-                         do ifun = 1,nfunc
-                            if (fun_plaX(ipl).eq.tag_func(ifun)) fn = ifun
-                         enddo
-                         if (fn.gt.0) then
+                  fn = 0
+                  do ifun = 1,nfunc
+                     if (fun_plaX(ipl).eq.tag_func(ifun)) fn = ifun
+                  enddo
+                  if (fn.gt.0) then
                   
                             !Table of the possible situation:
                             !hypothesis:
@@ -1281,11 +1074,8 @@
                             
                             !****** Situation S1 or S3 - begin ******
                             
-                            if ((sum_node_bottom.eq.10).or.(sum_node_bottom.eq.26)) then
-                             
-                  !                              write(*,*) 'situation s1,s3'
-                             
-                             
+                     if ((sum_node_bottom.eq.10).or.(sum_node_bottom.eq.26)) then
+                              !
                                !*** Situation S1 or S3 ***
                                !
                                ! e.g.: spectral degree = 3, nn = 4
@@ -1353,30 +1143,30 @@
                                
                                !*** Situation S1 ***
                                
-                               if (sum_node_bottom.eq.10) then
+                        if (sum_node_bottom.eq.10) then
                                
-                                  sit = 1 
+                           sit = 1 
                             
                                !*** Situation S3 ***
                                
-                               else
+                         else
                                
-                                  sit = 2
+                           sit = 2
                             
-                               endif
+                        endif
                   
-                               ! Even spectral polynomial degree
-                               if (mod(nn-1,2).eq.0) then
-                                 k = ((nn-1)/2)+1
+                        ! Even spectral polynomial degree
+                        if (mod(nn-1,2).eq.0) then
+                           k = ((nn-1)/2)+1
                                  
-                               ! Odd spectral polynomial degree
-                               else
-                                 k = (int((nn-1)/2))+num_sit(sit)
-                               endif
+                         ! Odd spectral polynomial degree
+                         else
+                           k = (int((nn-1)/2))+num_sit(sit)
+                        endif
                                  
                                  
-                               do i = 1,nn
-                                 do j = 1,nn
+                        do i = 1,nn
+                           do j = 1,nn
                                        dxdx = alfa11(ie) +beta12(ie)*ct(k) &
                                               + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
                                        dydx = alfa21(ie) +beta22(ie)*ct(k) &
@@ -1405,51 +1195,43 @@
                                        fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + term
                   
                                       prova = 3*(in -1) +1
-                                      
-                  !                                     if ( prova .eq. 190768) then
-                  !                                         write(*,*) 'primo', C, val_plaX(ipl,1), ww(j), ww (k) , dabs(det_j) , ellez
-                  !                                         write(*,*) z_node_bottom1, z_node_bottom2
-                  !                                         write(*,*) sit,k,sum_node_bottom, ie_glob 
-                  !                                         read(*,*)
-                  !                                     endif
                   
-                                 enddo
-                               enddo
+                           enddo
+                        enddo
                                
                                
                               
                                
                             !****** Situation S2 or S4 - begin ******
                             
-                            elseif ((sum_node_bottom.eq.14).or.(sum_node_bottom.eq.22)) then
+                      elseif ((sum_node_bottom.eq.14).or.(sum_node_bottom.eq.22)) then
                   
-                  !                              write(*,*) 'situation s2,s4'
-                  
+                             ! 
                              !*** Situation S2 ***
                                
-                               if (sum_node_bottom.eq.14) then
+                        if (sum_node_bottom.eq.14) then
                                
                                   sit = 1 
                             
                                !*** Situation S4 ***
                                
-                               else
+                         else
                                
                                   sit = 2
                             
-                               endif
+                        endif
                   
                                ! Even spectral polynomial degree
-                               if (mod(nn-1,2).eq.0) then
-                                 j = ((nn-1)/2)+1
+                        if (mod(nn-1,2).eq.0) then
+                           j = ((nn-1)/2)+1
                                  
                                ! Odd spectral polynomial degree
-                               else
-                                 j = (int((nn-1)/2))+num_sit(sit)
-                               endif
+                         else
+                           j = (int((nn-1)/2))+num_sit(sit)
+                        endif
                                  
-                               do i = 1,nn
-                                 do k = 1,nn
+                        do i = 1,nn
+                           do k = 1,nn
                                      dxdx = alfa11(ie) +beta12(ie)*ct(k) &
                                             + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
                                      dydx = alfa21(ie) +beta22(ie)*ct(k) &
@@ -1479,25 +1261,20 @@
                   
                                      prova = 3*(in -1) +1
                                       
-                  !                                     if ( prova .eq. 190768) then
-                  !                                         write(*,*) C, val_plaX(ipl,1), ww(j), ww (k) , dabs(det_j) , ellez
-                  !                                         read(*,*)
-                  !                                     endif
-                  
                   
                                      fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + term
-                                 enddo
-                               enddo
+                           enddo
+                        enddo
                               
                               
                               
-                           !****** Situation S5 or S6 - begin ******
+                            !****** Situation S5 or S6 - begin ******
                             
-                            elseif (sum_node_bottom.eq.18) then
+                      elseif (sum_node_bottom.eq.18) then
                   
                              !*** Situation S5 ***
                                
-                               if ((sum_node_bottom_first3.eq.10) .or.(sum_node_bottom_first3.eq.13) &
+                        if ((sum_node_bottom_first3.eq.10) .or.(sum_node_bottom_first3.eq.13) &
                                   .or.(sum_node_bottom_first3.eq.14)) then
                                
                                   sit = 1 
@@ -1508,18 +1285,18 @@
                                
                                   sit = 2
                             
-                               endif
+                        endif
                   
                                ! Even spectral polynomial degree
-                               if (mod(nn-1,2).eq.0) then
+                        if (mod(nn-1,2).eq.0) then
                                  i = ((nn-1)/2)+1
                                  
                                ! Odd spectral polynomial degree
                                else
                                  i = (int((nn-1)/2))+num_sit(sit)
-                               endif
+                        endif
                                  
-                               do j = 1,nn
+                              do j = 1,nn
                                  do k = 1,nn
                                       dxdx = alfa11(ie) +beta12(ie)*ct(k) &
                                              + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
@@ -1551,19 +1328,18 @@
                                       
                                       
                                  enddo
-                               enddo
+                        enddo
                               
-                            endif 
+                     endif 
                                
                   
-                         endif !if (fn.gt.0)
-                      endif  !Check on the Plane Wave Material - end
+                  endif !if (fn.gt.0)
+               endif  !Check on the Plane Wave Material - end
                   
-                     enddo !ipl = 1,nl_plaX
-                  endif  ! Plane Wave X - end
+            enddo !ipl = 1,nl_plaX
+         endif  ! Plane Wave X - end                
                   
-                  
-                  if (nl_plaY.gt.0) then       ! Plane Wave Y
+         if (nl_plaY.gt.0) then       ! Plane Wave Y
                    do ipl = 1,nl_plaY
                   
                       if (tag_mat(im).eq.tag_plaY(ipl)) then  !Check on the Plane Wave Material - start
@@ -1810,9 +1586,9 @@
                       endif  !Check on the Plane Wave Material - end
                   
                    enddo
-                  endif  ! Plane Wave Y - end
+         endif  ! Plane Wave Y - end
                                
-                  if (nl_plaZ.gt.0) then       ! Plane Wave Z
+         if (nl_plaZ.gt.0) then       ! Plane Wave Z
                    do ipl = 1,nl_plaZ
                   
                       if (tag_mat(im).eq.tag_plaZ(ipl)) then  !Check on the Plane Wave Material - start
@@ -2061,20 +1837,20 @@
                       endif  !Check on the Plane Wave Material - end
                   
                    enddo
-                  endif  ! Plane Wave Z - end
+         endif  ! Plane Wave Z - end
 
 
-!############################################################################
-!##################              PLANE WAVE END                ##############
-!############################################################################
+          !############################################################################
+          !##################              PLANE WAVE END                ##############
+          !############################################################################
 
 
-!############################################################################
-!##################             SEISMIC MOMENT  BEGIN          ##############
-!############################################################################
+          !############################################################################
+          !##################             SEISMIC MOMENT  BEGIN          ##############
+          !############################################################################
 
 
-                  if (nl_sism.gt.0) then
+         if (nl_sism.gt.0) then
                   
                    do isism = 1, nl_sism
                       do ipsism = 1, num_ns(isism)
@@ -2138,21 +1914,19 @@
                   
                    enddo !isism                                                                
                   
-                  endif !if (nl_sism.gt.0) then                                                
+         endif !if (nl_sism.gt.0) then                                                
                                
-                               
-                               
-                                       
-!############################################################################
-!##################             SEISMIC MOMENT END             ##############
-!############################################################################
+                                                    
+          !############################################################################
+          !##################             SEISMIC MOMENT END             ##############
+          !############################################################################
 
        
-!############################################################################
-!##################          EXPLOSIVE SOURCE BEGIN            ##############
-!############################################################################
+          !############################################################################
+          !##################          EXPLOSIVE SOURCE BEGIN            ##############
+          !############################################################################
 
-                  if (nl_expl.gt.0) then
+         if (nl_expl.gt.0) then
                    do iexpl = 1,nl_expl
                       do ipexpl = 1,num_ne(iexpl)
                                                             
@@ -2214,15 +1988,15 @@
                    enddo !iexpl                                                                
                   
                   
-                  endif !if (nl_expl.gt.0) then                                                
+         endif !if (nl_expl.gt.0) then                                                
 
                                        
                                        
-!############################################################################
-!##################          EXPLOSIVE SOURCE END              ##############
-!############################################################################
-                  deallocate(ct,dd,ww)
-               enddo  
+          !############################################################################
+          !##################          EXPLOSIVE SOURCE END              ##############
+          !############################################################################
+         deallocate(ct,dd,ww)
+      enddo  
 
 
 
@@ -2230,25 +2004,22 @@
 !############################################################################
 !##################          SEISMIC MOMENT BEGIN              ##############
 !############################################################################
-         if (nl_sism.gt.0) then                                                                        
+      if (nl_sism.gt.0) then                                                                        
             do isism = 1,nl_sism                                                                
                call MPI_BARRIER(mpi_comm,mpi_ierr)
                call MPI_ALLREDUCE(facsmom(isism,:),sum_facs, 6, SPEED_DOUBLE, MPI_SUM, mpi_comm, mpi_ierr)
                facsmom(isism,:) = sum_facs                    
             enddo                        
          
-         endif        
+      endif        
 
-
-
-
-          if (nl_sism.gt.0) then                                                                        
+      if (nl_sism.gt.0) then                                                                        
                  if (srcmodflag.eq.0) then
                     val_st = 12
                   elseif (srcmodflag.eq.1) then
                     val_st = 6
                   endif
-                 do isism = 1,nl_sism                                                                
+         do isism = 1,nl_sism                                                                
                      slip1_sism = val_sism(isism,val_st + 1)                                                
                      slip2_sism = val_sism(isism,val_st + 2)                                                
                      slip3_sism = val_sism(isism,val_st + 3)                                                
@@ -2318,7 +2089,7 @@
                     !facsmom(isism,4) = 0.0d0                                                
                     !facsmom(isism,5) = 0.0d0                                                
                     !facsmom(isism,6) = 0.0d0                                                  
-              enddo                        
+         enddo                        
               
       endif        
           
@@ -2332,996 +2103,140 @@
 !##################         EXPLOSIVE SOURCE BEGIN             ##############
 !############################################################################
 
+      if (nl_expl.gt.0) then                                                                        
+         do iexpl = 1,nl_expl                                                                
 
-if (nl_expl.gt.0) then                                                                        
-do iexpl = 1,nl_expl                                                                
-
-        call MPI_BARRIER(mpi_comm,mpi_ierr)
-        call MPI_ALLREDUCE(facsexpl(iexpl,:),sum_facs, 6, SPEED_DOUBLE, MPI_SUM, mpi_comm, mpi_ierr)
-        facsexpl(iexpl,:) = sum_facs                    
-
-enddo
-endif      
+            call MPI_BARRIER(mpi_comm,mpi_ierr)
+            call MPI_ALLREDUCE(facsexpl(iexpl,:),sum_facs, 6, SPEED_DOUBLE, MPI_SUM, mpi_comm, mpi_ierr)
+            facsexpl(iexpl,:) = sum_facs                    
+         enddo
+      endif      
 
 
 
-if (nl_expl.gt.0) then                                                                        
+      if (nl_expl.gt.0) then                                                                        
              
-do iexpl = 1,nl_expl                                                                
-    slip1_expl = val_expl(iexpl,13)                                                
-    slip2_expl = val_expl(iexpl,14)                                                
-    slip3_expl = val_expl(iexpl,15)                                                
-    
-    norm1_expl = val_expl(iexpl,16)                                                
-    norm2_expl = val_expl(iexpl,17)                                                
-    norm3_expl = val_expl(iexpl,18)                                                
-    
-    amp_expl = val_expl(iexpl,20)                                                
-
-   facsexpl(iexpl,1) = 1/facsexpl(iexpl,1) &                                        
-                      * slip1_expl &        
-                      * amp_expl                                                
-   facsexpl(iexpl,2) = 1/facsexpl(iexpl,2) &                                        
-                      * slip2_expl &        
-                      * amp_expl                                                
-   facsexpl(iexpl,3) = 1/facsexpl(iexpl,3) &                                        
-                      * slip3_expl &        
-                      * amp_expl                                                
-   facsexpl(iexpl,4) = 1/facsexpl(iexpl,4) &                                        
-                      * norm1_expl &        
-                      * amp_expl                                                
-   facsexpl(iexpl,5) = 1/facsexpl(iexpl,5) &                                        
-                      * norm2_expl &        
-                      * amp_expl                                                
-   facsexpl(iexpl,6) = 1/facsexpl(iexpl,6) &                                        
-                      * norm3_expl &        
-                      * amp_expl                                         
-enddo                                                                                
-endif        
+         do iexpl = 1,nl_expl                                                                
+            slip1_expl = val_expl(iexpl,13)                                                
+            slip2_expl = val_expl(iexpl,14)                                                
+            slip3_expl = val_expl(iexpl,15)                                                
+             
+            norm1_expl = val_expl(iexpl,16)                                                
+            norm2_expl = val_expl(iexpl,17)                                                
+            norm3_expl = val_expl(iexpl,18)                                                
+             
+            amp_expl = val_expl(iexpl,20)                                                
+         
+            facsexpl(iexpl,1) = 1/facsexpl(iexpl,1) &                                        
+                               * slip1_expl &        
+                               * amp_expl                                                
+            facsexpl(iexpl,2) = 1/facsexpl(iexpl,2) &                                        
+                               * slip2_expl &        
+                               * amp_expl                                                
+            facsexpl(iexpl,3) = 1/facsexpl(iexpl,3) &                                        
+                               * slip3_expl &        
+                               * amp_expl                                                
+            facsexpl(iexpl,4) = 1/facsexpl(iexpl,4) &                                        
+                               * norm1_expl &        
+                               * amp_expl                                                
+            facsexpl(iexpl,5) = 1/facsexpl(iexpl,5) &                                        
+                               * norm2_expl &        
+                               * amp_expl                                                
+            facsexpl(iexpl,6) = 1/facsexpl(iexpl,6) &                                        
+                               * norm3_expl &        
+                               * amp_expl                                         
+         enddo                                                                                
+      endif        
 
 !############################################################################
 !##################         EXPLOSIVE SOURCE END               ##############
 !############################################################################
 
+      ne_loc = cs_loc(0) -1
 
-!!<<<<<< HEAD
-!!            if (nmat_nhe.gt.0) then
-!!             allocate(rho_el(nn,nn,nn), lambda_el(nn,nn,nn), mu_el(nn,nn,nn), gamma_el(nn,nn,nn))
-!!             call GET_MECH_PROP_NH_ENHANCED(ie, nn, nnod_loc, cs_nnz_loc, cs_loc, &
-!!                                             rho_nhe, lambda_nhe, mu_nhe, 100.d0, 3.d0, &
-!!                                             rho_el, lambda_el, mu_el, gamma_el)
-!!             rho = sum(rho_el)/(nn*nn*nn)
-!!             lambda = sum(lambda_el)/(nn*nn*nn)
-!!             mu = sum(mu_el)/(nn*nn*nn)
-!!             deallocate(rho_el, lambda_el, mu_el, gamma_el)
-!!           endif
-!!
-!!
-!!              if (nl_pres.gt.0) then    ! Pressure load
-!!                 do ip = 1,nl_pres
-!!                    fn = 0
-!!                    do ifun = 1,nfunc
-!!                       if (fun_pres(ip).eq.tag_func(ifun)) fn = ifun
-!!                    enddo
-!!                    
-!!                    if (fn.gt.0) then
-!!                       do k = 1,nn
-!!                          do j = 1,nn
-!!                             do i = 1,nn
-!!                                dxdx = alfa11(ie) +beta12(ie)*ct(k) &
-!!                                     + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
-!!                                dydx = alfa21(ie) +beta22(ie)*ct(k) &
-!!                                     + beta23(ie)*ct(j) +gamma2(ie)*ct(j)*ct(k)
-!!                                dzdx = alfa31(ie) +beta32(ie)*ct(k) &
-!!                                     + beta33(ie)*ct(j) +gamma3(ie)*ct(j)*ct(k)
-!!                                
-!!                                dxdy = alfa12(ie) +beta11(ie)*ct(k) &
-!!                                     + beta13(ie)*ct(i) +gamma1(ie)*ct(k)*ct(i)
-!!                                dydy = alfa22(ie) +beta21(ie)*ct(k) &
-!!                                     + beta23(ie)*ct(i) +gamma2(ie)*ct(k)*ct(i)
-!!                                dzdy = alfa32(ie) +beta31(ie)*ct(k) &
-!!                                     + beta33(ie)*ct(i) +gamma3(ie)*ct(k)*ct(i)
-!!                                
-!!                                dxdz = alfa13(ie) +beta11(ie)*ct(j) &
-!!                                     + beta12(ie)*ct(i) +gamma1(ie)*ct(i)*ct(j)
-!!                                dydz = alfa23(ie) +beta21(ie)*ct(j) &
-!!                                     + beta22(ie)*ct(i) +gamma2(ie)*ct(i)*ct(j)
-!!                                dzdz = alfa33(ie) +beta31(ie)*ct(j) &
-!!                                     + beta32(ie)*ct(i) +gamma3(ie)*ct(i)*ct(j)
-!!                                
-!!                                det_j = dxdz * (dydx*dzdy - dzdx*dydy) &
-!!                                      - dydz * (dxdx*dzdy - dzdx*dxdy) &
-!!                                      + dzdz * (dxdx*dydy - dydx*dxdy)
-!!                                
-!!                                is = nn*nn*(k -1) +nn*(j -1) +i
-!!                                in = cs_loc(cs_loc(ie -1) +is)
-!!
-!!                                   x0 = val_pres(ip,1)
-!!                                   y0 = val_pres(ip,2)
-!!                                   z0 = val_pres(ip,3)
-!!                                   
-!!                                   r1 = val_pres(ip,5)
-!!                                   r2 = val_pres(ip,6)
-!!                                   r3 = val_pres(ip,7)
-!!                                   
-!!                                   phii = val_pres(ip,8)
-!!                                   theta = val_pres(ip,9)
-!!                                   psi = val_pres(ip,10)
-!!                                   
-!!                                   term = val_pres(ip,4) * det_j * ww(i)*ww(j)*ww(k)
-!!                                   
-!!                                   rot(1,1) = cos(phii)*cos(theta)
-!!                                   rot(1,2) = cos(phii)*sin(theta)*sin(psi) &
-!!                                            - sin(phii)*cos(psi)
-!!                                   rot(1,3) = cos(phii)*sin(theta)*cos(psi) &
-!!                                            + sin(phii)*sin(psi)
-!!                                   rot(2,1) = sin(phii)*cos(theta)
-!!                                   rot(2,2) = sin(phii)*sin(theta)*sin(psi) &
-!!                                            + cos(phii)*cos(psi)
-!!                                   rot(2,3) = sin(phii)*sin(theta)*cos(psi) &
-!!                                            - cos(phii)*sin(psi)
-!!                                   rot(3,1) = -sin(theta)
-!!                                   rot(3,2) = cos(theta)*sin(psi)
-!!                                   rot(3,3) = cos(theta)*cos(psi)
-!!                                   
-!!                                   x1 = rot(1,1)*(xs_loc(in) -x0) + rot(2,1)*(ys_loc(in) -y0) + rot(3,1)*(zs_loc(in) -z0)
-!!                                   
-!!                                   x2 = rot(1,2)*(xs_loc(in) -x0) + rot(2,2)*(ys_loc(in) -y0) + rot(3,2)*(zs_loc(in) -z0)
-!!                                   
-!!                                   x3 = rot(1,3)*(xs_loc(in) -x0) + rot(2,3)*(ys_loc(in) -y0) + rot(3,3)*(zs_loc(in) -z0)
-!!                                   
-!!                                   f1 = -2.0*term*x1/(r1**2) * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
-!!                                   f2 = -2.0*term*x2/(r2**2) * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
-!!                                   f3 = -2.0*term*x3/(r3**2) * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
-!!                                   
-!!                                  
-!!                                   fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) +rot(1,1)*f1 +rot(1,2)*f2 +rot(1,3)*f3
-!!                                   fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) +rot(2,1)*f1 +rot(2,2)*f2 +rot(2,3)*f3
-!!                                   fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) +rot(3,1)*f1 +rot(3,2)*f2 +rot(3,3)*f3
-!!                                   
-!!                             enddo
-!!                          enddo
-!!                       enddo
-!!                    endif
-!!                 enddo
-!!              endif
-!!              
-!!              
-!!              if (nl_shea.gt.0) then    ! Shear load
-!!                 do ip = 1,nl_shea
-!!                    fn = 0
-!!                    do ifun = 1,nfunc
-!!                       if (fun_shea(ip).eq.tag_func(ifun)) fn = ifun
-!!                    enddo
-!!                    
-!!                    if (fn.gt.0) then
-!!                       do k = 1,nn
-!!                          do j = 1,nn
-!!                             do i = 1,nn
-!!                                dxdx = alfa11(ie) +beta12(ie)*ct(k) &
-!!                                     + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
-!!                                dydx = alfa21(ie) +beta22(ie)*ct(k) &
-!!                                     + beta23(ie)*ct(j) +gamma2(ie)*ct(j)*ct(k)
-!!                                dzdx = alfa31(ie) +beta32(ie)*ct(k) &
-!!                                     + beta33(ie)*ct(j) +gamma3(ie)*ct(j)*ct(k)
-!!                                
-!!                                dxdy = alfa12(ie) +beta11(ie)*ct(k) &
-!!                                     + beta13(ie)*ct(i) +gamma1(ie)*ct(k)*ct(i)
-!!                                dydy = alfa22(ie) +beta21(ie)*ct(k) &
-!!                                     + beta23(ie)*ct(i) +gamma2(ie)*ct(k)*ct(i)
-!!                                dzdy = alfa32(ie) +beta31(ie)*ct(k) &
-!!                                     + beta33(ie)*ct(i) +gamma3(ie)*ct(k)*ct(i)
-!!                                
-!!                                dxdz = alfa13(ie) +beta11(ie)*ct(j) &
-!!                                     + beta12(ie)*ct(i) +gamma1(ie)*ct(i)*ct(j)
-!!                                dydz = alfa23(ie) +beta21(ie)*ct(j) &
-!!                                     + beta22(ie)*ct(i) +gamma2(ie)*ct(i)*ct(j)
-!!                                dzdz = alfa33(ie) +beta31(ie)*ct(j) &
-!!                                     + beta32(ie)*ct(i) +gamma3(ie)*ct(i)*ct(j)
-!!                                
-!!                                det_j = dxdz * (dydx*dzdy - dzdx*dydy) &
-!!                                      - dydz * (dxdx*dzdy - dzdx*dxdy) &
-!!                                      + dzdz * (dxdx*dydy - dydx*dxdy)
-!!                                
-!!                                is = nn*nn*(k -1) +nn*(j -1) +i
-!!                                in = cs_loc(cs_loc(ie -1) +is)
-!!                                
-!!                                   x0 = val_shea(ip,1)
-!!                                   y0 = val_shea(ip,2)
-!!                                   z0 = val_shea(ip,3)
-!!                                   
-!!                                   r1 = val_shea(ip,5)
-!!                                   r2 = val_shea(ip,6)
-!!                                   r3 = val_shea(ip,7)
-!!                                   
-!!                                   phii = val_shea(ip,8)
-!!                                   theta = val_shea(ip,9)
-!!                                   psi = val_shea(ip,10)
-!!                                   
-!!                                   term = val_shea(ip,4) * det_j * ww(i)*ww(j)*ww(k)
-!!                                   
-!!                                   rot(1,1) = cos(phii)*cos(theta)
-!!                                   rot(1,2) = cos(phii)*sin(theta)*sin(psi) &
-!!                                            - sin(phii)*cos(psi)
-!!                                   rot(1,3) = cos(phii)*sin(theta)*cos(psi) &
-!!                                            + sin(phii)*sin(psi)
-!!                                   rot(2,1) = sin(phii)*cos(theta)
-!!                                   rot(2,2) = sin(phii)*sin(theta)*sin(psi) &
-!!                                            + cos(phii)*cos(psi)
-!!                                   rot(2,3) = sin(phii)*sin(theta)*cos(psi) &
-!!                                            - cos(phii)*sin(psi)
-!!                                   rot(3,1) = -sin(theta)
-!!                                   rot(3,2) = cos(theta)*sin(psi)
-!!                                   rot(3,3) = cos(theta)*cos(psi)
-!!                                   
-!!                                   x1 = rot(1,1)*(xs_loc(in) -x0) + rot(2,1)*(ys_loc(in) -y0) + rot(3,1)*(zs_loc(in) -z0)
-!!                                   
-!!                                   x2 = rot(1,2)*(xs_loc(in) -x0) + rot(2,2)*(ys_loc(in) -y0) + rot(3,2)*(zs_loc(in) -z0)
-!!                                   
-!!                                   x3 = rot(1,3)*(xs_loc(in) -x0) + rot(2,3)*(ys_loc(in) -y0) + rot(3,3)*(zs_loc(in) -z0)
-!!                                   
-!!                                   f1 = 0.0
-!!                                   f2 = -2.0*term*x3/(r3**2) * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
-!!                                   f3 = +2.0*term*x2/(r2**2) * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
-!!                                   
-!!                                   
-!!                                   fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) +rot(1,1)*f1 +rot(1,2)*f2 +rot(1,3)*f3
-!!                                   fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) +rot(2,1)*f1 +rot(2,2)*f2 +rot(2,3)*f3
-!!                                   fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) +rot(3,1)*f1 +rot(3,2)*f2 +rot(3,3)*f3
-!!                                   
-!!                             enddo
-!!                          enddo
-!!                       enddo
-!!                    endif
-!!                 enddo
-!!              endif
-!!              
-!!              if (nl_forX.gt.0) then    ! Force load X
-!!                 do ip = 1,nl_forX
-!!                    fn = 0
-!!                    do ifun = 1,nfunc
-!!                       if (fun_forX(ip) .eq. tag_func(ifun)) fn = ifun
-!!                    enddo
-!!                    
-!!                    if (fn.gt.0) then
-!!                    
-!!                       !rho = prop_mat(im,1); lambda = prop_mat(im,2); mu = prop_mat(im,3)
-!!                       
-!!                       do k = 1,nn
-!!                          do j = 1,nn
-!!                             do i = 1,nn
-!!                                dxdx = alfa11(ie) +beta12(ie)*ct(k) &
-!!                                     + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
-!!                                dydx = alfa21(ie) +beta22(ie)*ct(k) &
-!!                                     + beta23(ie)*ct(j) +gamma2(ie)*ct(j)*ct(k)
-!!                                dzdx = alfa31(ie) +beta32(ie)*ct(k) &
-!!                                     + beta33(ie)*ct(j) +gamma3(ie)*ct(j)*ct(k)
-!!                                
-!!                                dxdy = alfa12(ie) +beta11(ie)*ct(k) &
-!!                                     + beta13(ie)*ct(i) +gamma1(ie)*ct(k)*ct(i)
-!!                                dydy = alfa22(ie) +beta21(ie)*ct(k) &
-!!                                     + beta23(ie)*ct(i) +gamma2(ie)*ct(k)*ct(i)
-!!                                dzdy = alfa32(ie) +beta31(ie)*ct(k) &
-!!                                     + beta33(ie)*ct(i) +gamma3(ie)*ct(k)*ct(i)
-!!                                
-!!                                dxdz = alfa13(ie) +beta11(ie)*ct(j) &
-!!                                     + beta12(ie)*ct(i) +gamma1(ie)*ct(i)*ct(j)
-!!                                dydz = alfa23(ie) +beta21(ie)*ct(j) &
-!!                                     + beta22(ie)*ct(i) +gamma2(ie)*ct(i)*ct(j)
-!!                                dzdz = alfa33(ie) +beta31(ie)*ct(j) &
-!!                                     + beta32(ie)*ct(i) +gamma3(ie)*ct(i)*ct(j)
-!!                                
-!!                                det_j = dxdz * (dydx*dzdy - dzdx*dydy) &
-!!                                      - dydz * (dxdx*dzdy - dzdx*dxdy) &
-!!                                      + dzdz * (dxdx*dydy - dydx*dxdy)
-!!                                
-!!                                is = nn*nn*(k -1) +nn*(j -1) +i
-!!                                in = cs_loc(cs_loc(ie -1) +is)
-!!                                x =  xs_loc(in); y = ys_loc(in); z = zs_loc(in); 
-!!                                
-!!                                   k1 = val_forX(ip,1)
-!!                                   k2 = val_forX(ip,2)
-!!                                   k3 = val_forX(ip,3)
-!!                                   omega = val_forX(ip,4)*2*pi
-!!                                   
-!!                                   
-!!                                   
-!!                                if (tag_func(fn) .eq. 100) then
-!!                                                                      
-!!                                    fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) - dcos(k1*x+k2*y+k3*z) &
-!!                                                             *(-k1**2*(lambda+2*mu)-mu*(k2**2+k3**2))* &
-!!                                                              det_j * ww(i)*ww(j)*ww(k)
-!!                                elseif(tag_func(fn) .eq. 101) then
-!!                                
-!!                                    fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) - dcos(k1*x+k2*y+k3*z) &
-!!                                                             * rho * &
-!!                                                              det_j * ww(i)*ww(j)*ww(k)
-!!                                                              
-!!                                elseif(tag_func(fn) .eq. 102) then
-!!
-!!                                   vp = dsqrt((lambda+2.d0*mu)/rho);
-!!                                   vs = dsqrt(mu/rho);
-!!                                    
-!!                                    k3 = k3*omega/vp;
-!!                                                            
-!!                                    fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) - dcos(k1*x+k2*y+k3*z) &
-!!                                                       * (k1*k3* (lambda+mu) )* &
-!!                                                              det_j * ww(i)*ww(j)*ww(k)
-!!                                                              
-!!                                                              
-!!                                endif
-!!======
-!!o ie = 1,ne_loc
-!!m = cs_loc(cs_loc(ie -1) +0);
-!!n = sdeg_mat(im) +1
-!!
-!!llocate(ct(nn),ww(nn),dd(nn,nn))
-!!all MAKE_LGL_NW(nn,ct,ww,dd)
-!!ho = prop_mat(im,1) 
-!!ambda = prop_mat(im,2)
-!!u = prop_mat(im,3)
-!!
-!!      
-!!f (nl_pres.gt.0) then    ! Pressure load
-!!do ip = 1,nl_pres
-!!   fn = 0
-!!   do ifun = 1,nfunc
-!!      if (fun_pres(ip).eq.tag_func(ifun)) fn = ifun
-!!   enddo
-!!   
-!!   if (fn.gt.0) then
-!!      do k = 1,nn
-!!         do j = 1,nn
-!!            do i = 1,nn
-!!               dxdx = alfa11(ie) +beta12(ie)*ct(k) &
-!!                    + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
-!!               dydx = alfa21(ie) +beta22(ie)*ct(k) &
-!!                    + beta23(ie)*ct(j) +gamma2(ie)*ct(j)*ct(k)
-!!               dzdx = alfa31(ie) +beta32(ie)*ct(k) &
-!!                    + beta33(ie)*ct(j) +gamma3(ie)*ct(j)*ct(k)
-!!               
-!!               dxdy = alfa12(ie) +beta11(ie)*ct(k) &
-!!                    + beta13(ie)*ct(i) +gamma1(ie)*ct(k)*ct(i)
-!!               dydy = alfa22(ie) +beta21(ie)*ct(k) &
-!!                    + beta23(ie)*ct(i) +gamma2(ie)*ct(k)*ct(i)
-!!               dzdy = alfa32(ie) +beta31(ie)*ct(k) &
-!!                    + beta33(ie)*ct(i) +gamma3(ie)*ct(k)*ct(i)
-!!               
-!!               dxdz = alfa13(ie) +beta11(ie)*ct(j) &
-!!                    + beta12(ie)*ct(i) +gamma1(ie)*ct(i)*ct(j)
-!!               dydz = alfa23(ie) +beta21(ie)*ct(j) &
-!!                    + beta22(ie)*ct(i) +gamma2(ie)*ct(i)*ct(j)
-!!               dzdz = alfa33(ie) +beta31(ie)*ct(j) &
-!!                    + beta32(ie)*ct(i) +gamma3(ie)*ct(i)*ct(j)
-!!               
-!!               det_j = dxdz * (dydx*dzdy - dzdx*dydy) &
-!!                     - dydz * (dxdx*dzdy - dzdx*dxdy) &
-!!                     + dzdz * (dxdx*dydy - dydx*dxdy)
-!!               
-!!               is = nn*nn*(k -1) +nn*(j -1) +i
-!!               in = cs_loc(cs_loc(ie -1) +is)
-!!
-!!                  x0 = val_pres(ip,1)
-!!                  y0 = val_pres(ip,2)
-!!                  z0 = val_pres(ip,3)
-!!                  
-!!                  r1 = val_pres(ip,5)
-!!                  r2 = val_pres(ip,6)
-!!                  r3 = val_pres(ip,7)
-!!                  
-!!                  phii = val_pres(ip,8)
-!!                  theta = val_pres(ip,9)
-!!                  psi = val_pres(ip,10)
-!!                  
-!!                  term = val_pres(ip,4) * det_j * ww(i)*ww(j)*ww(k)
-!!                  
-!!                  rot(1,1) = cos(phii)*cos(theta)
-!!                  rot(1,2) = cos(phii)*sin(theta)*sin(psi) &
-!!                           - sin(phii)*cos(psi)
-!!                  rot(1,3) = cos(phii)*sin(theta)*cos(psi) &
-!!                           + sin(phii)*sin(psi)
-!!                  rot(2,1) = sin(phii)*cos(theta)
-!!                  rot(2,2) = sin(phii)*sin(theta)*sin(psi) &
-!!                           + cos(phii)*cos(psi)
-!!                  rot(2,3) = sin(phii)*sin(theta)*cos(psi) &
-!!                           - cos(phii)*sin(psi)
-!!                  rot(3,1) = -sin(theta)
-!!                  rot(3,2) = cos(theta)*sin(psi)
-!!                  rot(3,3) = cos(theta)*cos(psi)
-!!                  
-!!                  x1 = rot(1,1)*(xs_loc(in) -x0) + rot(2,1)*(ys_loc(in) -y0) + rot(3,1)*(zs_loc(in) -z0)
-!!                  
-!!                  x2 = rot(1,2)*(xs_loc(in) -x0) + rot(2,2)*(ys_loc(in) -y0) + rot(3,2)*(zs_loc(in) -z0)
-!!                  
-!!                  x3 = rot(1,3)*(xs_loc(in) -x0) + rot(2,3)*(ys_loc(in) -y0) + rot(3,3)*(zs_loc(in) -z0)
-!!                  
-!!                  f1 = -2.0*term*x1/(r1**2) * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
-!!                  f2 = -2.0*term*x2/(r2**2) * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
-!!                  f3 = -2.0*term*x3/(r3**2) * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
-!!                  
-!!                 
-!!                  fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) +rot(1,1)*f1 +rot(1,2)*f2 +rot(1,3)*f3
-!!                  fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) +rot(2,1)*f1 +rot(2,2)*f2 +rot(2,3)*f3
-!!                  fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) +rot(3,1)*f1 +rot(3,2)*f2 +rot(3,3)*f3
-!!                  
-!!            enddo
-!!         enddo
-!!      enddo
-!!   endif
-!!enddo
-!!ndif
-!!
-!!
-!!f (nl_shea.gt.0) then    ! Shear load
-!!do ip = 1,nl_shea
-!!   fn = 0
-!!   do ifun = 1,nfunc
-!!      if (fun_shea(ip).eq.tag_func(ifun)) fn = ifun
-!!   enddo
-!!   
-!!   if (fn.gt.0) then
-!!      do k = 1,nn
-!!         do j = 1,nn
-!!            do i = 1,nn
-!!               dxdx = alfa11(ie) +beta12(ie)*ct(k) &
-!!                    + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
-!!               dydx = alfa21(ie) +beta22(ie)*ct(k) &
-!!                    + beta23(ie)*ct(j) +gamma2(ie)*ct(j)*ct(k)
-!!               dzdx = alfa31(ie) +beta32(ie)*ct(k) &
-!!                    + beta33(ie)*ct(j) +gamma3(ie)*ct(j)*ct(k)
-!!               
-!!               dxdy = alfa12(ie) +beta11(ie)*ct(k) &
-!!                    + beta13(ie)*ct(i) +gamma1(ie)*ct(k)*ct(i)
-!!               dydy = alfa22(ie) +beta21(ie)*ct(k) &
-!!                    + beta23(ie)*ct(i) +gamma2(ie)*ct(k)*ct(i)
-!!               dzdy = alfa32(ie) +beta31(ie)*ct(k) &
-!!                    + beta33(ie)*ct(i) +gamma3(ie)*ct(k)*ct(i)
-!!               
-!!               dxdz = alfa13(ie) +beta11(ie)*ct(j) &
-!!                    + beta12(ie)*ct(i) +gamma1(ie)*ct(i)*ct(j)
-!!               dydz = alfa23(ie) +beta21(ie)*ct(j) &
-!!                    + beta22(ie)*ct(i) +gamma2(ie)*ct(i)*ct(j)
-!!               dzdz = alfa33(ie) +beta31(ie)*ct(j) &
-!!                    + beta32(ie)*ct(i) +gamma3(ie)*ct(i)*ct(j)
-!!               
-!!               det_j = dxdz * (dydx*dzdy - dzdx*dydy) &
-!!                     - dydz * (dxdx*dzdy - dzdx*dxdy) &
-!!                     + dzdz * (dxdx*dydy - dydx*dxdy)
-!!               
-!!               is = nn*nn*(k -1) +nn*(j -1) +i
-!!               in = cs_loc(cs_loc(ie -1) +is)
-!!               
-!!                  x0 = val_shea(ip,1)
-!!                  y0 = val_shea(ip,2)
-!!                  z0 = val_shea(ip,3)
-!!                  
-!!                  r1 = val_shea(ip,5)
-!!                  r2 = val_shea(ip,6)
-!!                  r3 = val_shea(ip,7)
-!!                  
-!!                  phii = val_shea(ip,8)
-!!                  theta = val_shea(ip,9)
-!!                  psi = val_shea(ip,10)
-!!                  
-!!                  term = val_shea(ip,4) * det_j * ww(i)*ww(j)*ww(k)
-!!                  
-!!                  rot(1,1) = cos(phii)*cos(theta)
-!!                  rot(1,2) = cos(phii)*sin(theta)*sin(psi) &
-!!                           - sin(phii)*cos(psi)
-!!                  rot(1,3) = cos(phii)*sin(theta)*cos(psi) &
-!!                           + sin(phii)*sin(psi)
-!!                  rot(2,1) = sin(phii)*cos(theta)
-!!                  rot(2,2) = sin(phii)*sin(theta)*sin(psi) &
-!!                           + cos(phii)*cos(psi)
-!!                  rot(2,3) = sin(phii)*sin(theta)*cos(psi) &
-!!                           - cos(phii)*sin(psi)
-!!                  rot(3,1) = -sin(theta)
-!!                  rot(3,2) = cos(theta)*sin(psi)
-!!                  rot(3,3) = cos(theta)*cos(psi)
-!!                  
-!!                  x1 = rot(1,1)*(xs_loc(in) -x0) + rot(2,1)*(ys_loc(in) -y0) + rot(3,1)*(zs_loc(in) -z0)
-!!                  
-!!                  x2 = rot(1,2)*(xs_loc(in) -x0) + rot(2,2)*(ys_loc(in) -y0) + rot(3,2)*(zs_loc(in) -z0)
-!!                  
-!!                  x3 = rot(1,3)*(xs_loc(in) -x0) + rot(2,3)*(ys_loc(in) -y0) + rot(3,3)*(zs_loc(in) -z0)
-!!                  
-!!                  f1 = 0.0
-!!                  f2 = -2.0*term*x3/(r3**2) * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
-!!                  f3 = +2.0*term*x2/(r2**2) * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
-!!                  
-!!                  
-!!                  fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) +rot(1,1)*f1 +rot(1,2)*f2 +rot(1,3)*f3
-!!                  fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) +rot(2,1)*f1 +rot(2,2)*f2 +rot(2,3)*f3
-!!                  fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) +rot(3,1)*f1 +rot(3,2)*f2 +rot(3,3)*f3
-!!                  
-!!            enddo
-!!         enddo
-!!      enddo
-!!   endif
-!!enddo
-!!ndif
-!!
-!!f (nl_forX.gt.0) then    ! Force load X
-!!do ip = 1,nl_forX
-!!   fn = 0
-!!   do ifun = 1,nfunc
-!!      if (fun_forX(ip) .eq. tag_func(ifun)) fn = ifun
-!!   enddo
-!!   
-!!   if (fn.gt.0) then
-!!>>>>>> 559e23401211e25f7d21218180f4ad60872274d2
-!!   
-!!      !rho = prop_mat(im,1); lambda = prop_mat(im,2); mu = prop_mat(im,3)
-!!      
-!!      do k = 1,nn
-!!         do j = 1,nn
-!!            do i = 1,nn
-!!               dxdx = alfa11(ie) +beta12(ie)*ct(k) &
-!!                    + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
-!!               dydx = alfa21(ie) +beta22(ie)*ct(k) &
-!!                    + beta23(ie)*ct(j) +gamma2(ie)*ct(j)*ct(k)
-!!               dzdx = alfa31(ie) +beta32(ie)*ct(k) &
-!!                    + beta33(ie)*ct(j) +gamma3(ie)*ct(j)*ct(k)
-!!               
-!!               dxdy = alfa12(ie) +beta11(ie)*ct(k) &
-!!                    + beta13(ie)*ct(i) +gamma1(ie)*ct(k)*ct(i)
-!!               dydy = alfa22(ie) +beta21(ie)*ct(k) &
-!!                    + beta23(ie)*ct(i) +gamma2(ie)*ct(k)*ct(i)
-!!               dzdy = alfa32(ie) +beta31(ie)*ct(k) &
-!!                    + beta33(ie)*ct(i) +gamma3(ie)*ct(k)*ct(i)
-!!               
-!!               dxdz = alfa13(ie) +beta11(ie)*ct(j) &
-!!                    + beta12(ie)*ct(i) +gamma1(ie)*ct(i)*ct(j)
-!!               dydz = alfa23(ie) +beta21(ie)*ct(j) &
-!!                    + beta22(ie)*ct(i) +gamma2(ie)*ct(i)*ct(j)
-!!               dzdz = alfa33(ie) +beta31(ie)*ct(j) &
-!!                    + beta32(ie)*ct(i) +gamma3(ie)*ct(i)*ct(j)
-!!               
-!!               det_j = dxdz * (dydx*dzdy - dzdx*dydy) &
-!!                     - dydz * (dxdx*dzdy - dzdx*dxdy) &
-!!                     + dzdz * (dxdx*dydy - dydx*dxdy)
-!!               
-!!               is = nn*nn*(k -1) +nn*(j -1) +i
-!!               in = cs_loc(cs_loc(ie -1) +is)
-!!               x =  xs_loc(in); y = ys_loc(in); z = zs_loc(in); 
-!!               
-!!                  k1 = val_forX(ip,1)
-!!                  k2 = val_forX(ip,2)
-!!                  k3 = val_forX(ip,3)
-!!                  omega = val_forX(ip,4)*2*pi
-!!                  
-!!                  
-!!                  
-!!               if (tag_func(fn) .eq. 100) then
-!!                                                     
-!!                   fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) - dcos(k1*x+k2*y+k3*z) &
-!!                                            *(-k1**2*(lambda+2*mu)-mu*(k2**2+k3**2))* &
-!!                                             det_j * ww(i)*ww(j)*ww(k)
-!!               elseif(tag_func(fn) .eq. 101) then
-!!               
-!!                   fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) - dcos(k1*x+k2*y+k3*z) &
-!!                                            * rho * &
-!!                                             det_j * ww(i)*ww(j)*ww(k)
-!!                                             
-!!               elseif(tag_func(fn) .eq. 102) then
-!!
-!!                  vp = dsqrt((lambda+2.d0*mu)/rho);
-!!                  vs = dsqrt(mu/rho);
-!!                   
-!!                   k3 = k3*omega/vp;
-!!                                           
-!!                   fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) - dcos(k1*x+k2*y+k3*z) &
-!!                                      * (k1*k3* (lambda+mu) )* &
-!!                                             det_j * ww(i)*ww(j)*ww(k)
-!!                                             
-!!                                             
-!!               endif
-!!
-!!
-!!
-!!
-!!            enddo
-!!         enddo
-!!      enddo
-!!   endif
-!!enddo
-!!ndif
-!!
-!!f (nl_forY.gt.0) then    ! Force load Y
-!!do ip = 1,nl_forY
-!!   fn = 0
-!!   do ifun = 1,nfunc
-!!      if (fun_forY(ip).eq.tag_func(ifun)) fn = ifun
-!!   enddo
-!!   
-!!   if (fn.gt.0) then
-!!
-!!      !rho = prop_mat(im,1); lambda = prop_mat(im,2); mu = prop_mat(im,3)
-!!                           
-!!      do k = 1,nn
-!!         do j = 1,nn
-!!            do i = 1,nn
-!!               dxdx = alfa11(ie) +beta12(ie)*ct(k) &
-!!                    + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
-!!               dydx = alfa21(ie) +beta22(ie)*ct(k) &
-!!                    + beta23(ie)*ct(j) +gamma2(ie)*ct(j)*ct(k)
-!!               dzdx = alfa31(ie) +beta32(ie)*ct(k) &
-!!                    + beta33(ie)*ct(j) +gamma3(ie)*ct(j)*ct(k)
-!!               
-!!               dxdy = alfa12(ie) +beta11(ie)*ct(k) &
-!!                    + beta13(ie)*ct(i) +gamma1(ie)*ct(k)*ct(i)
-!!               dydy = alfa22(ie) +beta21(ie)*ct(k) &
-!!                    + beta23(ie)*ct(i) +gamma2(ie)*ct(k)*ct(i)
-!!               dzdy = alfa32(ie) +beta31(ie)*ct(k) &
-!!                    + beta33(ie)*ct(i) +gamma3(ie)*ct(k)*ct(i)
-!!               
-!!               dxdz = alfa13(ie) +beta11(ie)*ct(j) &
-!!                    + beta12(ie)*ct(i) +gamma1(ie)*ct(i)*ct(j)
-!!               dydz = alfa23(ie) +beta21(ie)*ct(j) &
-!!                    + beta22(ie)*ct(i) +gamma2(ie)*ct(i)*ct(j)
-!!               dzdz = alfa33(ie) +beta31(ie)*ct(j) &
-!!                    + beta32(ie)*ct(i) +gamma3(ie)*ct(i)*ct(j)
-!!               
-!!               det_j = dxdz * (dydx*dzdy - dzdx*dydy) &
-!!                     - dydz * (dxdx*dzdy - dzdx*dxdy) &
-!!                     + dzdz * (dxdx*dydy - dydx*dxdy)
-!!               
-!!               is = nn*nn*(k -1) +nn*(j -1) +i
-!!               in = cs_loc(cs_loc(ie -1) +is)
-!!
-!!               x =  xs_loc(in); y = ys_loc(in); z = zs_loc(in); 
-!!               
-!!                  k1 = val_forY(ip,1) 
-!!                  k2 = val_forY(ip,2)
-!!                  k3 = val_forY(ip,3)
-!!
-!!                  omega = val_forY(ip,4)*2*pi
-!!                  vp = dsqrt((lambda+2.d0*mu)/rho);
-!!                  vs = dsqrt(mu/rho);
-!!
-!!
-!!                  
-!!               if (tag_func(fn) .eq. 100) then
-!!                                                     
-!!                   fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) - dcos(k1*x+k2*y+k3*z) &
-!!                                            *(-k1*k2*(lambda+mu))* &
-!!                                             det_j * ww(i)*ww(j)*ww(k)
-!!               elseif(tag_func(fn) .eq. 101) then
-!!               
-!!                   fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) - 0.d0 * &
-!!                                             det_j * ww(i)*ww(j)*ww(k)
-!!               elseif(tag_func(fn) .eq. 102) then
-!!                   
-!!                   k3 = k3*omega/vp;
-!!                                           
-!!                   fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) - dcos(k1*x+k2*y+k3*z) &
-!!                                      * (k2*k3* (lambda+ mu) )* &
-!!                                             det_j * ww(i)*ww(j)*ww(k)
-!!                                             
-!!                                             
-!!               endif
-!!
-!!
-!!            enddo
-!!         enddo
-!!      enddo
-!!   endif
-!!enddo
-!!ndif
-!!
-!!f (nl_forZ.gt.0) then    ! Force load Z
-!!do ip = 1,nl_forZ
-!!   fn = 0
-!!   do ifun = 1,nfunc
-!!      if (fun_forZ(ip).eq.tag_func(ifun)) fn = ifun
-!!   enddo
-!!   
-!!   if (fn.gt.0) then
-!!
-!!      !rho = prop_mat(im,1); lambda = prop_mat(im,2); mu = prop_mat(im,3)
-!!      
-!!      do k = 1,nn
-!!         do j = 1,nn
-!!            do i = 1,nn
-!!               dxdx = alfa11(ie) +beta12(ie)*ct(k) &
-!!                    + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
-!!               dydx = alfa21(ie) +beta22(ie)*ct(k) &
-!!                    + beta23(ie)*ct(j) +gamma2(ie)*ct(j)*ct(k)
-!!               dzdx = alfa31(ie) +beta32(ie)*ct(k) &
-!!                    + beta33(ie)*ct(j) +gamma3(ie)*ct(j)*ct(k)
-!!               
-!!               dxdy = alfa12(ie) +beta11(ie)*ct(k) &
-!!                    + beta13(ie)*ct(i) +gamma1(ie)*ct(k)*ct(i)
-!!               dydy = alfa22(ie) +beta21(ie)*ct(k) &
-!!                    + beta23(ie)*ct(i) +gamma2(ie)*ct(k)*ct(i)
-!!               dzdy = alfa32(ie) +beta31(ie)*ct(k) &
-!!                    + beta33(ie)*ct(i) +gamma3(ie)*ct(k)*ct(i)
-!!               
-!!               dxdz = alfa13(ie) +beta11(ie)*ct(j) &
-!!                    + beta12(ie)*ct(i) +gamma1(ie)*ct(i)*ct(j)
-!!               dydz = alfa23(ie) +beta21(ie)*ct(j) &
-!!                    + beta22(ie)*ct(i) +gamma2(ie)*ct(i)*ct(j)
-!!               dzdz = alfa33(ie) +beta31(ie)*ct(j) &
-!!                    + beta32(ie)*ct(i) +gamma3(ie)*ct(i)*ct(j)
-!!               
-!!               det_j = dxdz * (dydx*dzdy - dzdx*dydy) &
-!!                     - dydz * (dxdx*dzdy - dzdx*dxdy) &
-!!                     + dzdz * (dxdx*dydy - dydx*dxdy)
-!!               
-!!               is = nn*nn*(k -1) +nn*(j -1) +i
-!!               in = cs_loc(cs_loc(ie -1) +is)
-!!               
-!!               x =  xs_loc(in); y = ys_loc(in); z = zs_loc(in); 
-!!
-!!                  k1 = val_forZ(ip,1) 
-!!                  k2 = val_forZ(ip,2)
-!!                  k3 = val_forZ(ip,3)
-!!
-!!                  omega = val_forZ(ip,4)*2*PI
-!!
-!!
-!!
-!!               if (tag_func(fn) .eq. 100) then
-!!                                                     
-!!                   fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) - dcos(k1*x+k2*y+k3*z) &
-!!                                            *(-k1*k2*(lambda+mu))* &
-!!                                             det_j * ww(i)*ww(j)*ww(k)
-!!               elseif(tag_func(fn) .eq. 101) then
-!!               
-!!               
-!!                   fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) - 0.d0 * &
-!!                                             det_j * ww(i)*ww(j)*ww(k)
-!!               elseif(tag_func(fn) .eq. 102) then
-!!               
-!!                  if (im .ne. 1)  then
-!!                     rho2 = 0; lambda2 = 0; mu2 = 0;
-!!                     vp = dsqrt((lambda+2.d0*mu)/rho);
-!!                     vs = dsqrt(mu/rho);
-!!                  else
-!!                     rho2 = prop_mat(2,1); lambda2 = prop_mat(2,2); mu2 = prop_mat(2,3)
-!!                     vp = dsqrt((lambda2+2.d0*mu2)/rho2);
-!!                     vs = dsqrt(mu2/rho2);
-!!                  endif 
-!!                                                          
-!!                   k3 = k3*omega/vp;
-!!                                           
-!!                   fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) - dcos(k1*x+k2*y+k3*z) &
-!!                    * (k3**2 * ((lambda-lambda2)+2.d0*(mu-mu2)) &
-!!                     + k1**2 * (mu-mu2) + k2**2 * (mu-mu2) - (rho-rho2) * omega**2  )* &
-!!                                             det_j * ww(i)*ww(j)*ww(k)
-!!                                             
-!!               elseif(tag_func(fn) .eq. 103) then
-!!               
-!!                  if (im .ne. 1)  then
-!!                     rho2 = 0; lambda2 = 0; mu2 = 0;
-!!                     vp = dsqrt((lambda+2.d0*mu)/rho);
-!!                     vs = dsqrt(mu/rho);
-!!                  else
-!!                     rho2 = prop_mat(2,1); lambda2 = prop_mat(2,2); mu2 = prop_mat(2,3)
-!!                     vp = dsqrt((lambda2+2.d0*mu2)/rho2);
-!!                     vs = dsqrt(mu2/rho2);
-!!                  endif 
-!!                                                          
-!!                   k3 = k3*omega/vp;
-!!                                           
-!!                   fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) - dsin(k1*x+k2*y+k3*z) &
-!!                    * (k3**2 * ((lambda-lambda2)+2.d0*(mu-mu2)) &
-!!                     + k1**2 * (mu-mu2) + k2**2 * (mu-mu2) - (rho-rho2) * omega**2  )* &
-!!                                             det_j * ww(i)*ww(j)*ww(k)
-!!
-!!               elseif(tag_func(fn) .eq. 104) then
-!!                   
-!!                   !write(*,*) k3
-!!                   vp = dsqrt((lambda+2.d0*mu)/rho);
-!!                   k3 = k3*omega/vp;                                                                                              
-!!                   fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) - dcos(k1*x+k2*y+k3*z) &
-!!                    * (k3**2 * (lambda+2.d0*mu) &
-!!                     + k1**2 * mu + k2**2 * mu - rho * omega**2  )* &
-!!                                             det_j * ww(i)*ww(j)*ww(k)
-!!                   
-!!                   !write(*,*) k1, k2, k3
-!!                   !write(*,*) k3**2 * (lambda+2.d0*mu) + k1**2 * mu + k2**2 * mu - rho * omega**2 
-!!                   !write(*,*) fmat(fn,(3*(in -1) +3))
-!!                   !read(*,*)  
-!!                                             
-!!               elseif(tag_func(fn) .eq. 105) then
-!!
-!!                   vp = dsqrt((lambda+2.d0*mu)/rho);                                
-!!                   k3 = k3*omega/vp;                                                                                              
-!!                   fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) - dsin(k1*x+k2*y+k3*z) &
-!!                    * (k3**2 * (lambda+2.d0*mu) &
-!!                     + k1**2 * mu + k2**2 * mu - rho * omega**2  )* &
-!!                                             det_j * ww(i)*ww(j)*ww(k)
-!!                                             
-!!               endif
-!!
-!!            enddo
-!!         enddo
-!!      enddo
-!!   endif
-!!enddo
-!!ndif
-!!
-!!f (nl_forc.gt.0) then    ! Force load
-!!do ip = 1,nl_forc
-!!   fn = 0
-!!   do ifun = 1,nfunc
-!!      if (fun_forc(ip).eq.tag_func(ifun)) fn = ifun
-!!   enddo
-!!   
-!!   if (fn.gt.0) then
-!!      do k = 1,nn
-!!         do j = 1,nn
-!!            do i = 1,nn
-!!               dxdx = alfa11(ie) +beta12(ie)*ct(k) &
-!!                    + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
-!!               dydx = alfa21(ie) +beta22(ie)*ct(k) &
-!!                    + beta23(ie)*ct(j) +gamma2(ie)*ct(j)*ct(k)
-!!               dzdx = alfa31(ie) +beta32(ie)*ct(k) &
-!!                    + beta33(ie)*ct(j) +gamma3(ie)*ct(j)*ct(k)
-!!               
-!!               dxdy = alfa12(ie) +beta11(ie)*ct(k) &
-!!                    + beta13(ie)*ct(i) +gamma1(ie)*ct(k)*ct(i)
-!!               dydy = alfa22(ie) +beta21(ie)*ct(k) &
-!!                    + beta23(ie)*ct(i) +gamma2(ie)*ct(k)*ct(i)
-!!               dzdy = alfa32(ie) +beta31(ie)*ct(k) &
-!!                    + beta33(ie)*ct(i) +gamma3(ie)*ct(k)*ct(i)
-!!               
-!!               dxdz = alfa13(ie) +beta11(ie)*ct(j) &
-!!                    + beta12(ie)*ct(i) +gamma1(ie)*ct(i)*ct(j)
-!!               dydz = alfa23(ie) +beta21(ie)*ct(j) &
-!!                    + beta22(ie)*ct(i) +gamma2(ie)*ct(i)*ct(j)
-!!               dzdz = alfa33(ie) +beta31(ie)*ct(j) &
-!!                    + beta32(ie)*ct(i) +gamma3(ie)*ct(i)*ct(j)
-!!               
-!!               det_j = dxdz * (dydx*dzdy - dzdx*dydy) &
-!!                     - dydz * (dxdx*dzdy - dzdx*dxdy) &
-!!                     + dzdz * (dxdx*dydy - dydx*dxdy)
-!!               
-!!               is = nn*nn*(k -1) +nn*(j -1) +i
-!!               in = cs_loc(cs_loc(ie -1) +is)
-!!               
-!!                  x0 = val_forc(ip,1)
-!!                  y0 = val_forc(ip,2)
-!!                  z0 = val_forc(ip,3)
-!!                  
-!!                  r1 = val_forc(ip,5)
-!!                  r2 = val_forc(ip,6)
-!!                  r3 = val_forc(ip,7)
-!!                  
-!!                  phii = val_forc(ip,8)
-!!                  theta = val_forc(ip,9)
-!!                  psi = val_forc(ip,10)
-!!                  
-!!                  term = val_forc(ip,4) * det_j * ww(i)*ww(j)*ww(k)
-!!                  
-!!                  rot(1,1) = cos(phii)*cos(theta)
-!!                  rot(1,2) = cos(phii)*sin(theta)*sin(psi) &
-!!                           - sin(phii)*cos(psi)
-!!                  rot(1,3) = cos(phii)*sin(theta)*cos(psi) &
-!!                           + sin(phii)*sin(psi)
-!!                  rot(2,1) = sin(phii)*cos(theta)
-!!                  rot(2,2) = sin(phii)*sin(theta)*sin(psi) &
-!!                           + cos(phii)*cos(psi)
-!!                  rot(2,3) = sin(phii)*sin(theta)*cos(psi) &
-!!                           - cos(phii)*sin(psi)
-!!                  rot(3,1) = -sin(theta)
-!!                  rot(3,2) = cos(theta)*sin(psi)
-!!                  rot(3,3) = cos(theta)*cos(psi)
-!!                  
-!!                  x1 = rot(1,1)*(xs_loc(in) -x0) + rot(2,1)*(ys_loc(in) -y0) + rot(3,1)*(zs_loc(in) -z0)
-!!                  
-!!                  x2 = rot(1,2)*(xs_loc(in) -x0) + rot(2,2)*(ys_loc(in) -y0) + rot(3,2)*(zs_loc(in) -z0)
-!!                  
-!!                  x3 = rot(1,3)*(xs_loc(in) -x0) + rot(2,3)*(ys_loc(in) -y0) + rot(3,3)*(zs_loc(in) -z0)
-!!                  
-!!                  f1 = term * dexp(-1.0*(x1/r1)**2 - 1.0*(x2/r2)**2 -1.0*(x3/r3)**2)
-!!                  
-!!                 
-!!                  fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) +rot(1,1)*f1
-!!                  fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) +rot(2,1)*f1
-!!                  fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) +rot(3,1)*f1
-!!                  
-!!            enddo
-!!         enddo
-!!      enddo
-!!   endif
-!!enddo
-!!ndif
-
-ne_loc = cs_loc(0) -1
-
-do ie = 1,ne_loc
-   im = cs_loc(cs_loc(ie -1) +0);
-   nn = sdeg_mat(im) +1
+      do ie = 1,ne_loc
+         im = cs_loc(cs_loc(ie -1) +0);
+         nn = sdeg_mat(im) +1
    
-   allocate(ct(nn),ww(nn),dd(nn,nn))
-   call MAKE_LGL_NW(nn,ct,ww,dd)
-   rho = prop_mat(im,1) 
-   lambda = prop_mat(im,2)
-   mu = prop_mat(im,3)
+         allocate(ct(nn),ww(nn),dd(nn,nn))
+         call MAKE_LGL_NW(nn,ct,ww,dd)
+         rho = prop_mat(im,1) 
+         lambda = prop_mat(im,2)
+         mu = prop_mat(im,3)
 
+         if (n_test.gt.0) then    ! Test load
 
-   if (n_test.gt.0) then    ! Test load
+            do ip = 1, n_test
 
-      do ip = 1, n_test
-
-         fn = 0
-            do ifun = 1,nfunc
-               if (fun_test(ip).eq.tag_func(ifun)) fn = ifun
-            enddo                  
+               fn = 0
+               do ifun = 1,nfunc
+                  if (fun_test(ip).eq.tag_func(ifun)) fn = ifun
+               enddo                  
                     
-         if (fn.gt.0) then
-
-    
-           rho = prop_mat(im,1); lambda = prop_mat(im,2); mu = prop_mat(im,3)
+               if (fn.gt.0) then
+   
+                 rho = prop_mat(im,1); lambda = prop_mat(im,2); mu = prop_mat(im,3)
 
                          
-            do k = 1,nn
-               do j = 1,nn
-                   do i = 1,nn
-                        dxdx = alfa11(ie) +beta12(ie)*ct(k) &
-                           + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
-                        dydx = alfa21(ie) +beta22(ie)*ct(k) &
-                           + beta23(ie)*ct(j) +gamma2(ie)*ct(j)*ct(k)
-                        dzdx = alfa31(ie) +beta32(ie)*ct(k) &
-                           + beta33(ie)*ct(j) +gamma3(ie)*ct(j)*ct(k)
+                  do k = 1,nn
+                     do j = 1,nn
+                        do i = 1,nn
+                           dxdx = alfa11(ie) +beta12(ie)*ct(k) &
+                            + beta13(ie)*ct(j) +gamma1(ie)*ct(j)*ct(k)
+                          dydx = alfa21(ie) +beta22(ie)*ct(k) &
+                              + beta23(ie)*ct(j) +gamma2(ie)*ct(j)*ct(k)
+                           dzdx = alfa31(ie) +beta32(ie)*ct(k) &
+                              + beta33(ie)*ct(j) +gamma3(ie)*ct(j)*ct(k)
                 
-                        dxdy = alfa12(ie) +beta11(ie)*ct(k) &
-                           + beta13(ie)*ct(i) +gamma1(ie)*ct(k)*ct(i)
-                        dydy = alfa22(ie) +beta21(ie)*ct(k) &
-                           + beta23(ie)*ct(i) +gamma2(ie)*ct(k)*ct(i)
-                        dzdy = alfa32(ie) +beta31(ie)*ct(k) &
-                           + beta33(ie)*ct(i) +gamma3(ie)*ct(k)*ct(i)
+                          dxdy = alfa12(ie) +beta11(ie)*ct(k) &
+                              + beta13(ie)*ct(i) +gamma1(ie)*ct(k)*ct(i)
+                           dydy = alfa22(ie) +beta21(ie)*ct(k) &
+                              + beta23(ie)*ct(i) +gamma2(ie)*ct(k)*ct(i)
+                           dzdy = alfa32(ie) +beta31(ie)*ct(k) &
+                              + beta33(ie)*ct(i) +gamma3(ie)*ct(k)*ct(i)
                 
-                        dxdz = alfa13(ie) +beta11(ie)*ct(j) &
-                           + beta12(ie)*ct(i) +gamma1(ie)*ct(i)*ct(j)
-                        dydz = alfa23(ie) +beta21(ie)*ct(j) &
-                           + beta22(ie)*ct(i) +gamma2(ie)*ct(i)*ct(j)
-                        dzdz = alfa33(ie) +beta31(ie)*ct(j) &
-                           + beta32(ie)*ct(i) +gamma3(ie)*ct(i)*ct(j)
+                           dxdz = alfa13(ie) +beta11(ie)*ct(j) &
+                              + beta12(ie)*ct(i) +gamma1(ie)*ct(i)*ct(j)
+                           dydz = alfa23(ie) +beta21(ie)*ct(j) &
+                              + beta22(ie)*ct(i) +gamma2(ie)*ct(i)*ct(j)
+                           dzdz = alfa33(ie) +beta31(ie)*ct(j) &
+                              + beta32(ie)*ct(i) +gamma3(ie)*ct(i)*ct(j)
                 
-                        det_j = dxdz * (dydx*dzdy - dzdx*dydy) &
-                              - dydz * (dxdx*dzdy - dzdx*dxdy) &
-                              + dzdz * (dxdx*dydy - dydx*dxdy)
+                           det_j = dxdz * (dydx*dzdy - dzdx*dydy) &
+                                 - dydz * (dxdx*dzdy - dzdx*dxdy) &
+                                 + dzdz * (dxdx*dydy - dydx*dxdy)
                 
-                              is = nn*nn*(k -1) +nn*(j -1) +i
-                              in = cs_loc(cs_loc(ie -1) +is)
+                           is = nn*nn*(k -1) +nn*(j -1) +i
+                           in = cs_loc(cs_loc(ie -1) +is)
 
                
-                        x =  xs_loc(in); y = ys_loc(in); z = zs_loc(in); 
+                            x =  xs_loc(in); y = ys_loc(in); z = zs_loc(in); 
 
-!EXTERNAL LOAD PAPER WITH BLANCA
-                        fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + det_j * ww(i) * ww(j) * ww(k) * ( &
+                           !EXTERNAL LOAD PAPER WITH BLANCA
+                           fmat(fn,(3*(in -1) +1)) = fmat(fn,(3*(in -1) +1)) + det_j * ww(i) * ww(j) * ww(k) * ( &
                                  4.d0*pi**2.d0*dcos(pi*y)*dcos(pi*z)*dsin(pi*y)*dsin(pi*z) * &
                                  (2.d0*lambda - 8.d0*mu + 9.d0*rho - 4.d0*lambda*dcos(pi*x)**2.d0 &
                                  + 8.d0*mu*dcos(pi*x)**2.d0 - 9.d0*rho*dcos(pi*x)**2.d0) )
                     
-                        fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) + det_j * ww(i) * ww(j) * ww(k) * ( &
+                           fmat(fn,(3*(in -1) +2)) = fmat(fn,(3*(in -1) +2)) + det_j * ww(i) * ww(j) * ww(k) * ( &
                                  4.d0*pi**2.d0*dcos(pi*x)*dcos(pi*z)*dsin(pi*x)*dsin(pi*z) * &
                                  (2.d0*lambda + 12.d0*mu - 9.d0*rho - 4.d0*lambda*dcos(pi*y)**2.d0 &
                                  - 16.d0*mu*dcos(pi*y)**2.d0 + 9.d0*rho*dcos(pi*y)**2.d0) )
 
-                        fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) + det_j * ww(i) * ww(j) * ww(k) * (&
+                           fmat(fn,(3*(in -1) +3)) = fmat(fn,(3*(in -1) +3)) + det_j * ww(i) * ww(j) * ww(k) * (&
                                  4.d0*pi**2.d0*dcos(pi*x)*dcos(pi*y)*dsin(pi*x)*dsin(pi*y) * & 
                                  (2.d0*lambda + 12.d0*mu - 9.d0*rho - 4.d0*lambda*dcos(pi*z)**2.d0 &
                                  - 16.d0*mu*dcos(pi*z)**2.d0 + 9.d0*rho*dcos(pi*z)**2.d0) ) 
 
-!EXTERNAL LOAD FOR DISCRETE ENERGY
-!fmat(fn,(3*(in -1) +1)) = 0.d0; 
-!fmat(fn,(3*(in -1) +2)) = 0.d0;
-!fmat(fn,(3*(in -1) +3)) = 0.d0;
 
-
-
-                     enddo            
+                        enddo            
+                     enddo
                   enddo
-               enddo
-            endif
-         enddo                    
-      endif
-    deallocate(ct,ww,dd)
-enddo
+               endif
+            enddo                    
+         endif
+         deallocate(ct,ww,dd)
+      enddo
 
 
 if (cs_nnz_bc_loc.gt.0) then

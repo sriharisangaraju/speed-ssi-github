@@ -73,7 +73,7 @@
 
   implicit none
 
-  character*70   :: filemate   
+  character*70   :: filemate,srcname   
   character*100000 :: inline
   character*4 :: keyword
 
@@ -90,7 +90,7 @@
   integer*4 :: nb_load_abc, nb_load_dg
   integer*4 :: nb_load_sism
   integer*4 :: nb_load_expl
-  integer*4 :: nb_case, n_test, nb_frac 
+  integer*4 :: nb_case, n_test, nb_frac,nb_nhee,srcmodflag 
   integer*4 :: nb_func,nb_func_data
   integer*4 :: status
   integer*4 :: lab_fnc, type_fnc, ndat_fnc

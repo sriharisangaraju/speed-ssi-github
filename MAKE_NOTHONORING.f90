@@ -157,15 +157,15 @@
 	 if (mpi_id.eq.0) then									
 	  	 write(*,'(A)')'Done'								
 		 write(*,'(A)')									
- 	endif														
+ 	 endif														
 
 
 !*************************************************************************************************
 !                                  General not honoring
 !*************************************************************************************************
 
-<<<<<<< HEAD
-	elseif (tcase .eq. 2 .or. tcase .eq. 3 .or. tcase .eq. 4 .or. tcase .eq. 6 &
+
+	 elseif (tcase .eq. 2 .or. tcase .eq. 3 .or. tcase .eq. 4 .or. tcase .eq. 6 &
 	        .or. tcase .eq. 7 .or. tcase .eq. 8 .or. tcase .eq. 11 .or. tcase .eq. 12 &
 	        .or. tcase .eq. 13 .or. tcase .eq. 14 .or. tcase .eq. 15 .or. tcase .eq. 18 &
 	        .or. tcase .eq. 22  .or. tcase .eq. 40 .or. tcase .eq. 33 .or. tcase .eq. 46) then									
@@ -291,16 +291,16 @@
 !                            L'AQUILA- MULTI BASIN
 !*************************************************************************************************
 
-	elseif (tcase.eq. 70) then									
+	 elseif (tcase.eq. 70) then									
 		if (mpi_id.eq.0 ) then									
-			write(*,'(A)')									
+		 	write(*,'(A)')									
 			write(*,'(A)')'CASE 70: Aquila-multibasin'	
 				
 		endif											
 								
-		 write(*,'(A)')'Reading Topography&Alluvial...'		
+		write(*,'(A)')'Reading Topography&Alluvial...'		
 		 
-		 file_case_xyz ='XYZ.out'								
+		file_case_xyz ='XYZ.out'								
 
 		zs_elev = -1.0e+30
 		zs_all = 0.d0;								
@@ -367,19 +367,13 @@
 				write(*,'(A,I8)') 'ALLUVIAL Layer # ',j	
 			endif
 
-		enddo      
+		 enddo      
                                    
 		if (mpi_id.eq.0) then
 			write(*,'(A)') 'Done'
 			write(*,'(A)')	
 		endif
 
-		enddo      
-                                   
-		if (mpi_id.eq.0) then
-			write(*,'(A)') 'Done'
-			write(*,'(A)')	
-		endif
 !*************************************************************************************************
 !                             VOLVI CASHIMA BENCHMARK - NOT honoring
 !*************************************************************************************************
