@@ -11,7 +11,7 @@ PETSC_LD_FLAGS=
 PETSC_FC_FLAGS=
 
 
-#PETSC_LD_FLAGS=I-L/cineca/prod/opt/libraries/petsc/3.7/openmpi--1-10.3--gnu--6.1.0/lib -lpetsc
+#PETSC_LD_FLAGS=-L/cineca/prod/opt/libraries/petsc/3.7/openmpi--1-10.3--gnu--6.1.0/lib -lpetsc
 #PETSC_FC_FLAGS=-I/cineca/prod/opt/libraries/petsc/3.7/openmpi--1-10.3--gnu--6.1.0/include 
 
 

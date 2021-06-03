@@ -54,7 +54,8 @@
 !> @param[out] nb_case  number of not honoring cases
 !> @param[out] n_test  1 for test case mode
 
-      subroutine READ_DIME_FILEMATE(filemate,nb_mat,nb_mat_nle, nb_mat_rnd, &
+      subroutine READ_DIME_FILEMATE(filemate,nb_mat,&
+                                    nb_mat_nle, nb_mat_rnd, &
                                     nb_load_dirX,nb_load_dirY,nb_load_dirZ, &
                                     nb_load_neuX,nb_load_neuY,nb_load_neuZ, &
                                     nb_load_neuN, &  
@@ -66,89 +67,91 @@
                                     nb_load_abc,nb_load_dg,nb_func,nb_func_data,&
                                     nb_load_sism,nb_load_expl,nb_case,nb_nhee,&
                                     n_test,nb_frac,srcmodflag)  
-                                                                                                                           
 
-      implicit none
-      
-      character*70   :: filemate, srcname
-      character*100000 :: inline
-      character*4 :: keyword
+                                                                                                                         
+                                                                                            
 
-      integer*4 :: nb_mat
-      integer*4 :: nb_mat_nle, nb_mat_rnd
-      integer*4 :: nb_load_dirX,nb_load_dirY,nb_load_dirZ
-      integer*4 :: nb_load_neuX,nb_load_neuY,nb_load_neuZ
-      integer*4 :: nb_load_neuN
-      integer*4 :: nb_load_traX,nb_load_traY,nb_load_traZ
-      integer*4 :: nb_load_poiX,nb_load_poiY,nb_load_poiZ
-      integer*4 :: nb_load_plaX,nb_load_plaY,nb_load_plaZ
-      integer*4 :: nb_load_forX,nb_load_forY,nb_load_forZ
-      integer*4 :: nb_load_forc,nb_load_pres,nb_load_shea
-      integer*4 :: nb_load_abc, nb_load_dg
-      integer*4 :: nb_load_sism
-      integer*4 :: nb_load_expl
-      integer*4 :: nb_case, nb_nhee, n_test, nb_frac 
-      integer*4 :: nb_func,nb_func_data
-      integer*4 :: status
-      integer*4 :: lab_fnc, type_fnc, ndat_fnc, srcmodflag
-      
-      nb_mat = 0;            nb_mat_nle = 0;        nb_case = 0;           nb_mat_rnd = 0;        
-      nb_load_dirX = 0;      nb_load_dirY = 0;      nb_load_dirZ = 0
-      nb_load_neuX = 0;      nb_load_neuY = 0;      nb_load_neuZ = 0
-      nb_load_neuN = 0;      nb_load_poiX = 0;      nb_load_poiY = 0 
-      nb_load_poiZ = 0;      nb_load_plaX = 0;      nb_load_plaY = 0 
-      nb_load_plaZ = 0;      nb_load_forX = 0;      nb_load_forY = 0 
-      nb_load_forZ = 0;      nb_load_forc = 0;      nb_load_pres = 0 
-      nb_load_shea = 0;      nb_load_abc = 0;       nb_load_dg = 0
-      nb_load_sism = 0;      nb_load_expl = 0;       nb_frac = 0;
-      nb_load_traX = 0;      nb_load_traY = 0;      nb_load_traZ = 0
-      nb_nhee = 0;
-      srcmodflag = 0;
-                 
-      nb_func = 0;   nb_func_data = 0
-      n_test = 0;
-      
-      open(40,file=filemate)
-      
-      do
-         read(40,'(A)',IOSTAT = status) inline
-         
-         if (status.ne.0) exit
-         
-         keyword = inline(1:4)
-         
-         select case (keyword)
-           
+  implicit none
+
+  character*70   :: filemate   
+  character*100000 :: inline
+  character*4 :: keyword
+
+  integer*4 :: nb_mat
+  integer*4 :: nb_mat_nle, nb_mat_rnd
+  integer*4 :: nb_load_dirX,nb_load_dirY,nb_load_dirZ
+  integer*4 :: nb_load_neuX,nb_load_neuY,nb_load_neuZ
+  integer*4 :: nb_load_neuN
+  integer*4 :: nb_load_traX,nb_load_traY,nb_load_traZ
+  integer*4 :: nb_load_poiX,nb_load_poiY,nb_load_poiZ
+  integer*4 :: nb_load_plaX,nb_load_plaY,nb_load_plaZ
+  integer*4 :: nb_load_forX,nb_load_forY,nb_load_forZ
+  integer*4 :: nb_load_forc,nb_load_pres,nb_load_shea
+  integer*4 :: nb_load_abc, nb_load_dg
+  integer*4 :: nb_load_sism
+  integer*4 :: nb_load_expl
+  integer*4 :: nb_case, n_test, nb_frac 
+  integer*4 :: nb_func,nb_func_data
+  integer*4 :: status
+  integer*4 :: lab_fnc, type_fnc, ndat_fnc
+
+  nb_mat = 0;            nb_mat_nle = 0;        nb_case = 0;           nb_mat_rnd = 0;        
+  nb_load_dirX = 0;      nb_load_dirY = 0;      nb_load_dirZ = 0
+  nb_load_neuX = 0;      nb_load_neuY = 0;      nb_load_neuZ = 0
+  nb_load_neuN = 0;      nb_load_poiX = 0;      nb_load_poiY = 0 
+  nb_load_poiZ = 0;      nb_load_plaX = 0;      nb_load_plaY = 0 
+  nb_load_plaZ = 0;      nb_load_forX = 0;      nb_load_forY = 0   
+  nb_load_forZ = 0;      nb_load_forc = 0;      nb_load_pres = 0 
+  nb_load_shea = 0;      nb_load_abc = 0;       nb_load_dg = 0
+  nb_load_sism = 0;      nb_load_expl = 0;       nb_frac = 0;
+  nb_load_traX = 0;      nb_load_traY = 0;      nb_load_traZ = 0
+
+  nb_func = 0;   nb_func_data = 0
+  n_test = 0;
+
+  open(40,file=filemate)
+
+  do
+    read(40,'(A)',IOSTAT = status) inline
+
+    if (status.ne.0) exit
+
+      keyword = inline(1:4)
+
+      select case (keyword)
+
            case('MATE')
-            nb_mat = nb_mat + 1
+           nb_mat = nb_mat + 1
            case('MATN')              
-            nb_mat_nle = nb_mat_nle + 1     
+           nb_mat_nle = nb_mat_nle + 1     
            case('MATR')              
-            nb_mat_rnd = nb_mat_rnd + 1                                    
+           nb_mat_rnd = nb_mat_rnd + 1                                    
            case('DIRX')        
-            nb_load_dirX = nb_load_dirX + 1
+           nb_load_dirX = nb_load_dirX + 1
            case('DIRY')
-            nb_load_dirY = nb_load_dirY + 1
+           nb_load_dirY = nb_load_dirY + 1
            case('DIRZ')
-            nb_load_dirZ = nb_load_dirZ + 1
+           nb_load_dirZ = nb_load_dirZ + 1
            case('NEUX')
-            nb_load_neuX = nb_load_neuX + 1
+           nb_load_neuX = nb_load_neuX + 1
            case('NEUY')
-            nb_load_neuY = nb_load_neuY + 1
+           nb_load_neuY = nb_load_neuY + 1
            case('NEUZ')
-            nb_load_neuZ = nb_load_neuZ + 1
+           nb_load_neuZ = nb_load_neuZ + 1
            case('NEUN')         
-            nb_load_neuN = nb_load_neuN + 1                 
+           nb_load_neuN = nb_load_neuN + 1                 
            case('PLOX')
-            nb_load_poiX = nb_load_poiX + 1
+           nb_load_poiX = nb_load_poiX + 1
            case('PLOY')
-            nb_load_poiY = nb_load_poiY + 1
+           nb_load_poiY = nb_load_poiY + 1
            case('PLOZ')
-            nb_load_poiZ = nb_load_poiZ + 1
+           nb_load_poiZ = nb_load_poiZ + 1
+
 !           case('TLOX')
 !            nb_load_traX = nb_load_traX + 1    
 !           case('TLOY')
 !            nb_load_traY = nb_load_traY + 1    
+
            case('TLOZ')
             nb_load_traZ = nb_load_traZ + 1    
            case('PLAX')        
@@ -269,4 +272,6 @@
       
       return
       end subroutine READ_DIME_FILEMATE
+
+
 

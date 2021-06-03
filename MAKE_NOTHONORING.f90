@@ -164,6 +164,7 @@
 !                                  General not honoring
 !*************************************************************************************************
 
+<<<<<<< HEAD
 	elseif (tcase .eq. 2 .or. tcase .eq. 3 .or. tcase .eq. 4 .or. tcase .eq. 6 &
 	        .or. tcase .eq. 7 .or. tcase .eq. 8 .or. tcase .eq. 11 .or. tcase .eq. 12 &
 	        .or. tcase .eq. 13 .or. tcase .eq. 14 .or. tcase .eq. 15 .or. tcase .eq. 18 &
@@ -231,6 +232,7 @@
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 46: KUMAMOTO'
 		endif											
+
 
 		if(mpi_id .eq. 0) write(*,'(A)')'Reading Topography&Alluvial...'
 		file_case_xyz ='XYZ.out'								
@@ -336,6 +338,7 @@
 
 			call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)
 
+
 			allocate(x_all(n_all), y_all(n_all), z_all(n_all))
 			allocate(node1_all(n_tria_all), node2_all(n_tria_all), node3_all(n_tria_all))
 			
@@ -371,6 +374,12 @@
 			write(*,'(A)')	
 		endif
 
+		enddo      
+                                   
+		if (mpi_id.eq.0) then
+			write(*,'(A)') 'Done'
+			write(*,'(A)')	
+		endif
 !*************************************************************************************************
 !                             VOLVI CASHIMA BENCHMARK - NOT honoring
 !*************************************************************************************************
@@ -382,7 +391,8 @@
 
 		elseif (mpi_id.eq.0 .and. tcase .eq. 50) then									
 			write(*,'(A)')									
-			write(*,'(A)')'CASE 50: PLANE-WAVE benchmark'		
+			write(*,'(A)')'CASE 50: PLANE-WAVE benchmark'	
+				
 		endif											
 								
      	write(*,'(A)')'Reading Topography&Alluvial...'					
@@ -436,15 +446,19 @@
 			write(*,'(A)')	
 		endif
 
-		
+				
 !*************************************************************************************************
 !                             XYZ map - ALL map - VS30 map
 !*************************************************************************************************
 
-	elseif (tcase.eq. 16 .or. tcase .eq. 20 .or. tcase .eq. 21) then									
+	elseif (tcase.eq. 16 .or. tcase.eq. 19 .or. tcase .eq. 20 .or. tcase .eq. 21) then									
 		if (mpi_id.eq.0 .and. tcase .eq. 16) then	        
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 16: ISTANBUL'	     				
+		endif
+		if (mpi_id.eq.0 .and. tcase .eq. 19) then	        
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 19: THESSALONIKI'	     				
 		endif
 	        if (mpi_id.eq.0 .and. tcase .eq. 20) then        
 			write(*,'(A)')									

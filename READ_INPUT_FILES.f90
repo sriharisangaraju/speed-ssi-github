@@ -228,7 +228,7 @@
       if (nload_abc_el.gt.0) allocate (tag_abc_el(nload_abc_el))
       if (nload_dg_el .gt. 0) allocate (tag_dg_el(nload_dg_el), tag_dg_yn(nload_dg_el),tag_dg_link(nload_dg_el), tag_dg_frc(nload_dg_el), val_dg_frc(nload_dg_el,2))
       if (nload_dg_el .gt. 0) then
-              tag_dg_frc=0; val_dg_frc=0;
+              tag_dg_frc=0; val_dg_frc=0; tag_dg_link =0;
       endif
 
       if (srcmodflag.eq.0) then
@@ -282,8 +282,10 @@
                 nload_shea_el,val_shea_el,fun_shea_el,&
                 n_test,fun_test,& !val_fun_test,&
                 nload_abc_el,tag_abc_el,&
-                nload_dg_el,tag_dg_el,tag_dg_yn, tag_dg_link, tag_dg_frc, val_dg_frc, n_frac, &
-                srcmodflag, szsism, nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el, &                 
+                nload_dg_el,tag_dg_el,tag_dg_yn, tag_dg_link, &
+                tag_dg_frc, val_dg_frc, n_frac, &
+                srcmodflag, szsism, &
+                nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el, &                 
                 nload_expl_el,val_expl_el,fun_expl_el,tag_expl_el, &                 
                 n_case,val_case,tag_case,tol_case, &
                 nmat_nhe,val_nhe,tol_nhe, &                                 
@@ -372,12 +374,18 @@
                 write(*,'(A)')'ISTANBUL'                     
               case(18)
                 write(*,'(A)')'BEIJING-TUTORIAL'                     
+              case(19)
+                write(*,'(A)')'THESSALONIKI'                     
               case(20)
                 write(*,'(A)')'ATHENS'                     
               case(21)
                 write(*,'(A)')'BEIJING'
               case(22)
-                write(*,'(A)')'NORCIA'                
+                write(*,'(A)')'NORCIA'      
+              case(27)
+                write(*,'(A)')'AQUILA-OB'        
+              case(28)
+                write(*,'(A)')'NORCIA-OB'      
               case(30) 
                 write(*,'(A)')'ATHENS-Parthenon'
               case(31) 

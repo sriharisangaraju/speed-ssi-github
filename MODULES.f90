@@ -301,7 +301,8 @@ module speed_par
       
 ! DAMPING
       integer*4 :: damping_type
-      integer*4, parameter :: N_SLS = 3    
+      integer*4, parameter :: N_SLS = 3
+          
             
 ! OTHER       
       integer*4 :: trash, &

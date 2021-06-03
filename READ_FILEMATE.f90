@@ -163,13 +163,14 @@
                                   nb_abc,lab_abc, &
                                   nb_dg,lab_dg,lab_dg_yn,lab_dg_link,&
                                   lab_dg_frc, val_dg_frc, nb_frac,& 
-                                  srcmodflag, szsism, nb_sism,val_sism,fnc_sism,lab_sism, & 
+                                  srcmodflag, szsism, &
+                                  nb_sism,val_sism,fnc_sism,lab_sism, & 
                                   nb_expl,val_expl,fnc_expl,lab_expl, & 
                                   nb_case,val_case,lab_case,tol_case, & 
                                   nb_nhee,val_nhe,tol_nhe, &
                                   nb_fnc,type_fnc,ind_fnc,dat_fnc,lab_fnc,nb_fnc_data, &
                                   fmax,fpeak)
-                                  
+
 
       use speed_exit_codes
 !      use speed_par, only: slip_type
@@ -342,9 +343,9 @@
                  char_mat(im,3) = rho * VS**2
                                   
            case('MATN')                                                                        
-            im_nle = im_nle + 1                                                                                        
-            read(inline(ileft:iright),*) lab_mat_nle(im_nle),type_mat_nle(im_nle),&                                
-                 char_mat_nle(im_nle,1),val_mat_nle(im_nle,1)                         
+            im_nle = im_nle + 1                                                          
+            read(inline(ileft:iright),*) lab_mat_nle(im_nle),type_mat_nle(im_nle),&                              
+                             char_mat_nle(im_nle,1),val_mat_nle(im_nle,1)                         
          
            case('MATR')                                                                        
             im_rnd = im_rnd + 1                                                                                        
@@ -479,7 +480,7 @@
             else
                  read(inline(ileft:iright),*) lab_dg(idg), lab_dg_yn(idg), lab_dg_frc(idg), val_dg_frc(idg,1), val_dg_frc(idg,2)
             endif
-            
+
            case('DGIX')
             idg = idg+1
             read(inline(ileft:iright),*) lab_dg(idg), lab_dg_yn(idg), lab_dg_link(idg)
@@ -639,8 +640,7 @@
                     ind_fnc(ifunc +1) = ind_fnc(ifunc) + 1
                  read(inline(ileft:iright),*) dummy,dummy,&
                     (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)                    
-               
-               case(773)
+              case(773)
                  read(inline(ileft:iright),*)dummy,dummy,ndat_fnc,fileinput
                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + ndat_fnc
 
@@ -669,3 +669,4 @@
       return
       
       end subroutine READ_FILEMATE
+

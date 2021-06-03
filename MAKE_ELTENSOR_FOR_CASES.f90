@@ -71,7 +71,7 @@
       integer*4, dimension(0:cs_nnz_loc) :: cs_loc                
 
       real*8 :: Depth, Depth_real, vs_all, vp_all, thickness, vs30, pig
-      real*8 :: VS,VP,rho,lambda,mu,gamma,ni, qs,qp
+      real*8 :: VS,VP, rho,lambda,mu,gamma,ni, qs,qp
       real*8 :: x1,y1,x2,y2,coef_a, coef_b, coef_c, numer, den, distance, f_distance
 
       real*8, dimension(nn_loc) :: zs_elev
@@ -248,6 +248,20 @@
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
 
+                   elseif (tcase.eq.27) then
+                   !-------------------------------------------------------------------
+                   ! CASE 27: AQUILA-BEDROCK OUTCROP - TEST 
+                        call MAKE_MECH_PROP_CASE_027(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                     xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
+                                                     vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
+                                     
+                   elseif (tcase.eq.28) then
+                   !-------------------------------------------------------------------
+                   ! CASE 28: NORCIA
+                        call MAKE_MECH_PROP_CASE_028(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                    xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
+                                                    vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
+
                    elseif (tcase.eq.30) then
                    !-------------------------------------------------------------------
                    ! CASE 30: ATHENS - PARTHENON
@@ -292,7 +306,13 @@
                    elseif (tcase.eq.50) then
                    !-------------------------------------------------------------------
                    ! CASE 50: PLANE-WAVE benchmark -  MULTI NOT honoring
-                        call MAKE_MECH_PROP_CASE_040(rho,lambda,mu,gamma,qs,qp, & !outputs
+                        call MAKE_MECH_PROP_CASE_050(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                      xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
+                                                      vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
+                   elseif (tcase.eq.70) then
+                   !-------------------------------------------------------------------
+                   ! CASE 70: L'AQUILA -  MULTI BASINS
+                        call MAKE_MECH_PROP_CASE_070(rho,lambda,mu,gamma,qs,qp, & !outputs
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
                     
@@ -367,7 +387,7 @@
                                             dsqrt(mu/rho), &
                                             dsqrt((lambda + 2.d0*mu)/rho), &
                                             rho, lambda, mu, &
-                                            qp, qs, gamma, zs_elev(ic), zs_all(ic)         
+                                            qp, qs, gamma, zs_elev(ic), zs_all(ic)                              
 
                         
                    rho_el(p,q,r) = rho

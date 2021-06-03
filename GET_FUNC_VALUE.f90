@@ -31,10 +31,11 @@
 !> @param[in] vel  (constant) velocity of the travelling load
 !> @param[out] GET_FUNC_VALUE value of the time function
 
+           
 
       real*8 function GET_FUNC_VALUE(nb_fnc, type_fnc, ind_fnc, &
                                      data_fnc, nb_data_fnc, id_fnc, time, dist,vel)
-            
+
 
 
       use binarysearch
@@ -53,8 +54,6 @@
       
       real*8, dimension(nb_data_fnc) :: data_fnc
       real*8, dimension(1) :: valmax
-
-
 
 
       GET_FUNC_VALUE = 0.0d0
@@ -337,9 +336,6 @@
           
          case(101) 
           GET_FUNC_VALUE = time
-
-        
-        
          case default
            GET_FUNC_VALUE = 0.d0
       
