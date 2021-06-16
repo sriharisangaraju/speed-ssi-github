@@ -168,7 +168,9 @@
 	 elseif (tcase .eq. 2 .or. tcase .eq. 3 .or. tcase .eq. 4 .or. tcase .eq. 6 &
 	        .or. tcase .eq. 7 .or. tcase .eq. 8 .or. tcase .eq. 11 .or. tcase .eq. 12 &
 	        .or. tcase .eq. 13 .or. tcase .eq. 14 .or. tcase .eq. 15 .or. tcase .eq. 18 &
-	        .or. tcase .eq. 22  .or. tcase .eq. 40 .or. tcase .eq. 33 .or. tcase .eq. 46) then									
+	        .or. tcase .eq. 22  .or. tcase .eq. 27 .or. tcase .eq. 28 .or. tcase .eq. 40 &
+	        .or. tcase .eq. 33 .or. tcase .eq. 46) then									
+	        
 		if (mpi_id.eq. 0 .and. tcase .eq. 2) then									
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 2: GRENOBLE'					
@@ -224,6 +226,14 @@
 	    elseif(mpi_id .eq. 0 .and. tcase .eq. 23) then		
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 33: GRONINGEN-ZE'	
+
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 27) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 27: AQUILA-OB'	
+
+	    elseif(mpi_id .eq. 0 .and. tcase .eq. 28) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 28: NORCIA-OB'	
 
 	    elseif(mpi_id .eq. 0 .and. tcase .eq. 40) then		
 			write(*,'(A)')									

@@ -30,7 +30,7 @@
      integer*4           :: sub_tag_all		
      real*8              :: ni, VS, VP, Depth_real         
               
-     rho    = 0.d0;
+      rho    = 0.d0;
      lambda = 0.d0;
      mu     = 0.d0;
      gamma  = 0.d0;
