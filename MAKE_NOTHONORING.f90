@@ -477,29 +477,29 @@
 
 
 		file_case_xyz ='XYZ.out'								
-		if(tcase .eq. 21)  file_case_all ='ALL.out'
+		if(tcase .eq. 19 .or. tcase .eq. 21)  file_case_all ='ALL.out'
 		file_case_vs = 'VS_RS.out'								
 														
 		zs_elev = 0.d0	
 		zs_all = 1.d0							
-		if(tcase .eq. 21) zs_all = -1.0e+30								
+		if(tcase .eq. 19 .or. tcase .eq. 21) zs_all = -1.0e+30								
 
 		call READ_DIME_FILEXYZ(file_case_xyz,n_elev,n_tria_elev)				
-		if(tcase .eq. 21) call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)					
+		if(tcase .eq. 19 .or. tcase .eq. 21) call READ_DIME_FILEXYZ(file_case_all,n_all,n_tria_all)					
 
 		allocate(x_elev(n_elev),y_elev(n_elev),z_elev(n_elev),&
 		         vs_elev(n_tria_elev),sedim(n_tria_elev))					
 		allocate(node1_elev(n_tria_elev), node2_elev(n_tria_elev), node3_elev(n_tria_elev))
 
-		if(tcase .eq. 21) allocate(x_all(n_all),y_all(n_all),z_all(n_all))					
-		if(tcase .eq. 21) allocate(node1_all(n_tria_all),node2_all(n_tria_all),node3_all(n_tria_all))
+		if(tcase .eq. 19 .or. tcase .eq. 21) allocate(x_all(n_all),y_all(n_all),z_all(n_all))					
+		if(tcase .eq. 19 .or. tcase .eq. 21) allocate(node1_all(n_tria_all),node2_all(n_tria_all),node3_all(n_tria_all))
 
 		call READ_FILEXYZ(file_case_xyz,n_elev,n_tria_elev,&					
 				  x_elev,y_elev,z_elev,&				
 				  node1_elev,node2_elev,node3_elev,&			
 				  max_elev_spacing)
 				  					
-		if(tcase .eq. 21) call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
+		if(tcase .eq. 19 .or. tcase .eq. 21) call READ_FILEXYZ(file_case_all,n_all,n_tria_all,&					
 				  x_all,y_all,z_all,&					
 				  node1_all,node2_all,node3_all,&			
 				  max_all_spacing)					
@@ -509,7 +509,7 @@
 
 
         do icase = 1, ncase 
-		     if(tcase .eq. 21) call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
+		     if (tcase .eq. 19 .or. tcase .eq. 21) call GET_NODE_DEPTH_FROM_ALLUVIAL(loc_n_num, n_all, n_tria_all, &					
 			     	                    		   x_all, y_all, z_all, &					
 				    		                       node1_all, node2_all, node3_all,&			
 			                                       cs_nnz_loc, cs_loc, nm, tag_mat, sdeg_mat, &	
@@ -527,7 +527,7 @@
 
 
 		deallocate(x_elev, y_elev, z_elev,vs_elev,sedim, node1_elev, node2_elev, node3_elev)
-		if(tcase .eq. 21)  deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
+		if(tcase .eq. 19 .or. tcase .eq. 21)  deallocate(x_all, y_all, z_all, node1_all, node2_all, node3_all)
 
 		if (mpi_id.eq.0) then									
 			write(*,'(A)')'Done'								
