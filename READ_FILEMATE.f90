@@ -169,7 +169,7 @@
                                   nb_case,val_case,lab_case,tol_case, & 
                                   nb_nhee,val_nhe,tol_nhe, &
                                   nb_fnc,type_fnc,ind_fnc,dat_fnc,lab_fnc,nb_fnc_data, &
-                                  fmax,fpeak)
+                                  fmax,fpeak,damping_type)
 
 
       use speed_exit_codes
@@ -181,7 +181,7 @@
       character*100000 :: inline
       character*4 :: keyword
 
-      integer*4 :: nb_mate,nb_fnc, nb_fnc_data, nb_frac
+      integer*4 :: nb_mate,nb_fnc, nb_fnc_data, nb_frac,damping_type
       integer*4 :: nb_mate_nle, nb_mate_rnd, nb_nhee
       integer*4 :: nb_diriX,nb_diriY,nb_diriZ,nb_neuX,nb_neuY,nb_neuZ
       integer*4 :: nb_neuN 
@@ -332,6 +332,11 @@
                  rho, VS, VP, & !char_mat(im,4)
                  Qua_S(im), Qua_P(im)
 
+             if(damping_type .eq. 2) then 
+                Qua_S(im) = 0.5d0*Qua_S(im)
+                Qua_P(im) = 0.5d0*Qua_P(im)
+             endif
+                
 !             write(*,*) lab_mat(im),type_mat(im),&
 !                 rho, VS, VP, & !char_mat(im,4)
 !                 Qua_S(im), Qua_P(im)
