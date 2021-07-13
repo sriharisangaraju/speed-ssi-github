@@ -135,7 +135,7 @@
                             nload_abc_el,nload_dg_el,nfunc,nfunc_data,&
                             nload_sism_el,&                                                                 
                             nload_expl_el,&                                                                
-                            n_case, nmat_nhe, n_test,n_frac,srcmodflag)                   
+                            n_case, nmat_nhe, n_test,n_frac, srcmodflag)                 
                                                                                                                             
       if(n_test.gt.0 .and. mpi_id .eq. 0)  write(*,'(A)')'*********TEST MODE*********'
 
