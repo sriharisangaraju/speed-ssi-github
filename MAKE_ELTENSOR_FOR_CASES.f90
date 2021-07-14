@@ -71,7 +71,7 @@
       integer*4, dimension(0:cs_nnz_loc) :: cs_loc                
 
       real*8 :: Depth, Depth_real, vs_all, vp_all, thickness, vs30, pig
-      real*8 :: VS,VP,rho,lambda,mu,gamma,ni, qs,qp
+      real*8 :: VS,VP, rho,lambda,mu,gamma,ni, qs,qp
       real*8 :: x1,y1,x2,y2,coef_a, coef_b, coef_c, numer, den, distance, f_distance
 
       real*8, dimension(nn_loc) :: zs_elev
@@ -224,7 +224,7 @@
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
 
                    elseif (tcase.eq.19) then
-                   ! CASE 19: THESSALONIKI-IMPROVED MODEL 
+                   ! CASE 19: SALONICCO
                         call MAKE_MECH_PROP_CASE_019(rho,lambda,mu,gamma,qs,qp, & !outputs
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
@@ -266,7 +266,7 @@
                    ! CASE 29: THESSALONIKI-OUTCROP BEDROCK 
                         call MAKE_MECH_PROP_CASE_029(rho,lambda,mu,gamma,qs,qp, & !outputs
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
-                                                      vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))                                                      
+                                                      vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))            
 
                    elseif (tcase.eq.30) then
                    !-------------------------------------------------------------------
@@ -284,14 +284,14 @@
 					 
                    elseif (tcase.eq.32) then
                    !------------------------------------------------------------------
-                   ! CASE 31: GRONINGEN - LAYERED MODEL
+                   ! CASE 32: GRONINGEN - LAYERED MODEL
                         call MAKE_MECH_PROP_CASE_032(rho,lambda,mu,gamma,qs,qp, & !outputs
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
 
                    elseif (tcase.eq.33) then
                    !------------------------------------------------------------------
-                   ! CASE 31: GRONINGEN - 2ND LAYERED MODEL
+                   ! CASE 33: GRONINGEN - 2ND LAYERED MODEL
                         call MAKE_MECH_PROP_CASE_033(rho,lambda,mu,gamma,qs,qp, & !outputs
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
@@ -303,13 +303,32 @@
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
 
+                   elseif (tcase.eq.46) then
+                   !-------------------------------------------------------------------
+                   ! CASE 46: KUMAMOTO
+                        call MAKE_MECH_PROP_CASE_046(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                      xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic))
+
                    elseif (tcase.eq.50) then
                    !-------------------------------------------------------------------
                    ! CASE 50: PLANE-WAVE benchmark -  MULTI NOT honoring
-                        call MAKE_MECH_PROP_CASE_040(rho,lambda,mu,gamma,qs,qp, & !outputs
+                        call MAKE_MECH_PROP_CASE_050(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                      xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
+                                                      vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
+                   elseif (tcase.eq.70) then
+                   !-------------------------------------------------------------------
+                   ! CASE 70: L'AQUILA -  MULTI BASINS
+                        call MAKE_MECH_PROP_CASE_070(rho,lambda,mu,gamma,qs,qp, & !outputs
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
                     
+                   elseif (tcase.eq.70) then
+                   !-------------------------------------------------------------------
+                   ! CASE 70: L'AQUILA -  MULTI BASINS
+                        call MAKE_MECH_PROP_CASE_070(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                      xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
+                                                      vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
+                   
                    elseif (tcase.eq.98) then
                    !-------------------------------------------------------------------
                    ! CASE 98: TEST honoring (only TOPOGRAPHY)
@@ -371,7 +390,9 @@
                         
                    if (check_case .eq. 1)  &
                        write(1000+mpi_id,*) xs(ic),ys(ic),zs(ic), &
-                                            VS, VP, rho, lambda, mu, &
+                                            dsqrt(mu/rho), &
+                                            dsqrt((lambda + 2.d0*mu)/rho), &
+                                            rho, lambda, mu, &
                                             qp, qs, gamma, zs_elev(ic), zs_all(ic)                              
 
                         
@@ -385,6 +406,7 @@
      
        if (check_case .eq. 1) close (1000+mpi_id)
 
+       ! Why this?? 10% of Vs Vp??
        if (damping_type .eq. 2) then
            qs = 0; qp = 0;
            vs_all = 0.d0; vp_all=0.d0;
