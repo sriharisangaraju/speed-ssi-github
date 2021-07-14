@@ -169,6 +169,7 @@
          if(nload_abc_el.gt.0)  write(*,'(A,I8)')'ABSO Boundaries  : ',nload_abc_el
          if(nload_dg_el.gt.0)   write(*,'(A,I8)')'DG Interfaces    : ',nload_dg_el
          if(nfunc.gt.0)         write(*,'(A,I8)')'Functions        : ',nfunc
+         if(srcmodflag.eq.1) write(*,*)'Using Not Honoring Fault Method For Siesmic Sources'
          if(nload_sism_el.gt.0) write(*,'(A,I8)')'Seis. Mom. Load  : ',nload_sism_el        
          if(nload_expl_el.gt.0) write(*,'(A,I8)')'Explosive Load   : ',nload_expl_el            
          if (n_case.gt.1) then
@@ -176,12 +177,17 @@
             write(*,'(A)')'              only the 1st case will be adopted'  
          endif
          write(*,'(A,I8)') 'CASE             : ',n_case                               
+
+         if(nmat_nhe.gt.0) then
+            write(*,'(A,I8)')     'Not_Honoring Enhanced Blocks : ',nmat_nhe        
+          endif
       endif
       
       if (nmat.le.0) then
          write(*,*)'Error ! nmat = 0'
          call EXIT(EXIT_NO_MATERIALS)
       endif
+      
       
       allocate (type_mat(nmat), tref_mat(nmat), prop_mat(nmat,4), sdeg_mat(nmat), tag_mat(nmat))
 
@@ -248,6 +254,7 @@
       
       if (nfunc.gt.0) allocate (tag_func(nfunc), func_type(nfunc), func_indx(nfunc +1), func_data(nfunc_data))
       
+      if (nmat_nhe.gt.0) allocate (val_nhe(nmat_nhe), tol_nhe(nmat_nhe))
       
       allocate(QS(nmat), QP(nmat)); QS = 0.d0; QP = 0.d0;
             
@@ -393,6 +400,10 @@
                 write(*,'(A)')'GRONINGEN-ZE' 
               case(40)
                 write(*,'(A)')'KUTCH BASIN, INDIA'                                            
+              case(46)
+                write(*,'(A)')'KUMAMOTO, JAPAN'
+              case(70)
+                write(*,'(A)')'AQUILA MULTI-BASIN'
               case(98,99,100)
                 write(*,'(A)')'TEST MODE'                                
               case default
