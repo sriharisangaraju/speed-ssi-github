@@ -135,8 +135,7 @@
                             nload_abc_el,nload_dg_el,nfunc,nfunc_data,&
                             nload_sism_el,&                                                                 
                             nload_expl_el,&                                                                
-                            n_case, nmat_nhe, n_test,n_frac, srcmodflag)                
-                            
+                            n_case, nmat_nhe, n_test,n_frac,srcmodflag)                   
                                                                                                                             
       if(n_test.gt.0 .and. mpi_id .eq. 0)  write(*,'(A)')'*********TEST MODE*********'
 
@@ -188,7 +187,6 @@
          call EXIT(EXIT_NO_MATERIALS)
       endif
       
-      
       allocate (type_mat(nmat), tref_mat(nmat), prop_mat(nmat,4), sdeg_mat(nmat), tag_mat(nmat))
 
       if (nmat_nle.gt.0) allocate(type_mat_nle(nmat_nle), prop_mat_nle(nmat_nle,1), val_mat_nle(nmat_nle,1), tag_mat_nle(nmat_nle))
@@ -228,33 +226,32 @@
       if (nload_shea_el.gt.0) allocate (val_shea_el(nload_shea_el,10), fun_shea_el(nload_shea_el))
       
       if (nload_abc_el.gt.0) allocate (tag_abc_el(nload_abc_el))
-      if (nload_dg_el .gt. 0) allocate (tag_dg_el(nload_dg_el), tag_dg_yn(nload_dg_el), tag_dg_frc(nload_dg_el), val_dg_frc(nload_dg_el,2))
-     
+      if (nload_dg_el .gt. 0) allocate (tag_dg_el(nload_dg_el), tag_dg_yn(nload_dg_el),tag_dg_link(nload_dg_el), tag_dg_frc(nload_dg_el), val_dg_frc(nload_dg_el,2))
       if (nload_dg_el .gt. 0) then
-              tag_dg_frc=0; val_dg_frc=0;
+              tag_dg_frc=0; val_dg_frc=0; tag_dg_link =0;
       endif
-      
-      
+
       if (srcmodflag.eq.0) then
           szsism = 21
-          if (nload_sism_el .gt. 0) allocate (val_sism_el(nload_sism_el,21), &
+          if (nload_sism_el.gt.0) allocate (val_sism_el(nload_sism_el,21), &
                                             fun_sism_el(nload_sism_el), tag_sism_el(nload_sism_el))
-          elseif (srcmodflag .eq. 1) then
-             szsism = 15
-             if (nload_sism_el.gt.0) allocate (val_sism_el(nload_sism_el,15), &
-                                              fun_sism_el(nload_sism_el), tag_sism_el(nload_sism_el))
+      elseif (srcmodflag.eq.1) then
+          szsism = 15
+          if (nload_sism_el.gt.0) allocate (val_sism_el(nload_sism_el,15), &
+                                            fun_sism_el(nload_sism_el), tag_sism_el(nload_sism_el))
       endif
-      
+
 
       if (nload_expl_el.gt.0) allocate (val_expl_el(nload_expl_el,20), &
                                         fun_expl_el(nload_expl_el), tag_expl_el(nload_expl_el))
       
       if (n_case.gt.0) allocate (val_case(n_case), tag_case(n_case), tol_case(n_case))
       if (n_case .eq. 0) allocate(tag_case(1)); tag_case(1)=0;
+
+      if (nmat_nhe.gt.0) allocate (val_nhe(nmat_nhe), tol_nhe(nmat_nhe))
       
       if (nfunc.gt.0) allocate (tag_func(nfunc), func_type(nfunc), func_indx(nfunc +1), func_data(nfunc_data))
       
-      if (nmat_nhe.gt.0) allocate (val_nhe(nmat_nhe), tol_nhe(nmat_nhe))
       
       allocate(QS(nmat), QP(nmat)); QS = 0.d0; QP = 0.d0;
             
@@ -285,15 +282,16 @@
                 nload_shea_el,val_shea_el,fun_shea_el,&
                 n_test,fun_test,& !val_fun_test,&
                 nload_abc_el,tag_abc_el,&
-                nload_dg_el,tag_dg_el,tag_dg_yn, tag_dg_link, tag_dg_frc, val_dg_frc, n_frac, &
-                srcmodflag, szsism, nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el, &
+                nload_dg_el,tag_dg_el,tag_dg_yn, tag_dg_link, &
+                tag_dg_frc, val_dg_frc, n_frac, &
+                srcmodflag, szsism, &
+                nload_sism_el,val_sism_el,fun_sism_el,tag_sism_el, &                 
                 nload_expl_el,val_expl_el,fun_expl_el,tag_expl_el, &                 
                 n_case,val_case,tag_case,tol_case, &
                 nmat_nhe,val_nhe,tol_nhe, &                                 
                 nfunc,func_type,func_indx,func_data,tag_func,nfunc_data, &
-                fmax,fpeak,damping_type)
-
-
+                fmax,fpeak)
+                
 
                 
                  
@@ -375,9 +373,9 @@
               case(16)
                 write(*,'(A)')'ISTANBUL'                     
               case(18)
-                write(*,'(A)')'BEIJING-TUTORIAL'    
+                write(*,'(A)')'BEIJING-TUTORIAL'                     
               case(19)
-                write(*,'(A)')'THESSALONIKI'                  
+                write(*,'(A)')'THESSALONIKI'                     
               case(20)
                 write(*,'(A)')'ATHENS'                     
               case(21)
@@ -387,9 +385,9 @@
               case(27)
                 write(*,'(A)')'AQUILA-OB'        
               case(28)
-                write(*,'(A)')'NORCIA-OB'   
+                write(*,'(A)')'NORCIA-OB' 
               case(29)
-                write(*,'(A)')'THESS-OB'                      
+                write(*,'(A)')'THESS-OB'                             
               case(30) 
                 write(*,'(A)')'ATHENS-Parthenon'
               case(31) 
