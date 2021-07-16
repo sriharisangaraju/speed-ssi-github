@@ -290,7 +290,7 @@
                 n_case,val_case,tag_case,tol_case, &
                 nmat_nhe,val_nhe,tol_nhe, &                                 
                 nfunc,func_type,func_indx,func_data,tag_func,nfunc_data, &
-                fmax,fpeak)
+                fmax,fpeak,damping_type)
                 
 
                 
