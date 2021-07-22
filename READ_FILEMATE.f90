@@ -332,10 +332,10 @@
                  rho, VS, VP, & !char_mat(im,4)
                  Qua_S(im), Qua_P(im)
 
-             write(*,*) lab_mat(im),type_mat(im),&
-                 rho, VS, VP, & !char_mat(im,4)
-                 Qua_S(im), Qua_P(im)
-             read(*,*)
+      !       write(*,*) lab_mat(im),type_mat(im),&
+      !           rho, VS, VP, & !char_mat(im,4)
+      !           Qua_S(im), Qua_P(im)
+      !       read(*,*)
 
              if(damping_val .eq. 2) then 
                 Qua_S(im) = 0.5d0*Qua_S(im)
