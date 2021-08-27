@@ -161,7 +161,7 @@
 
 
 !*************************************************************************************************
-!                                  General not honoring
+!                          Calssical not honoring (1 ALL and 1 XYZ file)
 !*************************************************************************************************
 
 
@@ -169,7 +169,7 @@
 	        .or. tcase .eq. 7 .or. tcase .eq. 8 .or. tcase .eq. 11 .or. tcase .eq. 12 &
 	        .or. tcase .eq. 13 .or. tcase .eq. 14 .or. tcase .eq. 15 .or. tcase .eq. 18 &
 	        .or. tcase .eq. 22  .or. tcase .eq. 27 .or. tcase .eq. 28 .or. tcase .eq. 40 &
-	        .or. tcase .eq. 33 .or. tcase .eq. 46) then									
+	        .or. tcase .eq. 33 .or. tcase .eq. 46 .or. tcase .eq. 60) then									
 	        
 		if (mpi_id.eq. 0 .and. tcase .eq. 2) then									
 			write(*,'(A)')									
@@ -238,10 +238,15 @@
 	    elseif(mpi_id .eq. 0 .and. tcase .eq. 40) then		
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 40: KUTCH'	     				
+		
 		elseif(mpi_id .eq. 0 .and. tcase .eq. 46) then		
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 46: KUMAMOTO'
-		endif											
+	
+		elseif(mpi_id .eq. 0 .and. tcase .eq. 50) then		
+				write(*,'(A)')									
+				write(*,'(A)')'CASE 60: JAKARTA'
+			endif											
 
 
 		if(mpi_id .eq. 0) write(*,'(A)')'Reading Topography&Alluvial...'
@@ -385,7 +390,7 @@
 		endif
 
 !*************************************************************************************************
-!                             VOLVI CASHIMA BENCHMARK - NOT honoring
+!                             MULTI - NOT honoring
 !*************************************************************************************************
 
 	elseif (tcase.eq. 5 .or. tcase .eq. 50) then									

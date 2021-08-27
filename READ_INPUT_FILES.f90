@@ -400,6 +400,8 @@
                 write(*,'(A)')'KUTCH BASIN, INDIA'                                            
               case(46)
                 write(*,'(A)')'KUMAMOTO, JAPAN'
+              case(60)
+                write(*,'(A)')'JAKARTA, INDONESIA'
               case(70)
                 write(*,'(A)')'AQUILA MULTI-BASIN'
               case(98,99,100)
