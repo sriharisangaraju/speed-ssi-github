@@ -169,7 +169,7 @@
 	        .or. tcase .eq. 7 .or. tcase .eq. 8 .or. tcase .eq. 11 .or. tcase .eq. 12 &
 	        .or. tcase .eq. 13 .or. tcase .eq. 14 .or. tcase .eq. 15 .or. tcase .eq. 18 &
 	        .or. tcase .eq. 22  .or. tcase .eq. 27 .or. tcase .eq. 28 .or. tcase .eq. 40 &
-	        .or. tcase .eq. 33 .or. tcase .eq. 46 .or. tcase .eq. 60) then									
+	        .or. tcase .eq. 33 .or. tcase .eq. 38 .or. tcase .eq. 46 .or. tcase .eq. 60) then									
 	        
 		if (mpi_id.eq. 0 .and. tcase .eq. 2) then									
 			write(*,'(A)')									
@@ -234,7 +234,11 @@
 	    elseif(mpi_id .eq. 0 .and. tcase .eq. 28) then		
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 28: NORCIA-OB'	
-
+			
+        elseif(mpi_id .eq. 0 .and. tcase .eq. 38) then		
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 38: MONTELIMAR'	
+			
 	    elseif(mpi_id .eq. 0 .and. tcase .eq. 40) then		
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 40: KUTCH'	     				
@@ -460,7 +464,8 @@
 !                             XYZ map - ALL map - VS30 map
 !*************************************************************************************************
 
-	elseif (tcase.eq. 16 .or. tcase.eq. 19 .or. tcase .eq. 20 .or. tcase .eq. 21 .or. tcase .eq. 29) then	
+	elseif (tcase.eq. 16 .or. tcase.eq. 19 .or. tcase .eq. 20 .or. tcase .eq. 21 &
+	        .or. tcase .eq. 29 .or. tcase .eq. 35) then	
 									
 		if (mpi_id.eq.0 .and. tcase .eq. 16) then	        
 			write(*,'(A)')									
@@ -481,7 +486,11 @@
 	        if (mpi_id.eq.0 .and. tcase .eq. 29) then        
 			write(*,'(A)')									
 			write(*,'(A)')'CASE 29: THESS-BEDROCK'  				
-		endif													
+		endif		
+		 	if (mpi_id.eq.0 .and. tcase .eq. 35) then        
+			write(*,'(A)')									
+			write(*,'(A)')'CASE 35: THESS+MYGD-FINAL'  	
+        endif 											
         	
         if (mpi_id.eq.0) write(*,'(A)')'Reading Topography&Alluvial...'					
 

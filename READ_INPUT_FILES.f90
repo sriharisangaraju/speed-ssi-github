@@ -396,6 +396,10 @@
                 write(*,'(A)')'GRONINGEN-LAYERED MODEL' 
               case(33) 
                 write(*,'(A)')'GRONINGEN-ZE' 
+              case(35) 
+                write(*,'(A)')'THESS+MYGD-FINAL'                  
+              case(38) 
+                write(*,'(A)')'MONTELIMAR'                  
               case(40)
                 write(*,'(A)')'KUTCH BASIN, INDIA'                                            
               case(46)
