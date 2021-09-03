@@ -29,7 +29,7 @@
      real*8, intent(in)  :: xs, ys, zs, Depth, zs_all,&
                             vs30, thickness, sub_tag_all		
      real*8              :: ni, VS, VP, Depth_real
-     real*8              :: VSini, VSfin, Zini, Zfin, Rini, Rfin
+     real*8              :: VS_ini, VS_fin, Z_ini, Z_fin, VP_ini, VP_fin, rho_ini, rho_fin
               
      rho    = 0.d0;
      lambda = 0.d0;
@@ -42,13 +42,22 @@
                  
      ! + MATERIAL INSIDE THE BASIN 
      
-		  VS = 500					  
-          VP  = 1.9 * VS
-          rho = 1900   
+		  Z_ini=0
+          Z_fin=500
+          
+          VS_ini=300
+          VS_fin=1500
+          VS=VS_ini+(VS_fin-VS_ini)*((Depth-Z_ini)/(Z_fin-Z_ini))**(1/2)
+          
+          VP_ini=550
+          VP_fin=2300
+          VP=VP_ini+(VP_fin-VP_ini)*((Depth-Z_ini)/(Z_fin-Z_ini))**(1/2)
+          
+          rho = 1950   
                  
           lambda = rho * (VP**2 - 2*VS**2)            
           mu = rho * VS**2  
-          qs = 50
+          qs = VS/10
           gamma = (3.1415*1.0)/qs
            			  
      else
