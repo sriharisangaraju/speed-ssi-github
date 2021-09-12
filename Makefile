@@ -26,7 +26,7 @@ $(EXEC): $(OBJS)
 	$(FC_PC) -o $@  $(OBJS) $(LD_PC_FLAGS) $(PETSC_LD_FLAGS)
 
 
-$(OBJS):%.o: %.f90  MODULES.o 
+$(OBJS):%.o: %.f90  MODULES.o kdtree2.o
 	$(FC_PC) $(FC_PC_FLAGS) $(PETSC_FC_FLAGS) $< -o $@
 
 .PHONY: clean

@@ -295,7 +295,19 @@
                         call MAKE_MECH_PROP_CASE_033(rho,lambda,mu,gamma,qs,qp, & !outputs
                                                       xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
                                                       vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))
-
+                                                      
+                   elseif (tcase.eq.35) then
+                   ! CASE 35: THESS+MYGD-FINAL 
+                        call MAKE_MECH_PROP_CASE_035(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                      xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
+                                                      vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))     
+                                                      
+                   elseif (tcase.eq.38) then
+                   ! CASE 38: MONTELIMAR 
+                        call MAKE_MECH_PROP_CASE_038(rho,lambda,mu,gamma,qs,qp, & !outputs
+                                                      xs(ic),ys(ic),zs(ic),zs_elev(ic),zs_all(ic), &
+                                                      vs_nodes(ic), thick_nodes(ic), sub_tag_all(ic))                                                           
+                                                      
                    elseif (tcase.eq.40) then
                    !-------------------------------------------------------------------
                    ! CASE 40: KUTCH  
