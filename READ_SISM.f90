@@ -78,7 +78,7 @@
       node_sism = 0
 
       tol = 6.28
-      EPSILON = 1.d-3
+      EPSILON = 1.d-8
       TWOPI = 6.283185307179586476925287
                     
       X(1) = X1
