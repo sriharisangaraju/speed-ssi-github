@@ -124,7 +124,7 @@
 
               node_sism = node_sism + 1
               sour_ns(node_sism,i_sism) = loc_n_num(isn) 
-              dist_sour_ns(node_sism,i_sism) = sqrt((Xipo - xs(isn))**2 +(Yipo - ys(isn))**2 +(Zipo - zs(isn))**2)
+              dist_sour_ns(node_sism,i_sism) = dsqrt((Xipo - xs(isn))**2 +(Yipo - ys(isn))**2 +(Zipo - zs(isn))**2)
               pos_sour_nx(node_sism,i_sism) = xs(isn)
               pos_sour_ny(node_sism,i_sism) = ys(isn)              
               pos_sour_nz(node_sism,i_sism) = zs(isn)
