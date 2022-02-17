@@ -261,9 +261,13 @@
       real*8, dimension(nb_neuY,4) :: val_neuY
       real*8, dimension(nb_neuZ,4) :: val_neuZ
       real*8, dimension(nb_neuN,4) :: val_neuN                      
-      real*8, dimension(nb_poiX,4) :: val_poiX
-      real*8, dimension(nb_poiY,4) :: val_poiY
-      real*8, dimension(nb_poiZ,4) :: val_poiZ
+
+      ! Modified for SSI (AH)
+      real*8, dimension(nb_poiX,6) :: val_poiX
+      real*8, dimension(nb_poiY,6) :: val_poiY
+      real*8, dimension(nb_poiZ,6) :: val_poiZ
+      !
+
       real*8, dimension(ntX,4) :: valtX
       real*8, dimension(ntY,4) :: valtY
       real*8, dimension(ntZ,4) :: valtZ      
@@ -407,6 +411,21 @@
             ipZ = ipZ + 1
             read(inline(ileft:iright),*) fnc_poiZ(ipZ),&
                  val_poiZ(ipZ,1),val_poiZ(ipZ,2),val_poiZ(ipZ,3),val_poiZ(ipZ,4)
+
+           !! For SSI (AH)
+           case('PLOD')
+            ipX = ipX + 1; ipY = ipY + 1; ipZ = ipZ + 1
+            read(inline(ileft:iright),*) fnc_poiX(ipX),val_poiX(ipX,4),val_poiX(ipX,5)      !!! function id, value of the applied load, building id
+            val_poiX(ipX,6)=1
+
+            fnc_poiY(ipY)=fnc_poiX(ipX)
+            val_poiY(ipY,4)=val_poiX(ipX,4); val_poiY(ipY,5)=val_poiX(ipX,5)
+            val_poiY(ipY,6)=2
+
+            fnc_poiZ(ipZ)=fnc_poiX(ipX)
+            val_poiZ(ipZ,4)=val_poiX(ipX,4); val_poiZ(ipZ,5)=val_poiX(ipX,5)
+            val_poiZ(ipZ,6)=3
+           !!
  
 !           case('TLOX') 
 !            itX = itX + 1
@@ -538,10 +557,10 @@
               tol_nhe(inhee) = 0.0
               read(inline(ileft:iright),*) val_nhe(inhee) !, tol_case(inhee)
 
-           case('FMAX') 
+           case('FMAX')                            !!! frequency at which Qs and Qp are computed (for plane wave load)
               read(inline(ileft:iright),*) fmax                                        
 
-           case('FPEK') 
+           case('FPEK')                            !!! peak frequency for non linear damping
               read(inline(ileft:iright),*) fpeak        
               
 !           case('SLIP')
@@ -646,8 +665,9 @@
                case(100)
                     ind_fnc(ifunc +1) = ind_fnc(ifunc) + 1
                  read(inline(ileft:iright),*) dummy,dummy,&
-                    (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)                    
-              case(773)
+                    (dat_fnc(j), j = ind_fnc(ifunc),ind_fnc(ifunc +1) -1)   
+
+               case(773)
                  read(inline(ileft:iright),*)dummy,dummy,ndat_fnc,fileinput
                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + ndat_fnc
 
@@ -664,7 +684,13 @@
                     read(24,*) dat_fnc(i)
                  enddo
                  close(24)
-                 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+               !! AH
+               case(777)     !!! reaction force from structure is used for the cases where this function is called AH
+                  read(inline(ileft:iright),*) dummy, dummy, ndat_fnc, dat_fnc(ind_fnc(ifunc)) !, dat_fnc(ind_fnc(ifunc)+1)
+                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + ndat_fnc   !2*ndat_fnc
+                  
+               !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             
             end select
                                            

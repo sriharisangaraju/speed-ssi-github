@@ -60,7 +60,7 @@
 !> @param[out] b_instabilitycontrol  if true, quit whenever the simulation diverges
 !> @param[out] instability_maxval  max abs. value for monitored Stress
 
-      subroutine READ_HEADER(headerfile,gridfile,matefile,mpifile,monfile,bkpfile,&   
+      subroutine READ_HEADER(headerfile,gridfile,matefile,mpifile,monfile,bkpfile,sdoffile&   
                              time_step,start_time,stop_time,&
                              option_out_var,&          
                              trestart,&
@@ -68,8 +68,9 @@
                              deltat_fixed,&                
                              depth_search_mon_pgm,ndt_mon_pgm,n_pgm,&        
                              rotation_angle_mon_pgm,monfile_pgm,&        
-                             depth_search_mon_lst,n_lst, &
-                             monfile_lst,dg_c,pen_c, scheme, order, stages, testmode, &
+                             depth_search_mon_lst,n_lst,monfile_lst, &
+                             depth_search_sys_lst,s_lst,sysfile_lst,&
+                             dg_c,pen_c, scheme, order, stages, testmode, &
                              ntime_err, time_err, damping_type, &
                              n_testcase, tag_testcase, &
                              b_failoncoeffs, b_setuponly, b_failCFL, b_instabilitycontrol, instability_maxval)
@@ -78,7 +79,7 @@
 
       implicit none
       
-      character*70 :: headerfile,gridfile,matefile,mpifile,monfile,bkpfile 
+      character*70 :: headerfile,gridfile,matefile,mpifile,monfile,bkpfile,sdoffile 
       character*70 :: inline
       character*10 :: scheme        
       character*8 :: keyword
@@ -92,8 +93,8 @@
       integer*4 :: ndt_monitor                
       integer*4 :: ndt_mon_pgm,n_pgm                                
       integer*4 :: monfile_pgm                                        
-      integer*4 :: n_lst, ntime_err, itime, n_testcase, tag_testcase
-      integer*4 :: monfile_lst, damping_type
+      integer*4 :: n_lst, s_lst, ntime_err, itime, n_testcase, tag_testcase
+      integer*4 :: monfile_lst, sysfile_lst, damping_type
       integer*4 :: file_row = 0
 
       integer*4, dimension (6) :: option_out_var 
@@ -102,7 +103,7 @@
       real*8 :: time_step,start_time,stop_time
       real*8 :: depth_search_mon_pgm                                
       real*8 :: rotation_angle_mon_pgm                                
-      real*8 :: depth_search_mon_lst
+      real*8 :: depth_search_mon_lst, depth_search_sys_lst
 
 
       real*8, dimension(ntime_err) :: time_err
@@ -119,7 +120,8 @@
 
       im = 0;       is = 0;            itime = 0;
       n_pgm = 0;    monfile_pgm = 0                 
-      n_lst = 0;    monfile_lst = 0       
+      n_lst = 0;    monfile_lst = 0   
+      s_lst = 0;    sysfile_lst = 0;   SDOFout = 0;     
       n_testcase = 0;          
 
       time_err = 0      
@@ -214,6 +216,9 @@
            case('BKPFILE')
             read(inline(ileft:iright),*) bkpfile   
 
+           case('SDOFFILE')   !!! AH
+            read(inline(ileft:iright),*) sdoffile      !!! location folder for sdof files    
+
            case('OPTIOUT')
             read(inline(ileft:iright),*) option_out_var(1),option_out_var(2),&  
                         option_out_var(3), option_out_var(4),option_out_var(5),option_out_var(6) 
@@ -234,7 +239,11 @@
            case('MLST')                        
             n_lst = 1                                
             read(inline(ileft:iright),*) depth_search_mon_lst,monfile_lst
-            
+           
+           case('SYSLST')   !!! AH
+            s_lst = 1
+            read(inline(ileft:iright),*) depth_search_sys_lst,sysfile_lst
+    
            case('TESTCASE')
             n_testcase = 1                                
             read(inline(ileft:iright),*) tag_testcase

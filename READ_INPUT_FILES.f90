@@ -70,15 +70,16 @@
       pen_c = -100.d0;
 
       call READ_HEADER(head_file,grid_file,mat_file, mpi_file, monitor_file, bkp_file, &
-                       deltat,tstart,tstop,&
+                       sdof_file, deltat,tstart,tstop,&
                        opt_out_var,& 
                        trestart,&
                        ndt_mon_lst,&        
                        deltat_fixed,&        
                        depth_search_mon_pgm,ndt_mon_pgm,num_pgm,&
                        rotation_angle_mon_pgm,file_mon_pgm,&        
-                       depth_search_mon_lst,num_lst,&        
-                       file_mon_lst,dg_c,pen_c,&
+                       depth_search_mon_lst,num_lst,file_mon_lst,&        
+                       depth_search_sys_lst,sys_lst,file_sys_lst,&
+                       dg_c,pen_c,&
                        rk_scheme, rk_order, rk_stages, testmode, ntime_err, time_error,&
                        damping_type, &
                        num_testcase, label_testcase, &
@@ -201,9 +202,10 @@
       if (nload_neuZ_el.gt.0) allocate (val_neuZ_el(nload_neuZ_el,4), fun_neuZ_el(nload_neuZ_el), tag_neuZ_el(nload_neuZ_el))
       if (nload_neuN_el.gt.0) allocate (val_neuN_el(nload_neuN_el,4), fun_neuN_el(nload_neuN_el), tag_neuN_el(nload_neuN_el))
       
-      if (nload_poiX_el.gt.0) allocate (val_poiX_el(nload_poiX_el,4), fun_poiX_el(nload_poiX_el))    
-      if (nload_poiY_el.gt.0) allocate (val_poiY_el(nload_poiY_el,4), fun_poiY_el(nload_poiY_el))   
-      if (nload_poiZ_el.gt.0) allocate (val_poiZ_el(nload_poiZ_el,4), fun_poiZ_el(nload_poiZ_el))
+      !! SDOF point load - AH
+      if (nload_poiX_el.gt.0) allocate (val_poiX_el(nload_poiX_el,6), fun_poiX_el(nload_poiX_el))    
+      if (nload_poiY_el.gt.0) allocate (val_poiY_el(nload_poiY_el,6), fun_poiY_el(nload_poiY_el))   
+      if (nload_poiZ_el.gt.0) allocate (val_poiZ_el(nload_poiZ_el,6), fun_poiZ_el(nload_poiZ_el))
 
 !      if (nload_traX_el.gt.0) allocate (val_traX_el(nload_traX_el,4), fun_traX_el(nload_traX_el))    
 !      if (nload_traY_el.gt.0) allocate (val_traY_el(nload_traY_el,4), fun_traY_el(nload_traY_el))   
