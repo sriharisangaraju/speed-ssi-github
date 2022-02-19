@@ -240,11 +240,11 @@ module speed_par
 !************************************************************************************
 
 ! FILENAMES
-      character*70 :: file_PG, file_MPGM, file_LS, file_MLST, &
+      character*70 :: file_PG, file_MPGM, file_LS, file_MLST, file_SYS, file_SYSLST, &   !!SSI -AH
                       head_file, grid_file, mat_file, bkp_file, head_file_frc, &
                       monitor_file, monitor_file_new, file_face, file_part, & 
                       file_mpi, mpi_file, file_mpi_new, &
-                      filename
+                      filename, sdof_file, sys_filename 
 
 ! 'YES' OR 'NOT'
       character*3  :: deltat_fixed   
@@ -279,7 +279,7 @@ module speed_par
                    nload_abc_el, nload_dg_el, &
                    nfunc, nfunc_data, &
                    nmonitors_pgm, nmonitors_lst, &
-                   num_pgm, num_lst, &
+                   num_pgm, num_lst, nsystem_lst, sys_lst, &  !!SSI - AH
                    nts, restart, trestart, &
                    ns, nn, nn2, nn3, &
                    nnode_dirX,nnode_dirY,nnode_dirZ, &
@@ -295,7 +295,7 @@ module speed_par
                    num_testcase, label_testcase, nmat_rnd, nmat_nhe
                    
 ! 0/1 INTERGERS
-      integer*4 :: file_mon_pgm, file_mon_lst, &
+      integer*4 :: file_mon_pgm, file_mon_lst, file_sys_lst, &  !!SSI-AH
                    find, torf, trof, make_damping_yes_or_not, &
                    mpi_ierr, srcmodflag
       
@@ -324,6 +324,7 @@ module speed_par
                                                con_spx_loc, con_spx_bc_loc, &
                                                local_el_num, local_node_num, local_node_num_dg, &
                                                n_glo, el_glo, &
+                                               n_system_glo, el_system_glo, system_label, &  !!SSI-AH
                                                node_domain, elem_domain, &
                                                node_domain_loc, elem_domain_loc, &
                                                count_faces, &
@@ -352,8 +353,8 @@ module speed_par
       
 ! OTHER  (MONITOR)
       integer*4, dimension (:), allocatable :: n_monitor_pgm, el_monitor_pgm, &
-                                               n_monitor_lst, el_monitor_lst, & 
-                                               monit_files
+                                               n_monitor_lst, el_monitor_lst, monit_files, & 
+                                               n_system_lst, el_system_lst, system_files  !!SSI-AH
 
 ! OTHER (SEISMIC MOMENT OR EXPLOSIVE SOURCE)
       integer*4, dimension (:), allocatable :: num_node_sism, num_node_expl, &
@@ -364,7 +365,8 @@ module speed_par
       integer*4, dimension (:), allocatable :: mpi_stat, &
                                                node_send, node_recv, proc_send, proc_recv, &
                                                node_send_jump, node_recv_jump, &
-                                               proc_send_jump, proc_recv_jump      
+                                               proc_send_jump, proc_recv_jump, &
+                                               proc_sys_send, proc_sys_recv   !!SSI-AH
 
 ! OTHER
       integer*4, dimension (:), allocatable :: itersnap, vec, i4count, &
@@ -390,7 +392,7 @@ module speed_par
                start, finish, &                        ! TIME VARIABLES
                fmax, fpeak, &                          ! FREQUENCY                      
                xx_macro, yy_macro, zz_macro, &         ! NODES
-               depth_search_mon_pgm, rotation_angle_mon_pgm, depth_search_mon_lst, &        ! MONITORS
+               depth_search_mon_pgm, rotation_angle_mon_pgm, depth_search_mon_lst, depth_search_sys_lst, &        ! MONITORS
                dg_c, pen_c, &                          ! DG CONSTANTS
                dist, eps, r8t                ! OTHER 
                
@@ -420,7 +422,12 @@ module speed_par
               x_glo_real, y_glo_real, z_glo_real, &
               highest_pgm, highest_pgm_loc, &
               highest_lst, highest_lst_loc, & 
-              dist_el_glo, posx_el_glo, posy_el_glo, posz_el_glo
+              dist_el_glo, posx_el_glo, posy_el_glo, posz_el_glo, &
+              x_system_lst, y_system_lst, z_system_lst, &  !!SSI-AH
+              x_system_real, y_system_real, z_system_real, &
+              xr_system_lst, yr_system_lst, zr_system_lst, dist_system_lst, &
+              xr_system_glo, yr_system_glo, zr_system_glo, dist_system_glo, &
+              x_system_glo_real, y_system_glo_real, z_system_glo_real 
 
 ! DAMPING
       real*8, dimension(:), allocatable :: QS, QP, frequency_range
@@ -443,7 +450,10 @@ module speed_par
                                             time_error
 
 ! LOAD VECTOR
-      real*8, dimension (:,:), allocatable :: Fel
+!      real*8, dimension (:,:), allocatable :: Fel
+
+!!! AH (3D tensor instead of 2D)
+      real*8, dimension (:,:,:), allocatable :: Fel
 
 ! (MATRICES OF) VALUES DEFINED IN FILENAME.MATE
       real*8, dimension (:,:), allocatable :: &
@@ -550,14 +560,15 @@ module speed_timeloop
                          nsend, node_send, nrecv, node_recv, proc_send, proc_recv, &
                          nsend_jump, node_send_jump, nrecv_jump, node_recv_jump, &
                          proc_send_jump, proc_recv_jump, &
+                         proc_sys_send, proc_sys_recv, & !!SSI-AH
                          
-                          !SEISMIC MOMENT
+                         !SEISMIC MOMENT
                          check_node_sism, check_dist_node_sism, &                                                  
                          length_check_node_sism, nload_sism_el, factor_seismic_moment, tau_seismic_moment, &
                          check_node_expl, check_dist_node_expl, &        
                          length_check_node_expl,nload_expl_el,factor_explosive_source, &
                          
-                          !DAMPING
+                         !DAMPING
                           make_damping_yes_or_not, Y_lambda,Y_mu, N_SLS, damping_type, frequency_range, &
                           A0_ray, A1_ray,fmax, &
                         
@@ -572,6 +583,8 @@ module speed_timeloop
                          ndt_mon_lst, nmonitors_lst, n_monitor_lst, el_monitor_lst, &                                        
                          xr_monitor_lst, yr_monitor_lst, zr_monitor_lst, &                                        
                          opt_out_var, monitor_file, bkp_file, &
+                         sdof_file, nsystem_lst, el_system_lst, & !!SSI-AH
+                         xr_system_lst, yr_system_lst, zr_system_lst, & 
                             
                          !TESTMODE
                          testmode, ntime_err, time_error, debug, &
@@ -699,6 +712,61 @@ contains
 end module binarysearch
 
 
+!> @author Aline Herlin
+!> @date November, 2020 - Creation
+!> @version 1.0
+!> @brief Contains parameters for linear elastic SDOF
 
+module SDOF_SYSTEM      !!! AH
+
+      implicit none
+    
+      type system
+        integer*4 :: ID      !< system ID
+        integer*4 :: ndt     !< ratio between soil and system time step
+        real*8 :: TN         !< natural period of the system
+        real*8 :: dt, dt2    !< system time step (and its square)
+        integer*4 :: const_law    !< constitutive law (1-Linear Elastic, 2-Elastoplastic, 3-Trilinear)
+        real*8 :: Ms, Mf, J       !< structure mass, foundation mass, centroidal moment of inertia
+        real*8, dimension(4,4) :: MAT_M, MAT_KS, MAT_KI, MAT_C, MAT_F, MAT_MCinv      !< mass, stiffness, soil-foundation stiffness and damping matrix for SFS interaction
+        real*8 :: Ks, height      !< structure stiffness matrix
+        real*8 :: K0, Kr, Kv      !< soil-foundation stiffness matrix
+        real*8 :: Hs, Ss          !< hardening and softening moduli
+        real*8 :: CSI, Cs, C0, Cr, Cv     !< damping ratio and damping coeff for damping matrix
+        real*8 :: beta_newmark, gamma_newmark     !< coefficients for newmark method
+        real*8, dimension(4,2) :: u, v, a, f     !< displ, vel, acc for 4DOF implementation
+        real*8, dimension(2) :: fs, fb  !< structure and basement shear force
+        real*8, dimension(3) :: SDOFIDR, dSDOFIDR, SDOFItF     !< drift, drift variation, interaction force with ground in x and y direction (Ku in linear elastic case)
+        real*8, dimension(3) :: tempSDOFU0,tempSDOFU1,tempSDOFU,tempSDOFA1     !< displacement at time n-1, n, n+1, absolute acceleration at time n
+        real*8 :: FY, FH, FU, EY, EH, EU
+        integer*4,dimension(3) :: branch, damage     !<defines the branch of the constitutive law and the eventual damage state
+        integer*4 :: SFS     !< 1-consider soil-foundation-structure interaction, 0-don't
+      end type system
+    
+      type(system),allocatable:: sys(:) !< SDOF system
+      integer*4 :: n_sdof, SDOFmon, i, j, SDOFnum
+      integer*4, dimension(3) :: SDOFout      !< displ, acc, f_react
+      real*8, dimension(:), allocatable :: ug1, ug2, ug3
+      real*8, dimension(:,:), allocatable :: SDOFag, SDOFgd    !!! ground acc and displ
+      real*8,dimension(:), allocatable :: SDOFinput, SDOFinputD, SDOFforceinput
+      real*8,dimension(:), allocatable ::  SDOFinputbuffer, SDOFforceinputbuffer
+    
+      character*100 :: SDOFinfo
+      character*100 :: SDOFdisplX, SDOFdisplY, SDOFdisplZ  !< SDOF displacement
+      character*100 :: SDOFgrdisplX, SDOFgrdisplY, SDOFgrdisplZ  !< SDOF base displacement
+      character*100 :: SDOFaccX, SDOFaccY, SDOFaccZ      !< SDOF total acceleration
+      character*100 :: SDOFgraccX, SDOFgraccY, SDOFgraccZ  !< SDOF base ground acceleration
+      character*100 :: SDOFfX, SDOFfY, SDOFfZ          !< SDOF reaction force
+    
+      character*100 :: STRdisplX, STRdisplY     !< 4DOF structure displacement
+      character*100 :: GRDdisplX, GRDdisplY, GRDdisplZ      !< 4DOF ground displacement
+      character*100 :: FNDdisplX, FNDdisplY, FNDdisplRX, FNDdisplRY, FNDdisplZX, FNDdisplZY     !< 4DOF foundation displacement
+      character*100 :: STRaccX, STRaccY     !< 4DOF structure acceleration
+      character*100 :: GRDaccX, GRDaccY, GRDaccZ      !< 4DOF ground acceleration
+      character*100 :: FNDaccX, FNDaccY, FNDaccRX, FNDaccRY, FNDaccZX, FNDaccZY     !< 4DOF foundation acceleration
+      character*100 :: STRfX, STRfY, FNDfX, FNDfY     !< 4DOF superstructure and foundation shear force
+      character*100 :: INTfX, INTfY, INTfZ      !< 4DOF interaction forces
+    
+    end module SDOF_SYSTEM
 
 
