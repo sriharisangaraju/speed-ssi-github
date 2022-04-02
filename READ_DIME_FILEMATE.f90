@@ -66,7 +66,7 @@
                                     nb_load_forc,nb_load_pres,nb_load_shea, &
                                     nb_load_abc,nb_load_dg,nb_func,nb_func_data,&
                                     nb_load_sism,nb_load_expl,nb_case,nb_nhee,&
-                                    n_test,nb_frac,srcmodflag)  
+                                    n_test,nb_frac,srcmodflag) ! SDOFflag)  
 
                                                                                                                          
                                                                                             
@@ -90,7 +90,7 @@
   integer*4 :: nb_load_abc, nb_load_dg
   integer*4 :: nb_load_sism
   integer*4 :: nb_load_expl
-  integer*4 :: nb_case, n_test, nb_frac,nb_nhee,srcmodflag 
+  integer*4 :: nb_case, n_test, nb_frac,nb_nhee,srcmodflag !,SDOFflag
   integer*4 :: nb_func,nb_func_data
   integer*4 :: status
   integer*4 :: lab_fnc, type_fnc, ndat_fnc
@@ -103,11 +103,13 @@
   nb_load_plaZ = 0;      nb_load_forX = 0;      nb_load_forY = 0   
   nb_load_forZ = 0;      nb_load_forc = 0;      nb_load_pres = 0 
   nb_load_shea = 0;      nb_load_abc = 0;       nb_load_dg = 0
-  nb_load_sism = 0;      nb_load_expl = 0;       nb_frac = 0;
+  nb_load_sism = 0;      nb_load_expl = 0;      nb_frac = 0;
   nb_load_traX = 0;      nb_load_traY = 0;      nb_load_traZ = 0
 
   nb_func = 0;   nb_func_data = 0
   n_test = 0;
+
+  !SDOFflag = 0;
 
   open(40,file=filemate)
 
@@ -146,6 +148,11 @@
            nb_load_poiY = nb_load_poiY + 1
            case('PLOZ')
            nb_load_poiZ = nb_load_poiZ + 1
+           !case('PLOD') ! SSI - AH, SS
+            !SDOFflag=1
+            !nb_load_poiX = nb_load_poiX + 1
+            !nb_load_poiY = nb_load_poiY + 1
+            !nb_load_poiZ = nb_load_poiZ + 1
 
 !           case('TLOX')
 !            nb_load_traX = nb_load_traX + 1    
@@ -261,6 +268,9 @@
                    ! TIME SERIES
                  read(inline(5:),*) lab_fnc, type_fnc, ndat_fnc
                  nb_func_data = nb_func_data + ndat_fnc
+               case(777) !!! reaction force from structure used as input SSI-AH
+                  read(inline(5:),*) lab_fnc, type_fnc, ndat_fnc
+                  nb_func_data = nb_func_data + 1    !mod-SS
 
             end select 
          

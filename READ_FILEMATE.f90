@@ -144,9 +144,9 @@
                                   nb_neuY,val_neuY,fnc_neuY,lab_neuY, &
                                   nb_neuZ,val_neuZ,fnc_neuZ,lab_neuZ, &
                                   nb_neuN,val_neuN,fnc_neuN,lab_neuN, & 
-                                  nb_poiX,val_poiX,fnc_poiX, &
-                                  nb_poiY,val_poiY,fnc_poiY, &
-                                  nb_poiZ,val_poiZ,fnc_poiZ, &
+                                  nb_poiX,val_poiX,fnc_poiX,building_id_x, &
+                                  nb_poiY,val_poiY,fnc_poiY,building_id_y, &
+                                  nb_poiZ,val_poiZ,fnc_poiZ,building_id_z, &
                                   ntX,valtX,ftX, &
                                   ntY,valtY,ftY, &
                                   ntZ,valtZ,ftZ, &
@@ -202,7 +202,7 @@
       integer*4 :: ipr,ish,iabc,idg
       integer*4 :: ileft,iright
       integer*4 :: i,j,dummy,status
-      integer*4 :: ntest, srcmodflag, szsism
+      integer*4 :: ntest, srcmodflag, szsism 
 
       integer*4, dimension(nb_diriX) :: fnc_diriX,lab_diriX
       integer*4, dimension(nb_diriY) :: fnc_diriY,lab_diriY
@@ -223,9 +223,9 @@
       integer*4, dimension(nb_sism) :: fnc_sism,lab_sism                  
       integer*4, dimension(nb_expl) :: fnc_expl,lab_expl                  
       integer*4, dimension(nb_case) :: lab_case                        
-      integer*4, dimension(nb_poiX) :: fnc_poiX
-      integer*4, dimension(nb_poiY) :: fnc_poiY
-      integer*4, dimension(nb_poiZ) :: fnc_poiZ
+      integer*4, dimension(nb_poiX) :: fnc_poiX, building_id_x
+      integer*4, dimension(nb_poiY) :: fnc_poiY, building_id_y
+      integer*4, dimension(nb_poiZ) :: fnc_poiZ, building_id_z
       integer*4, dimension(ntX) :: ftX
       integer*4, dimension(ntY) :: ftY
       integer*4, dimension(ntZ) :: ftZ
@@ -261,12 +261,9 @@
       real*8, dimension(nb_neuY,4) :: val_neuY
       real*8, dimension(nb_neuZ,4) :: val_neuZ
       real*8, dimension(nb_neuN,4) :: val_neuN                      
-
-      ! Modified for SSI (AH)
-      real*8, dimension(nb_poiX,6) :: val_poiX
-      real*8, dimension(nb_poiY,6) :: val_poiY
-      real*8, dimension(nb_poiZ,6) :: val_poiZ
-      !
+      real*8, dimension(nb_poiX,4) :: val_poiX
+      real*8, dimension(nb_poiY,4) :: val_poiY
+      real*8, dimension(nb_poiZ,4) :: val_poiZ
 
       real*8, dimension(ntX,4) :: valtX
       real*8, dimension(ntY,4) :: valtY
@@ -305,7 +302,10 @@
       fmax = 0.d0
 
       inhee = 0;
-  
+      
+      building_id_x = -1;
+      building_id_y = -1;
+      building_id_z = -1;
       
       
       if (nb_fnc.gt.0) ind_fnc(1) = 1
@@ -412,19 +412,19 @@
             read(inline(ileft:iright),*) fnc_poiZ(ipZ),&
                  val_poiZ(ipZ,1),val_poiZ(ipZ,2),val_poiZ(ipZ,3),val_poiZ(ipZ,4)
 
-           !! For SSI (AH)
-           case('PLOD')
-            ipX = ipX + 1; ipY = ipY + 1; ipZ = ipZ + 1
-            read(inline(ileft:iright),*) fnc_poiX(ipX),val_poiX(ipX,4),val_poiX(ipX,5)      !!! function id, value of the applied load, building id
-            val_poiX(ipX,6)=1
+           !! For SSI (AH, SS)
+           !case('PLOD')
+            !ipX = ipX + 1; ipY = ipY + 1; ipZ = ipZ + 1
+            !read(inline(ileft:iright),*) fnc_poiX(ipX),val_poiX(ipX,4),building_id_x(ipX)      !!! function id, value of the applied load, building id
+            !val_poiX(ipX,6)=1
 
-            fnc_poiY(ipY)=fnc_poiX(ipX)
-            val_poiY(ipY,4)=val_poiX(ipX,4); val_poiY(ipY,5)=val_poiX(ipX,5)
-            val_poiY(ipY,6)=2
+            !fnc_poiY(ipY)=fnc_poiX(ipX)
+            !val_poiY(ipY,4)=val_poiX(ipX,4); building_id_y(ipY)=building_id_x(ipX)
+            !val_poiY(ipY,6)=2
 
-            fnc_poiZ(ipZ)=fnc_poiX(ipX)
-            val_poiZ(ipZ,4)=val_poiX(ipX,4); val_poiZ(ipZ,5)=val_poiX(ipX,5)
-            val_poiZ(ipZ,6)=3
+            !fnc_poiZ(ipZ)=fnc_poiX(ipX)
+            !val_poiZ(ipZ,4)=val_poiX(ipX,4); building_id_z(ipZ)=building_id_x(ipX)
+            !val_poiZ(ipZ,6)=3
            !!
  
 !           case('TLOX') 
@@ -688,7 +688,7 @@
                !! AH
                case(777)     !!! reaction force from structure is used for the cases where this function is called AH
                   read(inline(ileft:iright),*) dummy, dummy, ndat_fnc, dat_fnc(ind_fnc(ifunc)) !, dat_fnc(ind_fnc(ifunc)+1)
-                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + ndat_fnc   !2*ndat_fnc
+                  ind_fnc(ifunc +1) = ind_fnc(ifunc) + 1   !mod SS
                   
                !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             

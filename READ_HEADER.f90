@@ -243,6 +243,10 @@
            case('SYSLST')   !!! AH
             s_lst = 1
             read(inline(ileft:iright),*) depth_search_sys_lst,sysfile_lst
+            sysfile_lst = 0   
+            !Sri - since we are applying SDOF reaction forces at nearest LGL node (on ground surface)
+            ! Not allocating the SDOF inside any element now, 
+            ! so we dont need SDOF coorinates in reference coordinates of consisting element
     
            case('TESTCASE')
             n_testcase = 1                                

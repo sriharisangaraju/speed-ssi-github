@@ -41,7 +41,7 @@ subroutine SDOF_SHEAR_MODEL (sID, gr_acc, direction)
                           sys(sID)%tempSDOFU(direction), sys(sID)%tempSDOFU1(direction), &
                           sys(sID)%tempSDOFU0(direction), SDOFPeff0)
 
-                          !!! returns sys(sID)%tempSDOFU = displacement at time n+1
+                          !!! returns sys(sID)%tempSDOFU = displacement at time n+1 = Relative displacement of structure w.r.t. ground
 
   if(sys(sID)%const_law.eq.3) then
     if (sys(sID)%tempSDOFU(direction).ge.0.0) Usign = 1

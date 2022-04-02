@@ -115,6 +115,7 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
       ub1(ishift+2) = uym  !!! y displacement at the base of the structure at time n+1
       ub1(ishift+3) = uzm  !!! z displacement at the base of the structure at time n+1
 
+      ! Central Difference Scheme
       axm = (ub1(ishift+1) -2.0d0*ub2(ishift+1) +ub3(ishift+1)) / dt2
       aym = (ub1(ishift+2) -2.0d0*ub2(ishift+2) +ub3(ishift+2)) / dt2
       azm = (ub1(ishift+3) -2.0d0*ub2(ishift+3) +ub3(ishift+3)) / dt2

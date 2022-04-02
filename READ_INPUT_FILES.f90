@@ -137,7 +137,10 @@
                             nload_sism_el,&                                                                 
                             nload_expl_el,&                                                                
                             n_case, nmat_nhe, n_test,n_frac,srcmodflag)                   
-                                                                                                                            
+      
+      SDOFflag = 0                      
+      if(sys_lst.eq.0) SDOFflag = 1                      
+      
       if(n_test.gt.0 .and. mpi_id .eq. 0)  write(*,'(A)')'*********TEST MODE*********'
 
       if (mpi_id.eq.0) then
@@ -170,6 +173,7 @@
          if(nload_dg_el.gt.0)   write(*,'(A,I8)')'DG Interfaces    : ',nload_dg_el
          if(nfunc.gt.0)         write(*,'(A,I8)')'Functions        : ',nfunc
          if(srcmodflag.eq.1) write(*,*)'Using Not Honoring Fault Method For Siesmic Sources'
+         if(SDOFflag.eq.1) write(*,*)'Coupling SDOF response :: True'
          if(nload_sism_el.gt.0) write(*,'(A,I8)')'Seis. Mom. Load  : ',nload_sism_el        
          if(nload_expl_el.gt.0) write(*,'(A,I8)')'Explosive Load   : ',nload_expl_el            
          if (n_case.gt.1) then
@@ -202,10 +206,9 @@
       if (nload_neuZ_el.gt.0) allocate (val_neuZ_el(nload_neuZ_el,4), fun_neuZ_el(nload_neuZ_el), tag_neuZ_el(nload_neuZ_el))
       if (nload_neuN_el.gt.0) allocate (val_neuN_el(nload_neuN_el,4), fun_neuN_el(nload_neuN_el), tag_neuN_el(nload_neuN_el))
       
-      !! SDOF point load - AH
-      if (nload_poiX_el.gt.0) allocate (val_poiX_el(nload_poiX_el,6), fun_poiX_el(nload_poiX_el))    
-      if (nload_poiY_el.gt.0) allocate (val_poiY_el(nload_poiY_el,6), fun_poiY_el(nload_poiY_el))   
-      if (nload_poiZ_el.gt.0) allocate (val_poiZ_el(nload_poiZ_el,6), fun_poiZ_el(nload_poiZ_el))
+      if (nload_poiX_el.gt.0) allocate (val_poiX_el(nload_poiX_el,4), fun_poiX_el(nload_poiX_el))
+      if (nload_poiY_el.gt.0) allocate (val_poiY_el(nload_poiY_el,4), fun_poiY_el(nload_poiY_el))   
+      if (nload_poiZ_el.gt.0) allocate (val_poiZ_el(nload_poiZ_el,4), fun_poiZ_el(nload_poiZ_el))
 
 !      if (nload_traX_el.gt.0) allocate (val_traX_el(nload_traX_el,4), fun_traX_el(nload_traX_el))    
 !      if (nload_traY_el.gt.0) allocate (val_traY_el(nload_traY_el,4), fun_traY_el(nload_traY_el))   
@@ -267,9 +270,9 @@
                 nload_neuY_el,val_neuY_el,fun_neuY_el,tag_neuY_el, &
                 nload_neuZ_el,val_neuZ_el,fun_neuZ_el,tag_neuZ_el, &
                 nload_neuN_el,val_neuN_el,fun_neuN_el,tag_neuN_el, &            
-                nload_poiX_el,val_poiX_el,fun_poiX_el,&
-                nload_poiY_el,val_poiY_el,fun_poiY_el,&
-                nload_poiZ_el,val_poiZ_el,fun_poiZ_el,&
+                nload_poiX_el,val_poiX_el,fun_poiX_el, &
+                nload_poiY_el,val_poiY_el,fun_poiY_el, &
+                nload_poiZ_el,val_poiZ_el,fun_poiZ_el, &
                 nload_traX_el,val_traX_el,fun_traX_el,&
                 nload_traY_el,val_traY_el,fun_traY_el,&
                 nload_traZ_el,val_traZ_el,fun_traZ_el,&               
@@ -293,9 +296,6 @@
                 nmat_nhe,val_nhe,tol_nhe, &                                 
                 nfunc,func_type,func_indx,func_data,tag_func,nfunc_data, &
                 fmax,fpeak,damping_type)
-                
-
-                
                  
 
       if(fmax .eq. 0.d0) then

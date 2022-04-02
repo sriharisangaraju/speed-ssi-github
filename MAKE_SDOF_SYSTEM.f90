@@ -97,12 +97,12 @@ subroutine MAKE_SDOF_SYSTEM(file_sdof,dtsite,id)
     sys(i)%tempSDOFU1=0
     sys(i)%tempSDOFU=0
 
-    sys(i)%dt=sys(i)%TN/(datan(1.d0)*4.d0)
+    sys(i)%dt=sys(i)%TN/(10.d0)  !(datan(1.d0)*4.d0)    - Stable time step for explicit central difference method for SDOF
     sys(i)%ndt=ceiling(dtsite/sys(i)%dt)
     sys(i)%dt=dtsite/sys(i)%ndt
     sys(i)%dt2=sys(i)%dt*sys(i)%dt
 
-    sys(i)%Cs = datan(1.d0)*16.d0*sys(i)%Ms*sys(i)%CSI/sys(i)%TN
+    sys(i)%Cs = datan(1.d0)*16.d0*sys(i)%Ms*sys(i)%CSI/sys(i)%TN      ! Damping Coefficient
 
     if (sys(i)%SFS.eq.1) then
       sys(i)%MAT_F = 1/(sys(i)%beta_newmark*sys(i)%dt2)*sys(i)%MAT_M + sys(i)%gamma_newmark/(sys(i)%beta_newmark*sys(i)%dt)*sys(i)%MAT_C + sys(i)%MAT_KS

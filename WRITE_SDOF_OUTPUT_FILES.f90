@@ -40,7 +40,7 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
   enddo
 
   if (SDOFout(1).eq.1) then
-
+    ! Relative Displacement
     if (sfs.eq.0) then
       open(SDOFmon,file=SDOFdisplX,position='append')			!!! x displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
@@ -203,7 +203,7 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
   if (SDOFout(2).eq.1) then
 
     if(sfs.eq.0) then
-      !!! relative acceleration
+      !!! relative acceleration (This is Absolute/Total Acceleration?)
 
       open(SDOFmon,file=SDOFaccX,position='append')			!!! x acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp

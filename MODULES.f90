@@ -297,7 +297,7 @@ module speed_par
 ! 0/1 INTERGERS
       integer*4 :: file_mon_pgm, file_mon_lst, file_sys_lst, &  !!SSI-AH
                    find, torf, trof, make_damping_yes_or_not, &
-                   mpi_ierr, srcmodflag
+                   mpi_ierr, srcmodflag, SDOFflag
       
 ! DAMPING
       integer*4 :: damping_type
@@ -348,8 +348,11 @@ module speed_par
                  tag_plaY_el, tag_plaX_el, tag_plaZ_el, &
                  tag_abc_el, tag_dg_el, tag_dg_yn, tag_dg_frc, tag_dg_link, &
                  tag_sism_el, tag_expl_el, &           
-                 tag_func, func_type, func_indx
-      
+                 tag_func, func_type, func_indx, &
+! SSI           
+      integer*4, dimension (:,:), allocatable :: locnode_buildID_map, &
+
+      integer*4, dimension (:), allocatable :: node_counter_sdof, &
       
 ! OTHER  (MONITOR)
       integer*4, dimension (:), allocatable :: n_monitor_pgm, el_monitor_pgm, &
@@ -450,10 +453,10 @@ module speed_par
                                             time_error
 
 ! LOAD VECTOR
-!      real*8, dimension (:,:), allocatable :: Fel
+      real*8, dimension (:,:), allocatable :: Fel
 
 !!! AH (3D tensor instead of 2D)
-      real*8, dimension (:,:,:), allocatable :: Fel
+!      real*8, dimension (:,:,:), allocatable :: Fel
 
 ! (MATRICES OF) VALUES DEFINED IN FILENAME.MATE
       real*8, dimension (:,:), allocatable :: &
@@ -539,6 +542,7 @@ module speed_timeloop
                          val_traX_el, val_traY_el, val_traZ_el, &
                          fun_traX_el, fun_traY_el, fun_traZ_el, &          
                          nfunc, tag_func, func_type, func_indx, func_data, nfunc_data, Fel, &
+                         SDOFflag, locnode_buildID_map, node_counter_sdof, & ! SSI
                         
                          !COORDINATE TRANFORMATION                       
                          alfa11, alfa12, alfa13, alfa21, alfa22, alfa23, &
@@ -717,7 +721,7 @@ end module binarysearch
 !> @version 1.0
 !> @brief Contains parameters for linear elastic SDOF
 
-module SDOF_SYSTEM      !!! AH
+module SDOF_SYSTEM      !!! AH, SS
 
       implicit none
     

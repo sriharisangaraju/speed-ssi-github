@@ -126,12 +126,12 @@
      
         if(mpi_id.eq.0 .and. make_damping_yes_or_not .eq. 1) then        
                 write(*,'(A)')                         
-                write(*,'(A)') '----------------Building the load matrix---------------'
+                write(*,'(A)') '----------------Building the Damping matrix---------------'
         endif
         
         if(mpi_id.eq.0 .and. make_damping_yes_or_not .eq. 0) then        
                 write(*,'(A)')                                                        
-                write(*,'(A)')'----------------Building the load matrix---------------'                        
+                write(*,'(A)')'----------------Building the Damping matrix---------------'                        
                 write(*,'(A)')'ATT: There are no materials with damping defined on'        
         endif
         
@@ -191,9 +191,9 @@
 !***********************************************************************************
 !     FIND OSCILLATOR POSITION
 !***********************************************************************************
-
-  call READ_SYSTEM_POSITION()
-
+   if (SDOFflag.eq.1) then
+      call READ_SYSTEM_POSITION()
+   endif
 !*****************************************************************************************
 !   BUILD LOAD MATRIX AND SEISMIC MOMENT TENSOR OR EXPLOSIVE SOURCE
 !*****************************************************************************************

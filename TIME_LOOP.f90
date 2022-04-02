@@ -29,7 +29,8 @@
       use max_var
       use DGJUMP
       use speed_timeloop
-      
+      use SDOF_SYSTEM      !SSI-AH
+
       implicit none
 
       include 'SPEED.MPI'
@@ -45,9 +46,9 @@
                    ic, ih, ik, il, it, ipos, ineg, &
                    isnap, its, fn, nn, ip, im, imon, iaz, &
                    i, j, k, is, in, id, istage, itime, &
-                   ie, ielem, count_monitor, find_tag, icase, irand
+                   ie, ielem, count_monitor, find_tag, icase, irand, isdof
                    
-      ! Elapsed time print-out iteration divisor
+! Elapsed time print-out iteration divisor
       integer*4 :: it_divisor = 1000
 
       integer*4, dimension(:), allocatable :: node_counter
@@ -96,7 +97,7 @@
                                           fk, fe, mv, &
                                           send_buffer, recv_buffer, &
                                           double_send_buffer, double_recv_buffer, &
-                                          send_buffer_jump, recv_buffer_jump
+                                          send_buffer_jump, recv_buffer_jump, SDOFrecv_temp
 
 ! DAMPING
       real*8                                  :: gamma, QS_nh, QP_nh
@@ -122,7 +123,7 @@
       real*8, dimension(:), allocatable        :: Depth_nle_el
 
 ! OUTPUT
-      real*8, dimension(:), allocatable        :: strain, omega, stress
+      real*8, dimension(:), allocatable        :: strain, omega, stress, strainold  !Added strainold - SSI AH
 
 ! RUNGE-KUTTA
       real*8, dimension(:), allocatable        :: A, b,c, u_int, v_int
@@ -172,7 +173,22 @@
           max_u = 0.d0; max_v = 0.d0; max_a = 0.d0; max_o = 0.d0
        endif 
        
-       
+!---------------------------------------------------------------------------
+ !     INITIALIZE OSCILLATOR AH
+ !--------------------------------------------------------------------------
+      if (SDOFnum.gt.0) then
+         call READ_SDOF_INPUT_FILES
+
+         allocate(SDOFinputD(3*SDOFnum))     ! base displacement
+         allocate(SDOFinput(3*SDOFnum))                  !base acceleration (x,y,z)
+         allocate(SDOFinputbuffer(3*mpi_np*SDOFnum))
+         allocate(SDOFrecv_temp(3*SDOFnum))
+         allocate(SDOFforceinput(3*SDOFnum)) 						!(Fx,Fy,Fz)
+         SDOFforceinput=0
+         allocate(SDOFforceinputbuffer(3*SDOFnum*mpi_np))
+         
+         call MAKE_SDOF_OUTPUT_FILES
+      endif
 !---------------------------------------------------------------------------
 ! Travelling Load                                                                                
 !---------------------------------------------------------------------------
@@ -269,6 +285,16 @@
       endif
 
 !---------------------------------------------------------------------------
+!     UNKNOWNS INITIALIZATION FOR SSI - AH
+!---------------------------------------------------------------------------
+
+      if (SDOFnum.gt.0) then
+         allocate(ug1(3*SDOFnum), ug2(3*SDOFnum), ug3(3*SDOFnum))     !!! base displacement at time n+1,n,n-1
+         ug1=0; ug2=0; ug3=0
+      endif
+     
+
+!---------------------------------------------------------------------------
 !     UNKNOWNS INITIALIZATION FOR DAMPING
 !---------------------------------------------------------------------------
 
@@ -287,7 +313,7 @@
       if(opt_out_var(4) .eq. 1) then
          allocate(stress(6*nnod_loc)); stress = 0.d0
       endif   
-      if(opt_out_var(5) .eq. 1 .or. damping_type .eq. 2) then
+      if(opt_out_var(5) .eq. 1 .or. damping_type .eq. 2) then     !Modified in SSI - AH
          allocate(strain(6*nnod_loc)); strain = 0.d0
       endif
       if(opt_out_var(6) .eq. 1) then
@@ -804,6 +830,7 @@
 
 !      write(*,*) 'nle', con_spx_loc_nle
 
+!---------------------------------------------------------------------------
 
 !---------------------------------------------------------------------------
 !     BEGINNING OF THE TIME LOOP
@@ -820,7 +847,7 @@
 
       do its = 0,nts
          if (opt_out_var(4) .eq. 1) stress = 0.d0
-         if (opt_out_var(5) .eq. 1 .or. damping_type .eq. 2) strain = 0.d0
+         if (opt_out_var(5) .eq. 1 .or. damping_type .eq. 2) strain = 0.d0    !Modified in SSI - AH
          if (opt_out_var(6) .eq. 1) omega = 0.d0
 
          if (mpi_id.eq.0) write(*,'(A,E14.6)')'TIME = ',tt1 
@@ -893,18 +920,37 @@
 
 
                   else  !EXTERNAL FORCES   
-                    if    (Fel(fn,(3*(id -1) +1)) .ne. 0.d0) then
-                        iaz = 3*(id -1) +1; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +1)) * & 
-                                     GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
-                    elseif(Fel(fn,(3*(id -1) +2)) .ne. 0.d0) then
-                        iaz = 3*(id -1) +2; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +2)) * & 
-                                 GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
-                    elseif(Fel(fn,(3*(id -1) +3)) .ne. 0.d0) then 
-                        iaz = 3*(id -1) +3; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +3)) * & 
-                                 GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
-                    endif
+                     ! Point Source - SS
+                     if    (Fel(fn,(3*(id -1) +1)) .ne. 0.d0) then
+                           iaz = 3*(id -1) +1; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +1)) * & 
+                                       GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
+                     endif
+                     if(Fel(fn,(3*(id -1) +2)) .ne. 0.d0) then
+                           iaz = 3*(id -1) +2; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +2)) * & 
+                                    GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
+                     endif
+                     if(Fel(fn,(3*(id -1) +3)) .ne. 0.d0) then 
+                           iaz = 3*(id -1) +3; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +3)) * & 
+                                    GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
+                     endif
                   endif
                enddo
+
+               !! SSI
+               if ((SDOFnum.gt.0).and.(locnode_buildID_map(id,1).gt.0)) then
+                  iaz = 3*(id -1); 
+                  do isdof=1, locnode_buildID_map(id,1)
+                     fe(iaz+1) = fe(iaz+1) + (1 /(node_counter_sdof(isdof))) * &
+                                    SDOFforceinput(3*(locnode_buildID_map(id,isdof+1) - 1) + 1)
+                     
+                     fe(iaz+2) = fe(iaz+2) + (1 /node_counter_sdof(isdof)) * &
+                                    SDOFforceinput(3*(locnode_buildID_map(id,isdof+1) - 1) + 2)
+                     
+                     fe(iaz+3) = fe(iaz+3) + (1 /node_counter_sdof(isdof)) * &
+                                    SDOFforceinput(3*(locnode_buildID_map(id,isdof+1) - 1) + 3)
+                  enddo
+               endif
+
             enddo
 
             do i = 1,nrecv
@@ -1994,7 +2040,7 @@
 !---------------------------------------------------------------------------
 !         if(its .eq. 0 .and. testmode .ne. 1) then
 
-!$OMP PARALLEL DO PRIVATE(iaz,id)
+!!$OMP PARALLEL DO PRIVATE(iaz,id) !Check this with Ilario
 
 !           do id = 1, nnod_loc
 !              iaz = 3*(id -1) +1
@@ -2055,7 +2101,7 @@
 
             enddo
             
-!$END OMP PARALLEL DO
+!$END OMP PARALLEL DO   !Check this with Ilario
 !         endif
                                                                                           
       endif                                                                                        
@@ -2080,6 +2126,7 @@
             u2(iaz) = 0.0d0; u1(iaz)  = 0.d0; v1(iaz) = 0.d0 
             if(rk_scheme .eq. 'RUNGEKUTTA') v2(iaz) = 0.d0
             do fn = 1,nfunc
+               ! Different in SSI-AH
                 u2(iaz) = u2(iaz) + Fel(fn,(3*(in -1) +1)) * func_value(fn)
                 if(rk_scheme .eq. 'RUNGEKUTTA') v2(iaz) = v2(iaz) + Fel(fn,(3*(in -1) +1)) * func_value(fn)
             enddo
@@ -2215,7 +2262,7 @@
 !---------------------------------------------------------------------------
 
       if (damping_type .eq. 2) then
-          
+          ! Different for SSI-AH
           call UPDATE_DAMPING_TENSOR(nnod_loc, N_SLS, frequency_range, &
                                      strain_visc, strain, deltat)
       endif
@@ -2242,7 +2289,95 @@
          endif         
                         
       endif
+
+   !---------------------------------------------------------------------------
+   !     COMPUTE INPUT OF SDOF SYSTEM
+   !---------------------------------------------------------------------------
+
+      if (SDOFnum.gt.0) then
+        SDOFinput = 0
+        SDOFinputD = 0
+        call COMPUTE_SDOF_INPUT(SDOFnum, mpi_id, el_system_lst, local_el_num, nelem_loc, &
+                               con_spx_loc, con_nnz_loc, sdeg_mat, nmat, &
+                               u2, nnod_loc, &
+                               xr_system_lst, yr_system_lst, zr_system_lst, &
+                               deltat2, &
+                               SDOFinput, SDOFinputD, mpi_np, &
+                               ug1, ug2, ug3)
+  
+                               !!! ug1, ug2, ug3 : displacements at the base of the structure at times n+1(current), n and n-1 respectively;
+                               !!! SDOFinput : base acceleration
+      endif
+  
+     !---------------------------------------------------------------------------
+     !     EXCHANGE GROUND MOTION OF SDOF SYSTEM
+     !---------------------------------------------------------------------------
+  
+      if (SDOFnum.gt.0) then
+  
+        ! base acceleration
+        SDOFrecv_temp = 0;
+        call MPI_BARRIER(mpi_comm, mpi_ierr)
+        call MPI_ALLREDUCE(SDOFinput, SDOFrecv_temp, 3*SDOFnum, SPEED_DOUBLE, MPI_SUM, mpi_comm, mpi_ierr)
+        SDOFinput = SDOFrecv_temp;
+
+        ! base displacement
+        SDOFrecv_temp = 0; 
+        call MPI_ALLREDUCE(SDOFinputD, SDOFrecv_temp, 3*SDOFnum, SPEED_DOUBLE, MPI_SUM, mpi_comm, mpi_ierr)
+        SDOFinputD = SDOFrecv_temp;
+        
+      endif
+  
+  
+       !write(*,*) 'MPI ID :', mpi_id, ', gd (after):', SDOFinputD(1:3), 'ga (after): ', SDOFinput(1:3)
+  
+     !---------------------------------------------------------------------------
+     !     COMPUTE OUTPUT OF SDOF SYSTEM AH
+     ! we doing this calculations for all SDOFs in all processors? (Optimise?)
+     !---------------------------------------------------------------------------
+      SDOFforceinput=0
+      if(n_sdof .gt. 0) then
+        do I=1,n_sdof     !!! number of oscillators
+  
+          SDOFag(I,1:3)=(-1.d0)*SDOFinput((3*(I-1)+1):(3*(I-1)+3))    !!! base acceleration
+          SDOFgd(I,1:3)=SDOFinputD((3*(I-1)+1):(3*(I-1)+3))   !!! base displacement
+          
+          do j=1,sys(I)%ndt
+            if(sys(I)%SFS.eq.0) then
+              call SDOF_SHEAR_MODEL(I,SDOFag(I,1),1)     !!! direction x
+              call SDOF_SHEAR_MODEL(I,SDOFag(I,2),2)     !!! direction y
+              !call SDOF_SHEAR_MODEL(I,SDOFag(I,3),3)     !!! direction z
+            elseif (sys(I)%SFS.eq.1) then
+              call SDOF_SFS_MODEL(I,SDOFag(I,:),1)      !!! direction x
+              call SDOF_SFS_MODEL(I,SDOFag(I,:),2)      !!! direction y
+            endif
+          enddo
+  
+          SDOFforceinput((3*(I-1)+1):(3*(I-1)+3))=sys(I)%SDOFItF      !!! Interaction force (Ku)
+        enddo
+  
+        if(mod(its,ndt_mon_lst) .eq. 0) then
+          call WRITE_SDOF_OUTPUT_FILES(tt1)
+        endif
+      endif   !n_sdof.gt.0
+  
+     !---------------------------------------------------------------------------
+     !     EXCHANGE FORCE OUTPUT OF SDOF SYSTEM AH
+     !---------------------------------------------------------------------------
       
+      if (SDOFnum.gt.0) then
+  
+         ! Shear Force in the Spring
+         SDOFrecv_temp = 0;
+         call MPI_BARRIER(mpi_comm, mpi_ierr)
+         call MPI_ALLREDUCE(SDOFforceinput, SDOFrecv_temp, 3*SDOFnum, SPEED_DOUBLE, MPI_SUM, mpi_comm, mpi_ierr)
+         SDOFforceinput = SDOFrecv_temp;
+         
+       endif
+  
+
+!---------------------- EXIT Incase of Instability -----------------------------------------------------------
+
       if (b_instabilitycontrol) then
         if (b_instability_abort) then
           write(*,*) 'Worker ', mpi_id, ': instability detected. Signalling to other workers.'
@@ -2270,7 +2405,8 @@
         endif
 
       endif
-      
+
+
 !---------------------------------------------------------------------------
 !     SETUP MAX VALUES FOR PEAK GROUND MAP
 !---------------------------------------------------------------------------
@@ -2432,7 +2568,20 @@
       if (nmat_nle.gt.0) deallocate(con_spx_loc_nle,Depth_nle_el,node_nle_4_mpi)
       
       if(nload_traZ_el .gt. 0)  deallocate(node_tra, dist_tra)
-       
+      
+      !!! AH
+      if(n_sdof.gt.0) then
+         deallocate(sys)
+         deallocate(SDOFag,SDOFgd)
+      endif
+      deallocate(SDOFinput, SDOFinputD, SDOFforceinput)
+      deallocate(SDOFinputbuffer, SDOFforceinputbuffer)
+
+      if(SDOFnum.gt.0) then
+         deallocate(ug1, ug2, ug3, SDOFrecv_temp)
+      endif
+      !!! AH
+
       !ADAPTIVE TIME STEP 
       !if (time_adpt .eq. 1) deallocate(fe_1,fe_2,fe_3,fext,fext_1,fext_2,fext_3,fk_1,fk_2,eta_1,eta,dg,d2g)
 

@@ -17,7 +17,7 @@
 !    along with SPEED.  If not, see <http://www.gnu.org/licenses/>.
 
 !> @brief Reads oscillator position and writes SYSLST.input file
-!! @author Aline Herlin
+!! @author Aline Herlin, Srihari Sangaraju
 !> @date February, 2021
 !> @version 1.0
 
@@ -65,15 +65,24 @@ subroutine READ_SYSTEM_POSITION()
 
       call READ_FILESYS(file_SYS,SDOFnum,system_label,x_system_lst,y_system_lst,z_system_lst)
 
-      do i=1,SDOFnum
-        do j=1,SDOFnum
-          if(system_label(j).eq.val_poiX_el(i,5)) then
-            val_poiX_el(i,1) = x_system_lst(j); val_poiY_el(i,1) = x_system_lst(j); val_poiZ_el(i,1) = x_system_lst(j)
-            val_poiX_el(i,2) = y_system_lst(j); val_poiY_el(i,2) = y_system_lst(j); val_poiZ_el(i,2) = y_system_lst(j)
-            val_poiX_el(i,3) = z_system_lst(j); val_poiY_el(i,3) = z_system_lst(j); val_poiZ_el(i,3) = z_system_lst(j)
-          endif
-        enddo
-      enddo
+      !Modified, so that In a simulation both types of Point sources (usual point sources and  SDOF Oscillators) can be used (-SS)
+      ! do i=1,SDOFnum
+      !   do j=1,nload_poiX_el
+      !     if(system_label(i).eq.building_id_x(j)) then
+      !       val_poiX_el(j,1) = x_system_lst(i); val_poiX_el(j,2) = y_system_lst(i); val_poiX_el(j,3) = z_system_lst(i);
+      !     endif
+      !   enddo
+      !   do j=1,nload_poiY_el
+      !     if(system_label(i).eq.building_id_y(j)) then
+      !       val_poiY_el(j,1) = x_system_lst(i); val_poiY_el(j,2) = y_system_lst(i); val_poiY_el(j,3) = z_system_lst(i);
+      !     endif
+      !   enddo
+      !   do j=1,nload_poiZ_el
+      !     if(system_label(i).eq.building_id_z(j)) then
+      !       val_poiZ_el(j,1) = x_system_lst(i); val_poiZ_el(j,2) = y_system_lst(i); val_poiZ_el(j,3) = z_system_lst(i);
+      !     endif
+      !   enddo
+      ! enddo
 
       if (file_sys_lst.eq.0) then ! NO input file with the position of oscillators
         allocate(x_system_real(SDOFnum), y_system_real(SDOFnum), z_system_real(SDOFnum))
@@ -122,6 +131,7 @@ subroutine READ_SYSTEM_POSITION()
 
           call GET_MINVALUES(n_system_glo, dist_system_glo, mpi_np, n_system_lst(j), 1, mpi_np)
 
+          ! Do we really need this step? the partition containing nearest node is already saved in n_system_lst
           call GET_INDLOC_FROM_INDGLO(n_system_glo, mpi_np, n_system_glo(n_system_lst(j)), ic)
 
           x_system_real(j) = x_system_glo_real(ic)
@@ -177,6 +187,15 @@ subroutine READ_SYSTEM_POSITION()
   endif
 
   call MPI_BARRIER(mpi_comm, mpi_ierr)
+
+  !-----------------------------------------------------------------------------------
+  ! Mapping SDOF oscillators to nearest LGL nodes
+  !------------------------------------------------------------------------------------
+  allocate(node_counter_sdof(SDOFnum)))
+  call MAKE_SYSTEM_POSITION_LGLNODES(nnod_loc , local_node_num, con_nnz_loc, con_spx_loc, &
+                                            xx_spx_loc, yy_spx_loc, zz_spx_loc, SDOFnum, system_label, &
+                                            x_system_lst, y_system_lst, z_system_lst, &
+                                            mpi_id, mpi_comm, mpi_np, locnode_buildID_map, node_counter_sdof)
 
   !----------------------------------------------------------------------------------
   !	WRITING SDOF_SYSTEM.INFO

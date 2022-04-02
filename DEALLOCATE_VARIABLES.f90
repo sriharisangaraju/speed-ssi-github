@@ -46,7 +46,8 @@
       deallocate(local_node_num,local_el_num)
       deallocate(Fel)
 
-
+      !deallocate(elem_domain) !!! AH 
+      
       if (nmonitors_lst.gt.0) deallocate(x_monitor_lst,y_monitor_lst,z_monitor_lst,n_monitor_lst)
       if (nmonitors_lst.gt.0) deallocate(xr_monitor_lst,yr_monitor_lst,zr_monitor_lst,el_monitor_lst)
       if (nmonitors_pgm.gt.0) deallocate(x_monitor_pgm,y_monitor_pgm,z_monitor_pgm,n_monitor_pgm)
