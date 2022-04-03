@@ -28,7 +28,7 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
   use speed_timeloop
 	implicit none
 
-	integer*4 :: sfs, temp
+	integer*4 :: sfs, temp, i
   real*8 :: tt1tmp
 
   SDOFmon=10*(mpi_id+1)+7

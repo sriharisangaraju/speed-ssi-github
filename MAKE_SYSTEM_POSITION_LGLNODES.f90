@@ -46,6 +46,7 @@ subroutine MAKE_SYSTEM_POSITION_LGLNODES(nn_loc , local_node_num, cs_nnz_loc, cs
 
   real*8, dimension(nn_loc) :: xs_loc, ys_loc, zs_loc
   real*8, dimension(nsdof) :: x_system_lst, y_system_lst, z_system_lst
+  real*8, dimension(nsdof) :: dist_system_loc
   real*8, dimension(nsdof*mpi_np) :: dist_system_glo
 
   node_counter_loc = 0

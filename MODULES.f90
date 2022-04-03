@@ -348,11 +348,11 @@ module speed_par
                  tag_plaY_el, tag_plaX_el, tag_plaZ_el, &
                  tag_abc_el, tag_dg_el, tag_dg_yn, tag_dg_frc, tag_dg_link, &
                  tag_sism_el, tag_expl_el, &           
-                 tag_func, func_type, func_indx, &
+                 tag_func, func_type, func_indx
 ! SSI           
-      integer*4, dimension (:,:), allocatable :: locnode_buildID_map, &
+      integer*4, dimension (:,:), allocatable :: locnode_buildID_map
 
-      integer*4, dimension (:), allocatable :: node_counter_sdof, &
+      integer*4, dimension (:), allocatable :: node_counter_sdof
       
 ! OTHER  (MONITOR)
       integer*4, dimension (:), allocatable :: n_monitor_pgm, el_monitor_pgm, &
@@ -430,7 +430,8 @@ module speed_par
               x_system_real, y_system_real, z_system_real, &
               xr_system_lst, yr_system_lst, zr_system_lst, dist_system_lst, &
               xr_system_glo, yr_system_glo, zr_system_glo, dist_system_glo, &
-              x_system_glo_real, y_system_glo_real, z_system_glo_real 
+              x_system_glo_real, y_system_glo_real, z_system_glo_real , &
+              highest_sys_lst_loc
 
 ! DAMPING
       real*8, dimension(:), allocatable :: QS, QP, frequency_range
@@ -748,7 +749,7 @@ module SDOF_SYSTEM      !!! AH, SS
       end type system
     
       type(system),allocatable:: sys(:) !< SDOF system
-      integer*4 :: n_sdof, SDOFmon, i, j, SDOFnum
+      integer*4 :: n_sdof, SDOFmon, SDOFnum ! SS - deleted common integers i, j
       integer*4, dimension(3) :: SDOFout      !< displ, acc, f_react
       real*8, dimension(:), allocatable :: ug1, ug2, ug3
       real*8, dimension(:,:), allocatable :: SDOFag, SDOFgd    !!! ground acc and displ

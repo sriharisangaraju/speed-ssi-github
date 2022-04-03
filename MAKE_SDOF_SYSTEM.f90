@@ -30,7 +30,7 @@ subroutine MAKE_SDOF_SYSTEM(file_sdof,dtsite,id)
 
 	implicit none
 
-  integer*4 :: id, SDOFunit
+  integer*4 :: id, SDOFunit, i
   character*70 :: file_sdof
   real*8 :: dtsite
   real*8, dimension(4,4) :: mat_temp

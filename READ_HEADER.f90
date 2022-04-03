@@ -60,7 +60,7 @@
 !> @param[out] b_instabilitycontrol  if true, quit whenever the simulation diverges
 !> @param[out] instability_maxval  max abs. value for monitored Stress
 
-      subroutine READ_HEADER(headerfile,gridfile,matefile,mpifile,monfile,bkpfile,sdoffile&   
+      subroutine READ_HEADER(headerfile,gridfile,matefile,mpifile,monfile,bkpfile,sdoffile, &   
                              time_step,start_time,stop_time,&
                              option_out_var,&          
                              trestart,&
@@ -121,7 +121,7 @@
       im = 0;       is = 0;            itime = 0;
       n_pgm = 0;    monfile_pgm = 0                 
       n_lst = 0;    monfile_lst = 0   
-      s_lst = 0;    sysfile_lst = 0;   SDOFout = 0;     
+      s_lst = 0;    sysfile_lst = 0;   !SDOFout = 0;     
       n_testcase = 0;          
 
       time_err = 0      
