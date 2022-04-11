@@ -107,7 +107,7 @@ subroutine MAKE_SDOF_SYSTEM(file_sdof,dtsite,id)
     if (sys(i)%SFS.eq.1) then
       sys(i)%MAT_F = 1/(sys(i)%beta_newmark*sys(i)%dt2)*sys(i)%MAT_M + sys(i)%gamma_newmark/(sys(i)%beta_newmark*sys(i)%dt)*sys(i)%MAT_C + sys(i)%MAT_KS
       mat_temp = sys(i)%MAT_F + sys(i)%MAT_KI
-      call MAT_INVERSE(mat_temp, sys(i)%MAT_MCinv, 4)
+      !call MAT_INVERSE(mat_temp, sys(i)%MAT_MCinv, 4) ! Issue with MPIf90 compiler for Apple silicon 
     endif
   enddo
 

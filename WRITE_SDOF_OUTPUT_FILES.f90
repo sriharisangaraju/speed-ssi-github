@@ -203,12 +203,12 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
   if (SDOFout(2).eq.1) then
 
     if(sfs.eq.0) then
-      !!! relative acceleration (This is Absolute/Total Acceleration?)
+      !!! relative acceleration - SS
 
       open(SDOFmon,file=SDOFaccX,position='append')			!!! x acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_sdof
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempSDOFA1(1)
+        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempSDOFRA1(1)
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
@@ -216,7 +216,7 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFaccY,position='append')			!!! y acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_sdof
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempSDOFA1(2)
+        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempSDOFRA1(2)
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
@@ -224,7 +224,7 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFaccZ,position='append')			!!! z acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_sdof
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempSDOFA1(3)
+        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempSDOFRA1(3)
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)

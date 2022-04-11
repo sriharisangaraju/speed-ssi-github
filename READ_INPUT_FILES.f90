@@ -139,7 +139,7 @@
                             n_case, nmat_nhe, n_test,n_frac,srcmodflag)                   
       
       SDOFflag = 0                      
-      if(sys_lst.eq.0) SDOFflag = 1                      
+      if(sys_lst.eq.1) SDOFflag = 1                      
       
       if(n_test.gt.0 .and. mpi_id .eq. 0)  write(*,'(A)')'*********TEST MODE*********'
 
@@ -259,7 +259,7 @@
       
       
       allocate(QS(nmat), QP(nmat)); QS = 0.d0; QP = 0.d0;
-            
+
       call READ_FILEMATE(mat_file,nmat,prop_mat,type_mat,tref_mat,tag_mat, QS, QP,&
                 nmat_nle,prop_mat_nle,val_mat_nle,type_mat_nle,tag_mat_nle, &   
                 nmat_rnd, rand_mat, &     

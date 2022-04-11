@@ -144,9 +144,9 @@
                                   nb_neuY,val_neuY,fnc_neuY,lab_neuY, &
                                   nb_neuZ,val_neuZ,fnc_neuZ,lab_neuZ, &
                                   nb_neuN,val_neuN,fnc_neuN,lab_neuN, & 
-                                  nb_poiX,val_poiX,fnc_poiX,building_id_x, &
-                                  nb_poiY,val_poiY,fnc_poiY,building_id_y, &
-                                  nb_poiZ,val_poiZ,fnc_poiZ,building_id_z, &
+                                  nb_poiX,val_poiX,fnc_poiX, &
+                                  nb_poiY,val_poiY,fnc_poiY, &
+                                  nb_poiZ,val_poiZ,fnc_poiZ, &
                                   ntX,valtX,ftX, &
                                   ntY,valtY,ftY, &
                                   ntZ,valtZ,ftZ, &
@@ -180,7 +180,7 @@
       character*70 :: filemate,fileinput
       character*100000 :: inline
       character*4 :: keyword
-
+      
       integer*4 :: nb_mate,nb_fnc, nb_fnc_data, nb_frac, damping_val
       integer*4 :: nb_mate_nle, nb_mate_rnd, nb_nhee
       integer*4 :: nb_diriX,nb_diriY,nb_diriZ,nb_neuX,nb_neuY,nb_neuZ
@@ -223,9 +223,9 @@
       integer*4, dimension(nb_sism) :: fnc_sism,lab_sism                  
       integer*4, dimension(nb_expl) :: fnc_expl,lab_expl                  
       integer*4, dimension(nb_case) :: lab_case                        
-      integer*4, dimension(nb_poiX) :: fnc_poiX, building_id_x
-      integer*4, dimension(nb_poiY) :: fnc_poiY, building_id_y
-      integer*4, dimension(nb_poiZ) :: fnc_poiZ, building_id_z
+      integer*4, dimension(nb_poiX) :: fnc_poiX !building_id_x
+      integer*4, dimension(nb_poiY) :: fnc_poiY !building_id_y
+      integer*4, dimension(nb_poiZ) :: fnc_poiZ !building_id_z
       integer*4, dimension(ntX) :: ftX
       integer*4, dimension(ntY) :: ftY
       integer*4, dimension(ntZ) :: ftZ
@@ -303,10 +303,9 @@
 
       inhee = 0;
       
-      building_id_x = -1;
-      building_id_y = -1;
-      building_id_z = -1;
-      
+      !building_id_x = -1;
+      !building_id_y = -1;
+      !building_id_z = -1;
       
       if (nb_fnc.gt.0) ind_fnc(1) = 1
       

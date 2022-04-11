@@ -191,11 +191,10 @@ subroutine READ_SYSTEM_POSITION()
   !-----------------------------------------------------------------------------------
   ! Mapping SDOF oscillators to nearest LGL nodes
   !------------------------------------------------------------------------------------
-  allocate(node_counter_sdof(SDOFnum))
   call MAKE_SYSTEM_POSITION_LGLNODES(nnod_loc , local_node_num, con_nnz_loc, con_spx_loc, &
                                             xx_spx_loc, yy_spx_loc, zz_spx_loc, SDOFnum, system_label, &
                                             x_system_lst, y_system_lst, z_system_lst, &
-                                            mpi_id, mpi_comm, mpi_np, locnode_buildID_map, node_counter_sdof)
+                                            mpi_id, mpi_comm, mpi_np, node_counter_sdof)
 
   !----------------------------------------------------------------------------------
   !	WRITING SDOF_SYSTEM.INFO

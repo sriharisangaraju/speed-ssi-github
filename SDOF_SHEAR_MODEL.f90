@@ -46,7 +46,8 @@ subroutine SDOF_SHEAR_MODEL (sID, gr_acc, direction)
   if(sys(sID)%const_law.eq.3) then
     if (sys(sID)%tempSDOFU(direction).ge.0.0) Usign = 1
     if (sys(sID)%tempSDOFU(direction).lt.0.0) Usign = -1
-    if ((abs(sys(sID)%tempSDOFU(direction)).ge.sys(sID)%EU).or.(sys(sID)%damage(direction).eq.1)) sys(sID)%tempSDOFU(direction) = Usign*sys(sID)%EU
+    if ((abs(sys(sID)%tempSDOFU(direction)).ge.sys(sID)%EU).or.(sys(sID)%damage(direction).eq.1)) &
+        sys(sID)%tempSDOFU(direction) = Usign*sys(sID)%EU
   endif
 
   sys(sID)%dSDOFIDR(direction)=sys(sID)%tempSDOFU(direction)-sys(sID)%SDOFIDR(direction)      !!! variation of base drift
@@ -55,6 +56,9 @@ subroutine SDOF_SHEAR_MODEL (sID, gr_acc, direction)
 
   sys(sID)%tempSDOFA1(direction)=(sys(sID)%tempSDOFU(direction) + &
      sys(sID)%tempSDOFU0(direction) - 2.d0*sys(sID)%tempSDOFU1(direction))/sys(sID)%dt2-gr_acc      !!! absolute acceleration AH
+
+  sys(sID)%tempSDOFRA1(direction)=(sys(sID)%tempSDOFU(direction) + &
+     sys(sID)%tempSDOFU0(direction) - 2.d0*sys(sID)%tempSDOFU1(direction))/sys(sID)%dt2      !!! Relative acceleration
 
   sys(sID)%tempSDOFU0(direction)=sys(sID)%tempSDOFU1(direction)      !!! update values
   sys(sID)%tempSDOFU1(direction)=sys(sID)%tempSDOFU(direction)
@@ -69,7 +73,8 @@ subroutine SDOF_SHEAR_MODEL (sID, gr_acc, direction)
   elseif (sys(sID)%const_law.eq.2) then
     call PERFECTLY_PLASTIC(sys(sID)%Ks, s, de, sys(sID)%FY)      !!! elastoplastic constitutive law
   elseif (sys(sID)%const_law.eq.3) then
-    call TRILINEAR(sys(sID)%Ks, sys(sID)%Hs, sys(sID)%Ss, s, de, e, sys(sID)%FY, sys(sID)%FH, sys(sID)%FU, sys(sID)%EY, sys(sID)%EH, sys(sID)%EU, sys(sID)%branch(direction), sys(sID)%damage(direction))      !!! trilinear constitutive law
+    call TRILINEAR(sys(sID)%Ks, sys(sID)%Hs, sys(sID)%Ss, s, de, e, sys(sID)%FY, sys(sID)%FH, sys(sID)%FU, sys(sID)%EY, &
+        sys(sID)%EH, sys(sID)%EU, sys(sID)%branch(direction), sys(sID)%damage(direction))      !!! trilinear constitutive law
   endif
 
   sys(sID)%SDOFItF(direction)=s

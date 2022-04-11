@@ -20,13 +20,16 @@
 !>  finds to which local-LGL node it should be applied.
 !! @author Ilario Mazzieri, Srihari Sangaraju
 !> @date February, 2022
+!> Outputs: (directly saved in module variables of speed_par)
+!> locnode_buildID_map  - For each local LGL node, has information about SDOFs that have to be applied at that location.
+!> node_counter_sdof    - Number of partitions that are sharing LGL node corresponding to each SDOF Oscillator.
 
 subroutine MAKE_SYSTEM_POSITION_LGLNODES(nn_loc , local_node_num, cs_nnz_loc, cs_loc, &
                                           xs_loc, ys_loc, zs_loc, nsdof, sys_label, &
                                           x_system_lst, y_system_lst, z_system_lst, &
-                                          mpi_id, mpi_comm, mpi_np, locnode_buildID_map, &
-                                          node_counter_sdof)
+                                          mpi_id, mpi_comm, mpi_np)
 
+  use speed_par, only : locnode_buildID_map, node_counter_sdof
 
   implicit none
   
@@ -37,12 +40,12 @@ subroutine MAKE_SYSTEM_POSITION_LGLNODES(nn_loc , local_node_num, cs_nnz_loc, cs
   integer*4 :: i, j, max_nsdof_per_node
   integer*4, dimension(0:cs_nnz_loc) :: cs_loc
   integer*4, dimension(nn_loc) :: node_counter_loc
-  integer*4, dimension(nsdof) :: node_counter_sdof_dum, node_counter_sdof
+  integer*4, dimension(nsdof) :: node_counter_sdof_dum
   integer*4, dimension(nsdof) :: node_sys_loc, sys_label, nearestnode_globnum, nearestnode_locnum
   integer*4, dimension(nsdof*mpi_np) :: node_sys_glo
-  integer*4, dimension(2) :: local_node_num
+  integer*4, dimension(nn_loc) :: local_node_num
 
-  integer*4, dimension(:,:), allocatable, INTENT(OUT) :: locnode_buildID_map
+  !integer*4, dimension(:,:), allocatable  :: locnode_buildID_map   !INTENT(OUT)
 
   real*8, dimension(nn_loc) :: xs_loc, ys_loc, zs_loc
   real*8, dimension(nsdof) :: x_system_lst, y_system_lst, z_system_lst
@@ -68,7 +71,7 @@ subroutine MAKE_SYSTEM_POSITION_LGLNODES(nn_loc , local_node_num, cs_nnz_loc, cs
 
   call GET_MINVALUES(node_sys_glo, dist_system_glo, nsdof*mpi_np, node_sys_loc, nsdof, mpi_np)
   call MPI_BARRIER(mpi_comm, mpi_ierr)
-
+  
   ! Finding if this nearest node is common in multiple partitions
   node_counter_sdof_dum = 0
   do i = 1, nsdof
@@ -81,13 +84,14 @@ subroutine MAKE_SYSTEM_POSITION_LGLNODES(nn_loc , local_node_num, cs_nnz_loc, cs
       node_counter_loc(nearestnode_locnum(i)) = node_counter_loc(nearestnode_locnum(i)) + 1
     endif
   enddo
-
+  
   ! Finiding LGL nodes that are shared by different partitions
+  allocate(node_counter_sdof(nsdof))
   call MPI_BARRIER(mpi_comm, mpi_ierr)
   call MPI_ALLREDUCE(node_counter_sdof_dum, node_counter_sdof, nsdof, SPEED_INTEGER, MPI_SUM, mpi_comm, mpi_ierr)
 
-  max_nsdof_per_node = MAXVAL(node_counter_loc) + 1  ! num on SDOFs allocated to a LGL node, id of 1st SDOF, id of 2nd SDOF etc...
-  allocate(locnode_buildID_map(nn_loc, max_nsdof_per_node))
+  max_nsdof_per_node = MAXVAL(node_counter_loc)  ! num on SDOFs allocated to a LGL node, id of 1st SDOF, id of 2nd SDOF etc...
+  allocate(locnode_buildID_map(nn_loc, max_nsdof_per_node + 1))
   locnode_buildID_map = 0
 
   ! Mapping SDOFs to nearest LGL nodes; 
@@ -99,8 +103,9 @@ subroutine MAKE_SYSTEM_POSITION_LGLNODES(nn_loc , local_node_num, cs_nnz_loc, cs
     if (nearestnode_locnum(i).ne.0) then
       locnode_buildID_map(nearestnode_locnum(i), 1) = locnode_buildID_map(nearestnode_locnum(i), 1) + 1
       locnode_buildID_map(nearestnode_locnum(i), locnode_buildID_map(nearestnode_locnum(i), 1)+1 ) = sys_label(i)
+      write(*,*) mpi_id, i, sys_label(i),'; node_counter = ', node_counter_sdof, '; coords = ', xs_loc(nearestnode_locnum(i)), &
+      ys_loc(nearestnode_locnum(i)), zs_loc(nearestnode_locnum(i)) 
     endif
-    
   enddo
 
 end subroutine MAKE_SYSTEM_POSITION_LGLNODES

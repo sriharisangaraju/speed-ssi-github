@@ -743,6 +743,7 @@ module SDOF_SYSTEM      !!! AH, SS
         real*8, dimension(2) :: fs, fb  !< structure and basement shear force
         real*8, dimension(3) :: SDOFIDR, dSDOFIDR, SDOFItF     !< drift, drift variation, interaction force with ground in x and y direction (Ku in linear elastic case)
         real*8, dimension(3) :: tempSDOFU0,tempSDOFU1,tempSDOFU,tempSDOFA1     !< displacement at time n-1, n, n+1, absolute acceleration at time n
+        real*8, dimension(3) :: tempSDOFRA1     ! Relative Acceleration of lumped mass in SDOF
         real*8 :: FY, FH, FU, EY, EH, EU
         integer*4,dimension(3) :: branch, damage     !<defines the branch of the constitutive law and the eventual damage state
         integer*4 :: SFS     !< 1-consider soil-foundation-structure interaction, 0-don't
