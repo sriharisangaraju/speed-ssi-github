@@ -34,7 +34,7 @@
            
 
       real*8 function GET_FUNC_VALUE(nb_fnc, type_fnc, ind_fnc, &
-                                     data_fnc, nb_data_fnc, id_fnc, time, dist,vel)
+                                     data_fnc, nb_data_fnc, id_fnc, time, dist,vel,timeit)
 
 
 
@@ -43,7 +43,7 @@
       implicit none
       
       integer*4 :: nb_fnc,id_fnc,i,nb_data_fnc, idx !nb_timeval 
-      integer*4 :: ind_start, ind_end
+      integer*4 :: ind_start, ind_end, timeit
       
       integer*4, dimension(nb_fnc) :: type_fnc
       integer*4, dimension(nb_fnc +1) :: ind_fnc
@@ -142,6 +142,9 @@
 !                 return
 !              endif    
 !           enddo
+          
+         case(773) !!! time series given in file AH
+            GET_FUNC_VALUE = data_fnc(ind_fnc(id_fnc) + timeit)
 
          case(4)
            t_t0 = time - data_fnc(ind_fnc(id_fnc) +1)

@@ -48,6 +48,11 @@
                    i, j, k, is, in, id, istage, itime, &
                    ie, ielem, count_monitor, find_tag, icase, irand, isdof
                    
+! Debug SSI
+      ! character*70 :: file_getval_name
+      ! integer*4 :: file_getval_id
+      ! real*8 ::dum_ind
+
 ! Elapsed time print-out iteration divisor
       integer*4 :: it_divisor = 1000
 
@@ -177,6 +182,8 @@
  !     INITIALIZE OSCILLATOR AH
  !--------------------------------------------------------------------------
       if (SDOFnum.gt.0) then
+         !n_sdof is greater than 1 only for mpi_id =0
+         ! The force-calculations od SDOF are done only using mpi_id  = 0 process
          call READ_SDOF_INPUT_FILES
 
          allocate(SDOFinputD(3*SDOFnum))     ! base displacement
@@ -188,6 +195,17 @@
          allocate(SDOFforceinputbuffer(3*SDOFnum*mpi_np))
          
          call MAKE_SDOF_OUTPUT_FILES
+
+         !Debug - Writing files with values of Interaction forces at each time step - SS
+         ! if (mpi_id.eq.0) then
+         !    do isdof=1,SDOFnum
+         !       file_getval_id = 2433 + isdof 
+         !       write(file_getval_name,'(A12,I4.4,A4)') 'GETVAL_SDOF_', isdof, '.txt'
+         !       open(file_getval_id, file=file_getval_name, status='replace')
+         !       close(file_getval_id)
+         !    enddo
+         ! endif
+
       endif
 !---------------------------------------------------------------------------
 ! Travelling Load                                                                                
@@ -909,7 +927,7 @@
                        if(local_node_num(id) .eq. node_tra(i) .and. find_tag .ne. 0) then
                           iaz = 3*(id -1) +3; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +3)) * & 
                            GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,&
-                                          nfunc_data,fn,tt_int,dist_tra(i),val_traZ_el(find_tag,1))
+                                          nfunc_data,fn,tt_int,dist_tra(i),val_traZ_el(find_tag,1),its)
                           ! val_debug =   GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,&
                           !                                    nfunc_data,fn,tt_int,dist_tra(i),val_traZ_el(find_tag,1))
                                                                                                 
@@ -923,15 +941,15 @@
                      ! Point Source - SS
                      if    (Fel(fn,(3*(id -1) +1)) .ne. 0.d0) then
                            iaz = 3*(id -1) +1; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +1)) * & 
-                                       GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
+                                       GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0,its)
                      endif
                      if(Fel(fn,(3*(id -1) +2)) .ne. 0.d0) then
                            iaz = 3*(id -1) +2; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +2)) * & 
-                                    GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
+                                    GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0,its)
                      endif
                      if(Fel(fn,(3*(id -1) +3)) .ne. 0.d0) then 
                            iaz = 3*(id -1) +3; fe(iaz) = fe(iaz) + Fel(fn,(3*(id -1) +3)) * & 
-                                    GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0)
+                                    GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt_int,0,0,its)
                      endif
                   endif
                enddo
@@ -939,18 +957,19 @@
                !! SSI
                if ((SDOFnum.gt.0).and.(locnode_buildID_map(id,1).gt.0)) then
                   iaz = 3*(id -1); 
-                  do isdof=1, locnode_buildID_map(id,1)
+                  do i=1, locnode_buildID_map(id,1)
+                     isdof = locnode_buildID_map(id,i+1)
                      fe(iaz+1) = fe(iaz+1) + (1 /(node_counter_sdof(isdof))) * &
-                                    SDOFforceinput(3*(locnode_buildID_map(id,isdof+1) - 1) + 1)
+                                    SDOFforceinput(3*(isdof - 1) + 1)
                      
                      fe(iaz+2) = fe(iaz+2) + (1 /node_counter_sdof(isdof)) * &
-                                    SDOFforceinput(3*(locnode_buildID_map(id,isdof+1) - 1) + 2)
+                                    SDOFforceinput(3*(isdof - 1) + 2)
                      
                      fe(iaz+3) = fe(iaz+3) + (1 /node_counter_sdof(isdof)) * &
-                                    SDOFforceinput(3*(locnode_buildID_map(id,isdof+1) - 1) + 3)
+                                    SDOFforceinput(3*(isdof - 1) + 3)
                   enddo
                endif
-
+            
             enddo
 
             do i = 1,nrecv
@@ -2107,7 +2126,7 @@
       endif                                                                                        
 
       do fn = 1,nfunc
-            func_value(fn) = GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt2,0,0)
+            func_value(fn) = GET_FUNC_VALUE(nfunc,func_type,func_indx,func_data,nfunc_data,fn,tt2,0,0,its)
 !            write(*,*) tt2, func_value(fn)
       enddo
 !      read(*,*)
@@ -2290,6 +2309,16 @@
                         
       endif
 
+!---------------------------------------------------------------------------
+!     WRITE VTK files
+!---------------------------------------------------------------------------
+      ! if ((tt_int.ge.0.8).and.(tt_int.le.2.3)) then
+      !    if (mod(its,ndt_mon_lst) .eq. 0) then 
+      !       call WRITE_VTK_VOLUME_TIMESERIES(its, mpi_id, nnod_loc, local_node_num, nmat, sdeg_mat, &
+      !       xx_spx_loc, yy_spx_loc, zz_spx_loc, con_nnz_loc, con_spx_loc, u2, stress)
+      !    endif
+      ! endif
+
    !---------------------------------------------------------------------------
    !     COMPUTE INPUT OF SDOF SYSTEM
    !---------------------------------------------------------------------------
@@ -2326,16 +2355,27 @@
         call MPI_ALLREDUCE(SDOFinputD, SDOFrecv_temp, 3*SDOFnum, SPEED_DOUBLE, MPI_SUM, mpi_comm, mpi_ierr)
         SDOFinputD = SDOFrecv_temp;
         
+      !   !Debug - SSI - SS
+      !   if (mpi_id.eq.0) then
+      !    do isdof=1,SDOFnum
+      !       file_getval_id = 2433 + isdof 
+      !       write(file_getval_name,'(A12,I4.4,A4)') 'GETVAL_SDOF_', isdof, '.txt'
+      !       open(file_getval_id, file=file_getval_name, position='append')
+      !       dum_ind = 3*(isdof - 1) + 1
+      !       write(file_getval_id,*) tt_int, SDOFforceinput(dum_ind), SDOFinput(dum_ind), SDOFinputD(dum_ind)
+      !       close(file_getval_id)
+      !    enddo
+      !   endif
       endif
   
   
        !write(*,*) 'MPI ID :', mpi_id, ', gd (after):', SDOFinputD(1:3), 'ga (after): ', SDOFinput(1:3)
   
      !---------------------------------------------------------------------------
-     !     COMPUTE OUTPUT OF SDOF SYSTEM AH
-     ! we doing this calculations for all SDOFs in all processors? (Optimise?)
+     !     COMPUTE OUTPUT OF SDOF SYSTEM AH (distribute this calculations among mpi_processess in next versions)
      !---------------------------------------------------------------------------
       SDOFforceinput=0
+      ! This is only performed in process with mpi_id = 0
       if(n_sdof .gt. 0) then
         do I=1,n_sdof     !!! number of oscillators
   
@@ -2523,7 +2563,7 @@
          write(*,'(A)')'-------------------------------------------------------'
          write(*,'(A)')
       endif
-      
+
 !---------------------------------------------------------------------------
 !     WRITING PEAK GROUD MAP
 !---------------------------------------------------------------------------
