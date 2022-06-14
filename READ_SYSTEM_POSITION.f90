@@ -24,7 +24,7 @@
 subroutine READ_SYSTEM_POSITION()
 
   use speed_par
-  use SDOF_SYSTEM, only : SDOFnum
+  use SPEED_SCI, only : SDOFnum
 
   implicit none
 

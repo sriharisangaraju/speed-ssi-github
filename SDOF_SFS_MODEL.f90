@@ -26,7 +26,7 @@
 
 subroutine SDOF_SFS_MODEL(sID, gr_acc, direction)
 
-  use SDOF_SYSTEM
+  use SPEED_SCI
 
   implicit none
 
@@ -37,14 +37,15 @@ subroutine SDOF_SFS_MODEL(sID, gr_acc, direction)
   TN = 0; TN1 = 0; TN2 = 0; TN3 = 0; TN4 = 0; temp = 0; du = 0; df = 0; vec = 0
   a_old = sys(sID)%a(:,direction); v_old = sys(sID)%v(:,direction); u_old = sys(sID)%u(:,direction); f_old = sys(sID)%f(:,direction)
 
-  TN1(1) = sys(sID)%Ms*gr_acc(direction)
+  TN1(1) = sys(sID)%Ms(1,1)*gr_acc(direction)
   TN1(2) = sys(sID)%Mf*gr_acc(direction)
-  TN1(4) = (sys(sID)%Ms + sys(sID)%Mf)*gr_acc(3)
+  TN1(4) = (sys(sID)%Ms(1,1) + sys(sID)%Mf)*gr_acc(3)
 
   temp = (1 - 2*sys(sID)%beta_newmark)/(2*sys(sID)%beta_newmark)*a_old + 1/(sys(sID)%beta_newmark*sys(sID)%dt)*v_old
   TN2 = MATMUL(sys(sID)%MAT_M,temp)
 
-  temp = (sys(sID)%gamma_newmark - 2*sys(sID)%beta_newmark)/(2*sys(sID)%beta_newmark)*sys(sID)%dt*a_old + (sys(sID)%gamma_newmark - sys(sID)%beta_newmark)/(sys(sID)%beta_newmark)*v_old
+  temp = (sys(sID)%gamma_newmark - 2*sys(sID)%beta_newmark)/(2*sys(sID)%beta_newmark)*sys(sID)%dt*a_old + &
+          (sys(sID)%gamma_newmark - sys(sID)%beta_newmark)/(sys(sID)%beta_newmark)*v_old
   TN3 = MATMUL(sys(sID)%MAT_C,temp)
 
   TN4 = MATMUL(sys(sID)%MAT_KS,u_old)
@@ -69,9 +70,10 @@ subroutine SDOF_SFS_MODEL(sID, gr_acc, direction)
   sys(sID)%a(:,direction) = (2*sys(sID)%beta_newmark - 1)/(2*sys(sID)%beta_newmark)*a_old + &
     1/(sys(sID)%beta_newmark*sys(sID)%dt2)*(du - v_old*sys(sID)%dt)
 
-  sys(sID)%SDOFItF(direction) = sys(sID)%f(2,direction)
+  sys(sID)%IntForce(1,direction) = sys(sID)%f(2,direction)
 
-  sys(sID)%SDOFItF(3) = sys(sID)%f(4,direction)
+  ! UnComment this after verifying
+  !sys(sID)%SDOFItF(3) = sys(sID)%f(4,direction)
 
   return
 end subroutine SDOF_SFS_MODEL

@@ -722,42 +722,64 @@ end module binarysearch
 !> @version 1.0
 !> @brief Contains parameters for linear elastic SDOF
 
-module SDOF_SYSTEM      !!! AH, SS
+module SPEED_SCI      !!! AH, SS
 
       implicit none
     
       type system
         integer*4 :: ID      !< system ID
-        integer*4 :: ndt     !< ratio between soil and system time step
+
         real*8 :: TN         !< natural period of the system
+        integer*4 :: ndt, NDOF     !< ratio between soil and system time step
         real*8 :: dt, dt2    !< system time step (and its square)
+
+        integer*4 :: StructType   ! 1. SDOF, 2. MDOF, 3. 4-DOF with SSI
         integer*4 :: const_law    !< constitutive law (1-Linear Elastic, 2-Elastoplastic, 3-Trilinear)
-        real*8 :: Ms, Mf, J       !< structure mass, foundation mass, centroidal moment of inertia
+        integer*4 :: SFS          !< 1-consider soil-foundation-structure interaction, 0-don't
+        integer*4 :: ForceApplicationtype  ! Apply reactions from Building onto Soil assuming : 1-PointForce, 2-ShearStress over an Area of ground surface
+
+        real*8 :: height, Floor_h, T1, T2, Area       ! From GWs-group
+        real*8 :: Calpha, Cbeta
+        real*8, dimension (:,:), allocatable :: Ms, Ks, SysC, Ms_inv    !< Structual Mass, Stiffness, Damping Matrices
+        real*8, dimension(:,:,:), allocatable :: props
+        real*8, dimension (:,:), allocatable :: dval
+
         real*8, dimension(4,4) :: MAT_M, MAT_KS, MAT_KI, MAT_C, MAT_F, MAT_MCinv      !< mass, stiffness, soil-foundation stiffness and damping matrix for SFS interaction
-        real*8 :: Ks, height      !< structure stiffness matrix
+        real*8 :: Mf, J           ! Foundation Mass, Centroidal Moment of Inertia, Structural Height - For SFS system(?)
         real*8 :: K0, Kr, Kv      !< soil-foundation stiffness matrix
+        real*8 :: beta_newmark, gamma_newmark     !< coefficients for newmark method
+
         real*8 :: Hs, Ss          !< hardening and softening moduli
         real*8 :: CSI, Cs, C0, Cr, Cv     !< damping ratio and damping coeff for damping matrix
-        real*8 :: beta_newmark, gamma_newmark     !< coefficients for newmark method
-        real*8, dimension(4,2) :: u, v, a, f     !< displ, vel, acc for 4DOF implementation
+        
+        real*8, dimension(4,2) :: u, v, a, f     !< displ, vel, acc for 4-DOF implementation
         real*8, dimension(2) :: fs, fb  !< structure and basement shear force
-        real*8, dimension(3) :: SDOFIDR, dSDOFIDR, SDOFItF     !< drift, drift variation, interaction force with ground in x and y direction (Ku in linear elastic case)
-        real*8, dimension(3) :: tempSDOFU0,tempSDOFU1,tempSDOFU,tempSDOFA1     !< displacement at time n-1, n, n+1, absolute acceleration at time n
-        real*8, dimension(3) :: tempSDOFRA1     ! Relative Acceleration of lumped mass in SDOF
+        
+        real*8, dimension(:,:), allocatable :: IDR, variIDR, IntForce     !< drift, drift variation, interaction force with ground in x and y direction (Ku in linear elastic case)
+        real*8, dimension(:,:), allocatable :: MaxIDR
+        real*8, dimension(:,:), allocatable :: MDOFEt, MDOFspd
+        real*8, dimension(:,:,:), allocatable :: MDOFstatev
+        real*8, dimension(:,:), allocatable :: MDOFyield, MDOFstate, MDOFIDeath
+        real*8, dimension(:,:), allocatable :: tempU0,tempU1,tempU,tempA1     !< displacement at time n-1, n, n+1, absolute acceleration at time n
+        real*8, dimension(:,:), allocatable :: tempRA1     ! Relative Acceleration of lumped mass in SDOF
+        
         real*8 :: FY, FH, FU, EY, EH, EU
         integer*4,dimension(3) :: branch, damage     !<defines the branch of the constitutive law and the eventual damage state
-        integer*4 :: SFS     !< 1-consider soil-foundation-structure interaction, 0-don't
+        integer*4 :: flag_Minv
       end type system
     
       type(system),allocatable:: sys(:) !< SDOF system
-      integer*4 :: n_sdof, SDOFmon, SDOFnum ! SS - deleted common integers i, j
+      integer*4 :: bldinfo_fp, SDOFnum ! SS - deleted common integers i, j
+      integer*4:: n_bld                   ! SS -  Number of structures
+      integer*4 :: MaxDOF_glob, MaxDOF_loc
       integer*4, dimension(3) :: SDOFout      !< displ, acc, f_react
+      real*8 :: MasspArea, kclose, configtmp 
       real*8, dimension(:), allocatable :: ug1, ug2, ug3
       real*8, dimension(:,:), allocatable :: SDOFag, SDOFgd    !!! ground acc and displ
       real*8,dimension(:), allocatable :: SDOFinput, SDOFinputD, SDOFforceinput
       real*8,dimension(:), allocatable ::  SDOFinputbuffer, SDOFforceinputbuffer
     
-      character*100 :: SDOFinfo
+      character*100 :: BLDinfo
       character*100 :: SDOFdisplX, SDOFdisplY, SDOFdisplZ  !< SDOF displacement
       character*100 :: SDOFgrdisplX, SDOFgrdisplY, SDOFgrdisplZ  !< SDOF base displacement
       character*100 :: SDOFaccX, SDOFaccY, SDOFaccZ      !< SDOF total acceleration
@@ -773,6 +795,6 @@ module SDOF_SYSTEM      !!! AH, SS
       character*100 :: STRfX, STRfY, FNDfX, FNDfY     !< 4DOF superstructure and foundation shear force
       character*100 :: INTfX, INTfY, INTfZ      !< 4DOF interaction forces
     
-    end module SDOF_SYSTEM
+    end module SPEED_SCI
 
 

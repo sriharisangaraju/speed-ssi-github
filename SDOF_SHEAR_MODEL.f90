@@ -24,60 +24,105 @@
 !> @param[in] gr_acc        base acceleration
 !> @param[in] direction     direction of motion
 
-subroutine SDOF_SHEAR_MODEL (sID, gr_acc, direction)
+subroutine SDOF_SHEAR_MODEL (sID, ndof, gr_acc, direction)
 
-  use SDOF_SYSTEM
+  use SPEED_SCI
 
   implicit none
 
-  integer*4 :: sID, direction, Usign
-  real*8 :: e, de, s, SDOFPeff0, gr_acc, SDOFPeff
+  integer*4 :: sID, ndof, direction, Usign
+  integer*4 :: idof, i, j
+  real*8 :: gr_acc
+  real*8, dimension(ndof) :: e, de, s, sysPeff0, sysPeff
 
-  SDOFPeff = gr_acc*sys(sID)%Ms     !!!mass x (-u_g'') = inertial force from the ground acceleration
+  sysPeff0 = 0
 
-  SDOFPeff0=SDOFPeff-sys(sID)%SDOFItF(direction)      !!! SDOFItF = interaction force Ku(n)
+  do idof=1,ndof
+    sysPeff(idof) = gr_acc*sys(sID)%Ms(idof,idof)     !!!mass x (-u_g'') = inertial force from the ground acceleration
+  enddo
 
-  call CENTRAL_DIFFERENCE(sys(sID)%Ms, sys(sID)%Cs, sys(sID)%dt, &
-                          sys(sID)%tempSDOFU(direction), sys(sID)%tempSDOFU1(direction), &
-                          sys(sID)%tempSDOFU0(direction), SDOFPeff0)
+  if (ndof.gt.1) then
+    do idof=1,ndof-1
+      sysPeff0(idof) = sysPeff(idof) - sys(sID)%IntForce(idof,direction) + sys(sID)%IntForce(idof+1,direction)     !!! SDOFItF = interaction force Ku(n)
+    enddo
+  endif
+  sysPeff0(ndof) = sysPeff(ndof) - sys(sID)%IntForce(ndof,direction)
 
-                          !!! returns sys(sID)%tempSDOFU = displacement at time n+1 = Relative displacement of structure w.r.t. ground
+  ! returns sys(sID)%tempU = displacement at time n+1 = Relative displacement of structure w.r.t. ground
+  if (sys(sID)%StructType.eq.1) then
+    call CENTRAL_DIFFERENCE(ndof, sys(sID)%Ms, sys(sID)%Ms_inv, sys(sID)%Cs, sys(sID)%dt, &
+                            sys(sID)%tempU(1,direction), sys(sID)%tempU1(1,direction), &
+                            sys(sID)%tempU0(1,direction), sysPeff0, sys(sID)%flag_Minv )
+  else
+    call CENTRAL_DIFFERENCE(ndof, sys(sID)%Ms(1:ndof,1:ndof), sys(sID)%Ms_inv(1:ndof,1:ndof), sys(sID)%SysC(1:ndof,1:ndof), &
+                            sys(sID)%dt, sys(sID)%tempU(1:ndof,direction), sys(sID)%tempU1(1:ndof,direction), &
+                            sys(sID)%tempU0(1:ndof,direction), sysPeff0, sys(sID)%flag_Minv )
+  endif
 
+  ! Modify this for SSI - with MDOF (below code works for SSI-SDOF)
   if(sys(sID)%const_law.eq.3) then
-    if (sys(sID)%tempSDOFU(direction).ge.0.0) Usign = 1
-    if (sys(sID)%tempSDOFU(direction).lt.0.0) Usign = -1
-    if ((abs(sys(sID)%tempSDOFU(direction)).ge.sys(sID)%EU).or.(sys(sID)%damage(direction).eq.1)) &
-        sys(sID)%tempSDOFU(direction) = Usign*sys(sID)%EU
+    if (sys(sID)%tempU(1, direction).ge.0.0) Usign = 1
+    if (sys(sID)%tempU(1, direction).lt.0.0) Usign = -1
+    if ((abs(sys(sID)%tempU(1, direction)).ge.sys(sID)%EU).or.(sys(sID)%damage(direction).eq.1)) &
+        sys(sID)%tempU(1,direction) = Usign*sys(sID)%EU
   endif
 
-  sys(sID)%dSDOFIDR(direction)=sys(sID)%tempSDOFU(direction)-sys(sID)%SDOFIDR(direction)      !!! variation of base drift
-
-  sys(sID)%SDOFIDR(direction)=sys(sID)%tempSDOFU(direction)     !!! base drift
-
-  sys(sID)%tempSDOFA1(direction)=(sys(sID)%tempSDOFU(direction) + &
-     sys(sID)%tempSDOFU0(direction) - 2.d0*sys(sID)%tempSDOFU1(direction))/sys(sID)%dt2-gr_acc      !!! absolute acceleration AH
-
-  sys(sID)%tempSDOFRA1(direction)=(sys(sID)%tempSDOFU(direction) + &
-     sys(sID)%tempSDOFU0(direction) - 2.d0*sys(sID)%tempSDOFU1(direction))/sys(sID)%dt2      !!! Relative acceleration
-
-  sys(sID)%tempSDOFU0(direction)=sys(sID)%tempSDOFU1(direction)      !!! update values
-  sys(sID)%tempSDOFU1(direction)=sys(sID)%tempSDOFU(direction)
-  sys(sID)%tempSDOFU(direction)=0
-
-  e=sys(sID)%SDOFIDR(direction)
-  de=sys(sID)%dSDOFIDR(direction)
-  s=sys(sID)%SDOFItF(direction)
-
-  if (sys(sID)%const_law.eq.1) then
-    call LINEAR_ELASTIC(sys(sID)%Ks, s, de)      !!! elastic constitutive law
-  elseif (sys(sID)%const_law.eq.2) then
-    call PERFECTLY_PLASTIC(sys(sID)%Ks, s, de, sys(sID)%FY)      !!! elastoplastic constitutive law
-  elseif (sys(sID)%const_law.eq.3) then
-    call TRILINEAR(sys(sID)%Ks, sys(sID)%Hs, sys(sID)%Ss, s, de, e, sys(sID)%FY, sys(sID)%FH, sys(sID)%FU, sys(sID)%EY, &
-        sys(sID)%EH, sys(sID)%EU, sys(sID)%branch(direction), sys(sID)%damage(direction))      !!! trilinear constitutive law
+  ! Time Variation of Interstory Drift (IDR)
+  sys(sID)%variIDR(1,direction) = sys(sID)%tempU(1,direction) - sys(sID)%IDR(1,direction)
+  sys(sID)%IDR(1,direction)=sys(sID)%tempU(1,direction); 
+  if (sys(sID)%StructType.eq.2) then
+    do j=2,ndof
+        sys(sID)%variIDR(j,direction) = (sys(sID)%tempU(j,direction) - sys(sID)%tempU(j-1,direction)) - sys(sID)%IDR(j,direction)
+        sys(sID)%IDR(J,direction) = sys(sID)%tempU(j,direction) - sys(sID)%tempU(j-1,direction)
+    enddo
+    !Max IDR 
+    do j=1,ndof
+        sys(sID)%MaxIDR(j,direction) = max(sys(sID)%MaxIDR(j,direction), abs(sys(sID)%IDR(j,direction)/sys(sID)%Floor_h))
+    enddo
   endif
 
-  sys(sID)%SDOFItF(direction)=s
+  !!! Relative acceleration
+  sys(sID)%tempRA1(1:ndof,direction) = ( sys(sID)%tempU(1:ndof,direction) + sys(sID)%tempU0(1:ndof,direction) - &
+                                      2.d0*sys(sID)%tempU1(1:ndof, direction))/sys(sID)%dt2
+  !!! Absolute acceleration AH
+  sys(sID)%tempA1(1:ndof,direction) = sys(sID)%tempRA1(1:ndof,direction) - gr_acc   
+
+  ! Updating displacement Values
+  sys(sID)%tempU0(1:ndof,direction)=sys(sID)%tempU1(1:ndof,direction)
+  sys(sID)%tempU1(1:ndof,direction)=sys(sID)%tempU(1:ndof,direction)
+  sys(sID)%tempU(1:ndof,direction)=0
+
+  do idof=1,ndof
+      e(idof) = sys(sID)%IDR(idof,direction)
+      de(idof)= sys(sID)%variIDR(idof,direction)
+      s(idof) = sys(sID)%IntForce(idof,direction)
+
+      if (sys(sID)%StructType.eq.1) then
+          if (sys(sID)%const_law.eq.1) then
+            call LINEAR_ELASTIC(sys(sID)%Ks, s, de)      !!! elastic constitutive law
+          elseif (sys(sID)%const_law.eq.2) then
+            call PERFECTLY_PLASTIC(sys(sID)%Ks, s, de, sys(sID)%FY)      !!! elastoplastic constitutive law
+          elseif (sys(sID)%const_law.eq.3) then
+            call TRILINEAR(sys(sID)%Ks, sys(sID)%Hs, sys(sID)%Ss, s, de, e, sys(sID)%FY, sys(sID)%FH, sys(sID)%FU, sys(sID)%EY, &
+                sys(sID)%EH, sys(sID)%EU, sys(sID)%branch(direction), sys(sID)%damage(direction))      !!! trilinear constitutive law
+          endif
+      elseif (sys(sID)%StructType.eq.2) then
+
+        if (sys(sID)%const_law.eq.1) then
+          call LINEAR_ELASTIC(sys(sID)%props(idof,1,1), s(idof), de(idof))
+        elseif (sys(sID)%const_law.eq.2) then
+          if ((abs(sys(sID)%IDR(idof,direction))/sys(sID)%Floor_h).GT.sys(sID)%dval(idof,4)) then
+              sys(sID)%MDOFIDeath(idof,direction) = 1
+          endif
+          call ksteel02(sys(sID)%props(idof,1:10,1), s(idof), e(idof), de(idof), sys(sID)%MDOFEt(idof,direction), &
+                        sys(sID)%MDOFstatev(idof,1:11,direction), sys(sID)%MDOFspd(idof,direction), &
+                        sys(sID)%MDOFyield(idof,direction), sys(sID)%MDOFIDeath(idof,direction), sys(sID)%Ms(1:ndof,1:ndof), ndof)
+        endif
+      endif
+
+      sys(sID)%IntForce(idof,direction) = s(idof)
+
+  enddo
 
   return
 end subroutine SDOF_SHEAR_MODEL

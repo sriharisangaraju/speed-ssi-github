@@ -76,7 +76,7 @@
                              b_failoncoeffs, b_setuponly, b_failCFL, b_instabilitycontrol, instability_maxval)
 
       use speed_exit_codes
-      use SDOF_SYSTEM, only : SDOFout
+      use SPEED_SCI, only : SDOFout
 
       implicit none
       

@@ -23,20 +23,20 @@
 
 subroutine MAKE_SDOF_OUTPUT_FILES
 
-  use SDOF_SYSTEM
+  use SPEED_SCI
   use speed_timeloop
   use speed_par
 
   implicit none
   character*100 :: file
-  integer*4 :: temp, sfs, ii
+  integer*4 :: temp, sfs, ii, SDOFmon
 
   SDOFmon = 701 + mpi_id
 
-  if (n_sdof.gt.0) then
+  if (n_bld.gt.0) then
 
     sfs = 0
-    do ii = 1, n_sdof
+    do ii = 1, n_bld
       temp = sys(ii)%SFS
       if(temp.eq.1) sfs = temp
     enddo

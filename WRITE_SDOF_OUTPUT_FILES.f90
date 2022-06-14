@@ -24,17 +24,17 @@
 
 subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
 
-  use SDOF_SYSTEM
+  use SPEED_SCI
   use speed_timeloop
-	implicit none
-
-	integer*4 :: sfs, temp, i
+  
+  implicit none
+  integer*4 :: sfs, temp, i, SDOFmon
   real*8 :: tt1tmp
 
   SDOFmon=10*(mpi_id+1)+7
 
   sfs = 0
-  do i = 1, n_sdof
+  do i = 1, n_bld
     temp = sys(i)%SFS
     if(temp.eq.1) sfs = temp
   enddo
@@ -42,56 +42,56 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
   if (SDOFout(1).eq.1) then
     ! Relative Displacement
     if (sfs.eq.0) then
-      open(SDOFmon,file=SDOFdisplX,position='append')			!!! x displacement
+      open(SDOFmon,file=SDOFdisplX,position='append')     !!! x displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%SDOFIDR(1)
+      do i=1,n_bld
+        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempU1(sys(i)%NDOF,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=SDOFdisplY,position='append')			!!! y displacement
+      open(SDOFmon,file=SDOFdisplY,position='append')     !!! y displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%SDOFIDR(2)
+      do i=1,n_bld
+        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempU1(sys(i)%NDOF,2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=SDOFdisplZ,position='append')			!!! z displacement
+      open(SDOFmon,file=SDOFdisplZ,position='append')     !!! z displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%SDOFIDR(3)
+      do i=1,n_bld
+        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempU1(sys(i)%NDOF,3)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
+
 
       !!! soil displacement
-
-      open(SDOFmon,file=SDOFgrdisplX,position='append')			!!! x displacement
+      open(SDOFmon,file=SDOFgrdisplX,position='append')     !!! x displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         write(SDOFmon,"(E16.7)",advance='NO') SDOFgd(i,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=SDOFgrdisplY,position='append')			!!! y displacement
+      open(SDOFmon,file=SDOFgrdisplY,position='append')     !!! y displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         write(SDOFmon,"(E16.7)",advance='NO') SDOFgd(i,2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=SDOFgrdisplZ,position='append')			!!! z displacement
+      open(SDOFmon,file=SDOFgrdisplZ,position='append')     !!! z displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         write(SDOFmon,"(E16.7)",advance='NO') SDOFgd(i,3)
       enddo
 
@@ -99,256 +99,257 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       close(SDOFmon)
     elseif(sfs.eq.1) then
 
-      open(SDOFmon,file=STRdisplX,position='append')			!!! structure x displacement
+      open(SDOFmon,file=STRdisplX,position='append')      !!! structure x displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%u(1,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=STRdisplY,position='append')			!!! structure y displacement
+      open(SDOFmon,file=STRdisplY,position='append')      !!! structure y displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%u(1,2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=GRDdisplX,position='append')			!!! soil x displacement
+      open(SDOFmon,file=GRDdisplX,position='append')      !!! soil x displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') SDOFgd(i,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=GRDdisplY,position='append')			!!! soil y displacement
+      open(SDOFmon,file=GRDdisplY,position='append')      !!! soil y displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') SDOFgd(i,2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=GRDdisplZ,position='append')			!!! soil z displacement
+      open(SDOFmon,file=GRDdisplZ,position='append')      !!! soil z displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') SDOFgd(i,3)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDdisplX,position='append')			!!! foundation x displacement
+      open(SDOFmon,file=FNDdisplX,position='append')      !!! foundation x displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%u(2,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDdisplY,position='append')			!!! foundation y displacement
+      open(SDOFmon,file=FNDdisplY,position='append')      !!! foundation y displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%u(2,2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDdisplRX,position='append')			!!! foundation rotation from x motion
+      open(SDOFmon,file=FNDdisplRX,position='append')     !!! foundation rotation from x motion
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%u(3,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDdisplRY,position='append')			!!! foundation rotation from y motion
+      open(SDOFmon,file=FNDdisplRY,position='append')     !!! foundation rotation from y motion
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%u(3,2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDdisplZX,position='append')			!!! foundation z displacement from x motion
+      open(SDOFmon,file=FNDdisplZX,position='append')     !!! foundation z displacement from x motion
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%u(4,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDdisplZY,position='append')			!!! foundation z displacement from y motion
+      open(SDOFmon,file=FNDdisplZY,position='append')     !!! foundation z displacement from y motion
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%u(4,2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
     endif
-	endif
+  endif
+
 
   if (SDOFout(2).eq.1) then
 
     if(sfs.eq.0) then
       !!! relative acceleration - SS
 
-      open(SDOFmon,file=SDOFaccX,position='append')			!!! x acceleration
+      open(SDOFmon,file=SDOFaccX,position='append')     !!! x acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempSDOFRA1(1)
+      do i=1,n_bld
+        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempRA1(sys(i)%NDOF,1)
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=SDOFaccY,position='append')			!!! y acceleration
+      open(SDOFmon,file=SDOFaccY,position='append')     !!! y acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempSDOFRA1(2)
+      do i=1,n_bld
+        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempRA1(sys(i)%NDOF,2)
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=SDOFaccZ,position='append')			!!! z acceleration
+      open(SDOFmon,file=SDOFaccZ,position='append')     !!! z acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempSDOFRA1(3)
+      do i=1,n_bld
+        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempRA1(sys(i)%NDOF,3)
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
+
 
       !!! soil acceleration
-
-      open(SDOFmon,file=SDOFgraccX,position='append')			!!! x ground acceleration
+      open(SDOFmon,file=SDOFgraccX,position='append')     !!! x ground acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         write(SDOFmon,"(E16.7)",advance='NO') -SDOFag(i,1)
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=SDOFgraccY,position='append')			!!! y ground acceleration
+      open(SDOFmon,file=SDOFgraccY,position='append')     !!! y ground acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         write(SDOFmon,"(E16.7)",advance='NO') -SDOFag(i,2)
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=SDOFgraccZ,position='append')			!!! y ground acceleration
+      open(SDOFmon,file=SDOFgraccZ,position='append')     !!! y ground acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         write(SDOFmon,"(E16.7)",advance='NO') -SDOFag(i,3)
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
     elseif(sfs.eq.1) then
 
-      open(SDOFmon,file=STRaccX,position='append')			!!! structure x acceleration
+      open(SDOFmon,file=STRaccX,position='append')      !!! structure x acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%a(1,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=STRaccY,position='append')			!!! structure y acceleration
+      open(SDOFmon,file=STRaccY,position='append')      !!! structure y acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%a(1,2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=GRDaccX,position='append')			!!! soil x acceleration
+      open(SDOFmon,file=GRDaccX,position='append')      !!! soil x acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') -SDOFag(i,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=GRDaccY,position='append')			!!! soil y acceleration
+      open(SDOFmon,file=GRDaccY,position='append')      !!! soil y acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') -SDOFag(i,2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=GRDaccZ,position='append')			!!! soil z acceleration
+      open(SDOFmon,file=GRDaccZ,position='append')      !!! soil z acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') -SDOFag(i,3)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDaccX,position='append')			!!! foundation x acceleration
+      open(SDOFmon,file=FNDaccX,position='append')      !!! foundation x acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%a(2,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDaccY,position='append')			!!! foundation y acceleration
+      open(SDOFmon,file=FNDaccY,position='append')      !!! foundation y acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%a(2,2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDaccRX,position='append')			!!! foundation rocking acceleration from x motion
+      open(SDOFmon,file=FNDaccRX,position='append')     !!! foundation rocking acceleration from x motion
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%a(3,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDaccRY,position='append')			!!! foundation rocking acceleration from y motion
+      open(SDOFmon,file=FNDaccRY,position='append')     !!! foundation rocking acceleration from y motion
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%a(3,2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDaccZX,position='append')			!!! foundation z acceleration from x motion
+      open(SDOFmon,file=FNDaccZX,position='append')     !!! foundation z acceleration from x motion
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%a(4,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDaccZY,position='append')			!!! foundation z acceleration from y motion
+      open(SDOFmon,file=FNDaccZY,position='append')     !! foundation z acceleration from y motion
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%a(4,2)
       enddo
 
@@ -360,86 +361,86 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
   if (SDOFout(3).eq.1) then
 
     if(sfs.eq.0) then
-      open(SDOFmon,file=SDOFfX,position='append')			!!! x interaction force
+      open(SDOFmon,file=SDOFfX,position='append')     !!! x interaction force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         write(SDOFmon,"(E16.7)",advance='NO') SDOFforceinput(3*(i-1)+1)
       end do
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=SDOFfY,position='append')			!!! y interaction force
+      open(SDOFmon,file=SDOFfY,position='append')     !!! y interaction force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         write(SDOFmon,"(E16.7)",advance='NO') SDOFforceinput(3*(i-1)+2)
       end do
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=SDOFfZ,position='append')			!!! z interaction force
+      open(SDOFmon,file=SDOFfZ,position='append')     !!! z interaction force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         write(SDOFmon,"(E16.7)",advance='NO') SDOFforceinput(3*(i-1)+3)
       end do
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
     elseif(sfs.eq.1) then
 
-      open(SDOFmon,file=STRfX,position='append')			!!! structure x force
+      open(SDOFmon,file=STRfX,position='append')      !!! structure x force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%fs(1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=STRfY,position='append')			!!! structure y force
+      open(SDOFmon,file=STRfY,position='append')      !!! structure y force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%fs(2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDfX,position='append')			!!! foundation x shear force
+      open(SDOFmon,file=FNDfX,position='append')      !!! foundation x shear force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%fb(1)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=FNDfY,position='append')			!!! foundation y shear force
+      open(SDOFmon,file=FNDfY,position='append')      !!! foundation y shear force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') sys(i)%fb(2)
       enddo
 
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=INTfX,position='append')			!!! x interaction force
+      open(SDOFmon,file=INTfX,position='append')      !!! x interaction force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') SDOFforceinput(3*(i-1)+1)
       end do
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=INTfY,position='append')			!!! y interaction force
+      open(SDOFmon,file=INTfY,position='append')      !! y interaction force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') SDOFforceinput(3*(i-1)+2)
       end do
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
 
-      open(SDOFmon,file=INTfZ,position='append')			!!! z interaction force
+      open(SDOFmon,file=INTfZ,position='append')      !!! z interaction force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
-      do i=1,n_sdof
+      do i=1,n_bld
         if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') SDOFforceinput(3*(i-1)+3)
       end do
       write(SDOFmon,"(A1)") " "

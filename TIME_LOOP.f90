@@ -29,7 +29,7 @@
       use max_var
       use DGJUMP
       use speed_timeloop
-      use SDOF_SYSTEM      !SSI-AH
+      use SPEED_SCI
 
       implicit none
 
@@ -182,7 +182,7 @@
  !     INITIALIZE OSCILLATOR AH
  !--------------------------------------------------------------------------
       if (SDOFnum.gt.0) then
-         !n_sdof is greater than 1 only for mpi_id =0
+         !n_bld is greater than 1 only for mpi_id =0
          ! The force-calculations od SDOF are done only using mpi_id  = 0 process
          call READ_SDOF_INPUT_FILES
 
@@ -2372,20 +2372,20 @@
        !write(*,*) 'MPI ID :', mpi_id, ', gd (after):', SDOFinputD(1:3), 'ga (after): ', SDOFinput(1:3)
   
      !---------------------------------------------------------------------------
-     !     COMPUTE OUTPUT OF SDOF SYSTEM AH (distribute this calculations among mpi_processess in next versions)
+     !     COMPUTE OUTPUT OF SDOF/MDOF SYSTEM (distribute this calculations among mpi_processess in next versions)
      !---------------------------------------------------------------------------
       SDOFforceinput=0
       ! This is only performed in process with mpi_id = 0
-      if(n_sdof .gt. 0) then
-        do I=1,n_sdof     !!! number of oscillators
+      if(n_bld .gt. 0) then
+        do I=1,n_bld     !!! number of oscillators
   
           SDOFag(I,1:3)=(-1.d0)*SDOFinput((3*(I-1)+1):(3*(I-1)+3))    !!! base acceleration
           SDOFgd(I,1:3)=SDOFinputD((3*(I-1)+1):(3*(I-1)+3))   !!! base displacement
           
           do j=1,sys(I)%ndt
             if(sys(I)%SFS.eq.0) then
-              call SDOF_SHEAR_MODEL(I,SDOFag(I,1),1)     !!! direction x
-              call SDOF_SHEAR_MODEL(I,SDOFag(I,2),2)     !!! direction y
+              call SDOF_SHEAR_MODEL(I, sys(I)%NDOF, SDOFag(I,1),1)     !!! direction x
+              call SDOF_SHEAR_MODEL(I, sys(I)%NDOF, SDOFag(I,2),2)     !!! direction y
               !call SDOF_SHEAR_MODEL(I,SDOFag(I,3),3)     !!! direction z
             elseif (sys(I)%SFS.eq.1) then
               call SDOF_SFS_MODEL(I,SDOFag(I,:),1)      !!! direction x
@@ -2393,16 +2393,16 @@
             endif
           enddo
   
-          SDOFforceinput((3*(I-1)+1):(3*(I-1)+3))=sys(I)%SDOFItF      !!! Interaction force (Ku)
+          SDOFforceinput((3*(I-1)+1):(3*(I-1)+3))=sys(I)%IntForce(1,1:3)      !!! Interaction force (Ku)
         enddo
   
         if(mod(its,ndt_mon_lst) .eq. 0) then
           call WRITE_SDOF_OUTPUT_FILES(tt1)
         endif
-      endif   !n_sdof.gt.0
+      endif   !n_bld.gt.0
   
      !---------------------------------------------------------------------------
-     !     EXCHANGE FORCE OUTPUT OF SDOF SYSTEM AH
+     !     EXCHANGE FORCE OUTPUT OF SDOF/MDOF SYSTEM
      !---------------------------------------------------------------------------
       
       if (SDOFnum.gt.0) then
@@ -2610,7 +2610,7 @@
       if(nload_traZ_el .gt. 0)  deallocate(node_tra, dist_tra)
       
       !!! AH
-      if(n_sdof.gt.0) then
+      if(n_bld.gt.0) then
          deallocate(sys)
          deallocate(SDOFag,SDOFgd)
       endif

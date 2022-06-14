@@ -23,34 +23,45 @@
 
 subroutine READ_SDOF_INPUT_FILES
 
-  use SDOF_SYSTEM
+  use SPEED_SCI
   use speed_timeloop
   use speed_par, only : filename, sdof_file
 
   implicit none
+  integer*4 :: unit_file
 
-  SDOFmon=701+mpi_id
+  bldinfo_fp=701+mpi_id
 
-  n_sdof = 0
+  n_bld = 0
 
   if ((SDOFnum.gt.0).and.(mpi_id.eq.0)) then
+    
+    ! Reading Config File - Damping Type, Unit Mass of building
+    open(unit_file,file='Config.txt')
+    read(unit_file,*)
+    read(unit_file,*) configtmp,MasspArea
+    read(unit_file,*) kclose
+    close(unit_file)
 
-    filename="SDOFINFO.txt"
+    if(kclose.ne.0) kclose=1.d0
+
+    ! Reading BLDINFO.txt file
+    filename="BLDINFO.txt"
 
     if(len_trim(sdof_file) .ne. 70) then
-      SDOFinfo = sdof_file(1:len_trim(sdof_file)) // '/' // filename
+      BLDinfo = sdof_file(1:len_trim(sdof_file)) // '/' // filename
     else
-      SDOFinfo = filename
+      BLDinfo = filename
     endif
 
-    open(SDOFmon,file=SDOFinfo)
-    read(SDOFmon,*) n_sdof
-    close(SDOFmon)
+    open(bldinfo_fp,file=BLDinfo)
+    read(bldinfo_fp,*) n_bld
+    close(bldinfo_fp)
 
-    allocate(sys(n_sdof))			!!! SDOF system
-    allocate(SDOFag(n_sdof,3),SDOFgd(n_sdof,3))
-    SDOFag = 0; SDOFgd = 0
-    call MAKE_SDOF_SYSTEM(SDOFinfo, deltat, mpi_id)
+    allocate(sys(n_bld))  !!! SDOF system
+    allocate(SDOFag(n_bld,3),SDOFgd(n_bld,3))
+    SDOFag = 0; SDOFgd = 0;
+    call MAKE_SDOF_SYSTEM(BLDinfo, deltat, mpi_id)
 
   endif
 
