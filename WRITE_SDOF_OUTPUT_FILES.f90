@@ -28,8 +28,9 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
   use speed_timeloop
   
   implicit none
-  integer*4 :: sfs, temp, i, SDOFmon
+  integer*4 :: sfs, temp, i, SDOFmon, jdof
   real*8 :: tt1tmp
+  character*32 :: fmt_spec
 
   SDOFmon=10*(mpi_id+1)+7
 
@@ -45,7 +46,12 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFdisplX,position='append')     !!! x displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempU1(sys(i)%NDOF,1)
+        if (flag_outAtAllDOFs.eq.1) then
+          write(fmt_spec,'(A1, I0, A6)') '(', sys(i)%NDOF, 'E16.7)'
+          write(SDOFmon,fmt_spec,advance='NO') (sys(i)%tempU1(jdof,1), jdof=1,sys(i)%NDOF)
+        else
+          write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempU1(sys(i)%NDOF,1)
+        endif
       enddo
 
       write(SDOFmon,"(A1)") " "
@@ -54,7 +60,12 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFdisplY,position='append')     !!! y displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempU1(sys(i)%NDOF,2)
+        if (flag_outAtAllDOFs.eq.1) then
+          write(fmt_spec,'(A1, I0, A6)') '(', sys(i)%NDOF, 'E16.7)'
+          write(SDOFmon,fmt_spec,advance='NO') (sys(i)%tempU1(jdof,2), jdof=1,sys(i)%NDOF)
+        else
+          write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempU1(sys(i)%NDOF,2)
+        endif
       enddo
 
       write(SDOFmon,"(A1)") " "
@@ -63,7 +74,12 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFdisplZ,position='append')     !!! z displacement
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempU1(sys(i)%NDOF,3)
+          if (flag_outAtAllDOFs.eq.1) then
+            write(fmt_spec,'(A1, I0, A6)') '(', sys(i)%NDOF, 'E16.7)'
+            write(SDOFmon,fmt_spec,advance='NO') (sys(i)%tempU1(jdof,3), jdof=1,sys(i)%NDOF)
+          else
+            write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempU1(sys(i)%NDOF,3)
+          endif
       enddo
 
       write(SDOFmon,"(A1)") " "
@@ -364,7 +380,12 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFfX,position='append')     !!! x interaction force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        write(SDOFmon,"(E16.7)",advance='NO') SDOFforceinput(3*(i-1)+1)
+        if (flag_outAtAllDOFs.eq.1) then
+          write(fmt_spec,'(A1, I0, A6)') '(', sys(i)%NDOF, 'E16.7)'
+          write(SDOFmon,fmt_spec,advance='NO') (sys(i)%IntForce(jdof,1), jdof=1,sys(i)%NDOF)
+        else
+          write(SDOFmon,"(E16.7)",advance='NO') sys(i)%IntForce(sys(i)%NDOF,1)
+        endif
       end do
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
@@ -372,7 +393,12 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFfY,position='append')     !!! y interaction force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        write(SDOFmon,"(E16.7)",advance='NO') SDOFforceinput(3*(i-1)+2)
+        if (flag_outAtAllDOFs.eq.1) then
+          write(fmt_spec,'(A1, I0, A6)') '(', sys(i)%NDOF, 'E16.7)'
+          write(SDOFmon,fmt_spec,advance='NO') (sys(i)%IntForce(jdof,2), jdof=1,sys(i)%NDOF)
+        else
+          write(SDOFmon,"(E16.7)",advance='NO')sys(i)%IntForce(sys(i)%NDOF,2)
+        endif
       end do
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
@@ -380,7 +406,12 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFfZ,position='append')     !!! z interaction force
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        write(SDOFmon,"(E16.7)",advance='NO') SDOFforceinput(3*(i-1)+3)
+        if (flag_outAtAllDOFs.eq.1) then
+          write(fmt_spec,'(A1, I0, A6)') '(', sys(i)%NDOF, 'E16.7)'
+          write(SDOFmon,fmt_spec,advance='NO') (sys(i)%IntForce(jdof,3), jdof=1,sys(i)%NDOF)
+        else
+          write(SDOFmon,"(E16.7)",advance='NO')sys(i)%IntForce(sys(i)%NDOF,3)
+        endif
       end do
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)

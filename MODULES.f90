@@ -733,9 +733,9 @@ module SPEED_SCI      !!! AH, SS
         integer*4 :: ndt, NDOF     !< ratio between soil and system time step
         real*8 :: dt, dt2    !< system time step (and its square)
 
-        integer*4 :: StructType   ! 1. SDOF, 2. MDOF, 3. 4-DOF with SSI
+        integer*4 :: StructType   ! 1. SDOF, 2. MDOF
         integer*4 :: const_law    !< constitutive law (1-Linear Elastic, 2-Elastoplastic, 3-Trilinear)
-        integer*4 :: SFS          !< 1-consider soil-foundation-structure interaction, 0-don't
+        integer*4 :: SFS          !< 1-consider soil-foundation-structure interaction (4-DOF with SSI), 0-don't
         integer*4 :: ForceApplicationtype  ! Apply reactions from Building onto Soil assuming : 1-PointForce, 2-ShearStress over an Area of ground surface
 
         real*8 :: height, Floor_h, T1, T2, Area       ! From GWs-group
@@ -769,11 +769,14 @@ module SPEED_SCI      !!! AH, SS
       end type system
     
       type(system),allocatable:: sys(:) !< SDOF system
-      integer*4 :: bldinfo_fp, SDOFnum ! SS - deleted common integers i, j
-      integer*4:: n_bld                   ! SS -  Number of structures
+      integer*4 :: bldinfo_fp, SDOFnum ! SS - deleted common integers i, j; SDOFnum - related to oscillator numbers in SYS.input file
+      integer*4:: n_bld                ! SS -  Number of structures - Seen in BLDInfo.txt file - Currently n_bld is non zero only in mpi_id = 0. 
+                                       ! i.e. calculations for all the structures is being done only in one processor. Need to fing 
       integer*4 :: MaxDOF_glob, MaxDOF_loc
       integer*4, dimension(3) :: SDOFout      !< displ, acc, f_react
+      integer*4 :: flag_outAtAllDOFs
       real*8 :: MasspArea, kclose, configtmp 
+      logical :: isConfigPresent
       real*8, dimension(:), allocatable :: ug1, ug2, ug3
       real*8, dimension(:,:), allocatable :: SDOFag, SDOFgd    !!! ground acc and displ
       real*8,dimension(:), allocatable :: SDOFinput, SDOFinputD, SDOFforceinput

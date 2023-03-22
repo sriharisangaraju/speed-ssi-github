@@ -76,7 +76,7 @@
                              b_failoncoeffs, b_setuponly, b_failCFL, b_instabilitycontrol, instability_maxval)
 
       use speed_exit_codes
-      use SPEED_SCI, only : SDOFout
+      use SPEED_SCI, only : SDOFout, flag_outAtAllDOFs
 
       implicit none
       
@@ -122,7 +122,7 @@
       im = 0;       is = 0;            itime = 0;
       n_pgm = 0;    monfile_pgm = 0                 
       n_lst = 0;    monfile_lst = 0   
-      s_lst = 0;    sysfile_lst = 0;   SDOFout = 0;     
+      s_lst = 0;    sysfile_lst = 0;   SDOFout = 0;   flag_outAtAllDOFs = 0;
       n_testcase = 0;          
 
       time_err = 0      
@@ -222,10 +222,10 @@
 
            case('OPTIOUT')
             read(inline(ileft:iright),*) option_out_var(1),option_out_var(2),&  
-                        option_out_var(3), option_out_var(4),option_out_var(5),option_out_var(6) 
+                        option_out_var(3), option_out_var(4),option_out_var(5),option_out_var(6)
 
            case('SDOFOUT')  !!! AH
-            read(inline(ileft:iright),*) SDOFout(1),SDOFout(2),SDOFout(3)
+            read(inline(ileft:iright),*) flag_outAtAllDOFs, SDOFout(1),SDOFout(2),SDOFout(3)
                         
            case('TIMEERR') 
             itime = itime + 1                

@@ -37,13 +37,15 @@ subroutine READ_SDOF_INPUT_FILES
   if ((SDOFnum.gt.0).and.(mpi_id.eq.0)) then
     
     ! Reading Config File - Damping Type, Unit Mass of building
-    open(unit_file,file='Config.txt')
-    read(unit_file,*)
-    read(unit_file,*) configtmp,MasspArea
-    read(unit_file,*) kclose
-    close(unit_file)
-
-    if(kclose.ne.0) kclose=1.d0
+    INQUIRE(FILE="Config.txt", EXIST=isConfigPresent)
+    if (isConfigPresent) then
+      open(unit_file,file='Config.txt')
+      read(unit_file,*)
+      read(unit_file,*) configtmp,MasspArea
+      read(unit_file,*) kclose
+      close(unit_file)
+      if(kclose.ne.0) kclose=1.d0
+    endif
 
     ! Reading BLDINFO.txt file
     filename="BLDINFO.txt"

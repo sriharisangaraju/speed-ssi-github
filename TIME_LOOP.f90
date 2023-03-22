@@ -49,8 +49,8 @@
                    ie, ielem, count_monitor, find_tag, icase, irand, isdof
                    
 ! Debug SSI
-      ! character*70 :: file_getval_name
-      ! integer*4 :: file_getval_id
+      character*70 :: file_getval_name
+      integer*4 :: file_getval_id
       ! real*8 ::dum_ind
 
 ! Elapsed time print-out iteration divisor
@@ -197,14 +197,14 @@
          call MAKE_SDOF_OUTPUT_FILES
 
          !Debug - Writing files with values of Interaction forces at each time step - SS
-         ! if (mpi_id.eq.0) then
-         !    do isdof=1,SDOFnum
-         !       file_getval_id = 2433 + isdof 
-         !       write(file_getval_name,'(A12,I4.4,A4)') 'GETVAL_SDOF_', isdof, '.txt'
-         !       open(file_getval_id, file=file_getval_name, status='replace')
-         !       close(file_getval_id)
-         !    enddo
-         ! endif
+         if (mpi_id.eq.0) then
+            do isdof=1,SDOFnum
+               file_getval_id = 2433 + isdof 
+               write(file_getval_name,'(A12,I4.4,A4)') 'GETVAL_SDOF_', isdof, '.txt'
+               open(file_getval_id, file=file_getval_name, status='replace')
+               close(file_getval_id)
+            enddo
+         endif
 
       endif
 !---------------------------------------------------------------------------
@@ -2343,7 +2343,6 @@
      !---------------------------------------------------------------------------
   
       if (SDOFnum.gt.0) then
-  
         ! base acceleration
         SDOFrecv_temp = 0;
         call MPI_BARRIER(mpi_comm, mpi_ierr)
@@ -2356,16 +2355,16 @@
         SDOFinputD = SDOFrecv_temp;
         
       !   !Debug - SSI - SS
-      !   if (mpi_id.eq.0) then
-      !    do isdof=1,SDOFnum
-      !       file_getval_id = 2433 + isdof 
-      !       write(file_getval_name,'(A12,I4.4,A4)') 'GETVAL_SDOF_', isdof, '.txt'
-      !       open(file_getval_id, file=file_getval_name, position='append')
-      !       dum_ind = 3*(isdof - 1) + 1
-      !       write(file_getval_id,*) tt_int, SDOFforceinput(dum_ind), SDOFinput(dum_ind), SDOFinputD(dum_ind)
-      !       close(file_getval_id)
-      !    enddo
-      !   endif
+        if (mpi_id.eq.0) then
+         do isdof=1,SDOFnum
+            file_getval_id = 2433 + isdof 
+            write(file_getval_name,'(A12,I4.4,A4)') 'GETVAL_SDOF_', isdof, '.txt'
+            open(file_getval_id, file=file_getval_name, position='append')
+            !dum_ind = 3*(isdof - 1) + 1
+            write(file_getval_id,*) tt_int, SDOFforceinput(1), SDOFinput(1), SDOFinputD(1)
+            close(file_getval_id)
+         enddo
+        endif
       endif
   
   
@@ -2378,7 +2377,6 @@
       ! This is only performed in process with mpi_id = 0
       if(n_bld .gt. 0) then
         do I=1,n_bld     !!! number of oscillators
-  
           SDOFag(I,1:3)=(-1.d0)*SDOFinput((3*(I-1)+1):(3*(I-1)+3))    !!! base acceleration
           SDOFgd(I,1:3)=SDOFinputD((3*(I-1)+1):(3*(I-1)+3))   !!! base displacement
           
@@ -2407,7 +2405,7 @@
       
       if (SDOFnum.gt.0) then
   
-         ! Shear Force in the Spring
+         ! Shear Force in the Spring need to modify this MPI_ALLREDUCE, when Structural calculations are done in multiple MPI processors
          SDOFrecv_temp = 0;
          call MPI_BARRIER(mpi_comm, mpi_ierr)
          call MPI_ALLREDUCE(SDOFforceinput, SDOFrecv_temp, 3*SDOFnum, SPEED_DOUBLE, MPI_SUM, mpi_comm, mpi_ierr)

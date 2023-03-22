@@ -191,6 +191,7 @@ subroutine READ_SYSTEM_POSITION()
   !-----------------------------------------------------------------------------------
   ! Mapping SDOF oscillators to nearest LGL nodes
   !------------------------------------------------------------------------------------
+  ! node_counter_sdof = number of partitions sharing the LGL node where SDOF point load is applied
   call MAKE_SYSTEM_POSITION_LGLNODES(nnod_loc , local_node_num, con_nnz_loc, con_spx_loc, &
                                             xx_spx_loc, yy_spx_loc, zz_spx_loc, SDOFnum, system_label, &
                                             x_system_lst, y_system_lst, z_system_lst, &

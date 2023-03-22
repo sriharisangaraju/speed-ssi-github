@@ -16,8 +16,9 @@
 !    You should have received a copy of the GNU Affero General Public License
 !    along with SPEED.  If not, see <http://www.gnu.org/licenses/>.
 
+!---------------------Central Difference Scheme---------------------------
 !> @brief Computes the displacement of the oscillator through central difference scheme
-!> @author Aline Herlin
+!> @author Aline Herlin, Srihari
 !> @date November, 2020
 !> @version 1.0
 !> @param[in] m           mass of the system
@@ -45,9 +46,10 @@ subroutine CENTRAL_DIFFERENCE(NDOF, M, M_inv, C, dT, U, U1, U0, P, flag_Minv)
     real*8, dimension(NDOF) :: T
     real*8 :: x, y
     
+    ! Check if for some cases we need to change damping matrix (C); then we can pre define these variables (m1, m2, m3, m4); may be we dont need M,M1_inv,C matrices later
     U=0; 
 
-    m1=M/dT/dT + C/2./dT    !!! coeff for u(n+1)
+    m1=M/dT/dT + C/2./dT    !!! coeff for u(n+1) -> 1/M_inv
     m2=-2.*M/dT/dT          !!! coeff for u(n)
     m3=M/dT/dT-C/2./dT      !!! coeff for u(n-1)
 
@@ -60,7 +62,7 @@ subroutine CENTRAL_DIFFERENCE(NDOF, M, M_inv, C, dT, U, U1, U0, P, flag_Minv)
         M_inv = m4
         flag_Minv = 1
     else
-        M4 = M_inv
+        m4 = M_inv
     endif
 
     do idof= 1,NDOF
@@ -85,12 +87,12 @@ subroutine CENTRAL_DIFFERENCE(NDOF, M, M_inv, C, dT, U, U1, U0, P, flag_Minv)
     return
 end subroutine CENTRAL_DIFFERENCE
 
-
+!------------------Inverse of a Matrix------------------------------------
 subroutine matinv(A, B, N) 
 
     implicit none
 
-    integer(4) :: N
+    integer(4), intent(in) :: N
     integer(4) :: IS(N),JS(N)
     integer(4) :: I, J, K
 
@@ -143,19 +145,19 @@ subroutine matinv(A, B, N)
 end subroutine matinv
 
 
-!!----------------------------------------------------------------------------------------
-subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath,M,ndof)
+!------------------Const-Law: Non-linear Shear Spring----------------------------
+subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
 !
     implicit none
     real*8 E0,sy0,eta,mu,gama,esoft,alpha,beta,a_k,Omega
     real*8 emax,emin,ert,srt,erc,src,Ehc,Eh1,dt,dc,eu
-    real*8 de,s,e,s0,et,e_unload,sign,sy,evs,eve,epeak,smax,max
+    real*8 de,s,e,s0,Et,e_unload,sign,sy,evs,eve,epeak,smax,max
     real*8 sres,eres,x,e_slip,s_slip,e_close,s_close,srel,ET1
     real*8 smin,spd,strain_end
     
     !real*8 mu
-    integer kon, yield, IDeath,ndof
-    real*8 M(NDOF,NDOF)!
+    integer kon, yield, IDeath  !ndof
+    !real*8 M(ndof,ndof)!
     real*8 props(10), statev(11)
 
       E0  = props(1) 

@@ -16,6 +16,7 @@
 !    You should have received a copy of the GNU Affero General Public License
 !    along with SPEED.  If not, see <http://www.gnu.org/licenses/>.
 
+!---------------------Elastic - Perfecty Plastic---------------------------
 !> @brief Defines stress-strain relation for EPP SDOF oscillator
 !> @author Aline Herlin
 !> @date January, 2021

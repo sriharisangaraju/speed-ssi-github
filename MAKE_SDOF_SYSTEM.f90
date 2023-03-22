@@ -30,7 +30,7 @@ subroutine MAKE_SDOF_SYSTEM(file_bldinfo,dtsite,id)
 
   implicit none
 
-  integer*4 :: id, SDOFunit, i, j
+  integer*4 :: id, SDOFunit, i, j, dummy
   character*70 :: file_bldinfo
   real*8 :: dtsite, tempint
   real*8, dimension(4,4) :: mat_temp
@@ -41,17 +41,18 @@ subroutine MAKE_SDOF_SYSTEM(file_bldinfo,dtsite,id)
   read(SDOFunit,*) n_bld              !!! here is the number of SDOF oscillators
 
   do i=1, n_bld
-
-    read (SDOFunit,"(5I10)") sys(i)%ID, sys(i)%StructType, sys(i)%SFS, &
-                              sys(i)%const_law, sys(i)%ForceApplicationtype
-
     sys(i)%SFS = 0
     sys(i)%ForceApplicationtype = 1
+
+    read (SDOFunit,*) sys(i)%ID, sys(i)%StructType, sys(i)%const_law
 
     if (sys(i)%StructType.eq.1) then
 
       sys(i)%NDOF = 1
       sys(i)%flag_Minv = 0;
+
+      read (SDOFunit,*) sys(i)%SFS
+      sys(i)%SFS = 0
 
       allocate(sys(i)%Ms(1,1), sys(i)%Ms_inv(1,1), sys(i)%Ks(1,1))
       allocate(sys(i)%IDR(1,3), sys(i)%variIDR(1,3))
@@ -62,13 +63,14 @@ subroutine MAKE_SDOF_SYSTEM(file_bldinfo,dtsite,id)
       if (sys(i)%const_law.eq.1) then
         !read (SDOFunit,"(1I10)") sys(i)%SFS
         if (sys(i)%SFS.eq.0) then
-          read(SDOFunit,"(4E15.7)") sys(i)%Ms, sys(i)%Ks, sys(i)%CSI, sys(i)%TN
+          read(SDOFunit,*) sys(i)%Ms, sys(i)%Ks, sys(i)%CSI, sys(i)%TN
+          write(*,*) 'SDOF No: ', i, sys(i)%Ms, sys(i)%Ks, sys(i)%CSI, sys(i)%TN
         elseif (sys(i)%SFS.eq.1) then
-          read(SDOFunit,"(13E15.7)") sys(i)%Ms, sys(i)%Mf, sys(i)%J, sys(i)%height, &
+          read(SDOFunit,*) sys(i)%Ms, sys(i)%Mf, sys(i)%J, sys(i)%height, &
                                     sys(i)%Ks, sys(i)%K0, sys(i)%Kr, sys(i)%Kv, sys(i)%CSI, &
                                     sys(i)%C0, sys(i)%Cr, sys(i)%Cv, sys(i)%TN
 
-          read(SDOFunit,"(2E15.7)") sys(i)%beta_newmark, sys(i)%gamma_newmark
+          read(SDOFunit,*) sys(i)%beta_newmark, sys(i)%gamma_newmark
 
           sys(i)%MAT_M = 0; sys(i)%MAT_KS = 0; sys(i)%MAT_KI = 0; sys(i)%MAT_C = 0
 
@@ -109,12 +111,21 @@ subroutine MAKE_SDOF_SYSTEM(file_bldinfo,dtsite,id)
         sys(i)%branch = 1
         sys(i)%damage = 0
 
+        write(*,*) 'SDOF No: ', i, sys(i)%Ms, sys(i)%Ks, sys(i)%CSI, sys(i)%TN
+
       endif
 
       sys(i)%Cs = datan(1.d0)*16.d0*sys(i)%Ms(1,1)*sys(i)%CSI/sys(i)%TN      ! Damping Coefficient
 
     elseif (sys(i)%StructType.eq.2) then
-      read(SDOFunit,"(I10,2E15.7)") sys(i)%NDOF, sys(i)%Floor_h, sys(i)%Area
+      
+      if(.not.isConfigPresent) then
+        write(*,*) "*****For MDOF Structures, config.txt file is missing!*****"
+        CALL EXIT()
+      endif
+
+      read(SDOFunit,*) sys(i)%NDOF, sys(i)%Floor_h, sys(i)%Area, sys(i)%ForceApplicationtype
+      sys(i)%ForceApplicationtype = 1
       
       sys(i)%Height=sys(i)%NDOF*sys(i)%Floor_h        
             
@@ -145,7 +156,7 @@ subroutine MAKE_SDOF_SYSTEM(file_bldinfo,dtsite,id)
       sys(i)%flag_Minv = 0;
 
       do j=1, sys(i)%NDOF
-        read(SDOFunit,"(10E15.7)")sys(i)%props(j,1:10,1)
+        read(SDOFunit,*)sys(i)%props(j,1:10,1)
       enddo
 
     endif
@@ -174,15 +185,15 @@ subroutine MAKE_SDOF_SYSTEM(file_bldinfo,dtsite,id)
     if (sys(i)%StructType.eq.2) then
       read(SDOFunit,*) 
       do j=1, sys(i)%NDOF
-        read(SDOFunit,"(4E15.7)")sys(i)%dval(j,1:4)
+        read(SDOFunit,*)sys(i)%dval(j,1:4)
       enddo 
     endif
   enddo    
   
-  read(SDOFunit,*) 
+  if (sys(1)%StructType.eq.2) read(SDOFunit,*) 
   do i=1, n_bld
     if (sys(i)%StructType.eq.2) then
-      read(SDOFunit,"(5E15.7)")sys(i)%T1, sys(i)%T2, sys(i)%Calpha, sys(i)%Cbeta, sys(i)%TN
+      read(SDOFunit,*)dummy, sys(i)%T1, sys(i)%T2, sys(i)%Calpha, sys(i)%Cbeta, sys(i)%TN
     endif
   enddo
 

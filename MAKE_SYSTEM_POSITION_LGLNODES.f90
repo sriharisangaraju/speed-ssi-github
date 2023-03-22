@@ -57,7 +57,7 @@ subroutine MAKE_SYSTEM_POSITION_LGLNODES(nn_loc , local_node_num, cs_nnz_loc, cs
   ! Find if LGL_gob_num is inside the local partition
   ! Finding Nearest Node to SDOF Oscillator across all partitions - in Global Numeration
   do i = 1,nsdof
-    call GET_NEAREST_NODE(nn_loc, xs_loc, ys_loc, zs_loc, x_system_lst, y_system_lst, z_system_lst, &
+    call GET_NEAREST_NODE(nn_loc, xs_loc, ys_loc, zs_loc, x_system_lst(i), y_system_lst(i), z_system_lst(i), &
                           node_sys_loc(i), dist_system_loc(i))
     node_sys_loc(i) = local_node_num(node_sys_loc(i))
   enddo

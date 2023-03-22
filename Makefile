@@ -5,7 +5,7 @@ FC_PC=mpif90
 
 
 FC_PC_FLAGS=-O5 -g -c -cpp -ffree-form -ffree-line-length-none -fopenmp -fbounds-check -fallow-argument-mismatch -DPETSC_AVOID_MPIF_H
-LD_PC_FLAGS=-O5  -fopenmp /Users/srihari/apps/metis-4.0.3-clang/libmetis.a 
+LD_PC_FLAGS=-O5  -fopenmp /Users/srihari/apps/metis-clang/5.1.0/build/Darwin-arm64/libmetis/libmetis.a 
 
 #/opt/homebrew/Cellar/metis/5.1.0/lib/libmetis.dylib 
 #/Users/srihari/apps/metis-4.0.3/libmetis.a

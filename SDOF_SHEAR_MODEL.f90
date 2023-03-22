@@ -50,13 +50,18 @@ subroutine SDOF_SHEAR_MODEL (sID, ndof, gr_acc, direction)
 
   ! returns sys(sID)%tempU = displacement at time n+1 = Relative displacement of structure w.r.t. ground
   if (sys(sID)%StructType.eq.1) then
-    call CENTRAL_DIFFERENCE(ndof, sys(sID)%Ms, sys(sID)%Ms_inv, sys(sID)%Cs, sys(sID)%dt, &
+    call CENTRAL_DIFFERENCE(ndof, sys(sID)%Ms(1,1), sys(sID)%Ms_inv(1,1), sys(sID)%Cs, sys(sID)%dt, &
                             sys(sID)%tempU(1,direction), sys(sID)%tempU1(1,direction), &
                             sys(sID)%tempU0(1,direction), sysPeff0, sys(sID)%flag_Minv )
   else
     call CENTRAL_DIFFERENCE(ndof, sys(sID)%Ms(1:ndof,1:ndof), sys(sID)%Ms_inv(1:ndof,1:ndof), sys(sID)%SysC(1:ndof,1:ndof), &
                             sys(sID)%dt, sys(sID)%tempU(1:ndof,direction), sys(sID)%tempU1(1:ndof,direction), &
                             sys(sID)%tempU0(1:ndof,direction), sysPeff0, sys(sID)%flag_Minv )
+    if (direction.eq.1) then
+      write(*,*) 'InputForces: Acc =', gr_acc, 'sysPeff = ', (sysPeff0(idof), idof = 1,sys(1)%NDOF)
+      write(*,*) 'Input Un-1 = ', (sys(1)%tempU0(idof,1), idof=1,sys(1)%NDOF), 'Un = ', (sys(1)%tempU1(idof,1), idof=1,sys(1)%NDOF)
+      write(*,*) 'Output Un+1 = ', (sys(1)%tempU(idof,1), idof=1,sys(1)%NDOF)
+    endif
   endif
 
   ! Modify this for SSI - with MDOF (below code works for SSI-SDOF)
@@ -81,16 +86,18 @@ subroutine SDOF_SHEAR_MODEL (sID, ndof, gr_acc, direction)
     enddo
   endif
 
-  !!! Relative acceleration
-  sys(sID)%tempRA1(1:ndof,direction) = ( sys(sID)%tempU(1:ndof,direction) + sys(sID)%tempU0(1:ndof,direction) - &
-                                      2.d0*sys(sID)%tempU1(1:ndof, direction))/sys(sID)%dt2
-  !!! Absolute acceleration AH
-  sys(sID)%tempA1(1:ndof,direction) = sys(sID)%tempRA1(1:ndof,direction) - gr_acc   
+  do idof= 1,ndof
+      !!! Relative acceleration
+      sys(sID)%tempRA1(idof,direction) = ( sys(sID)%tempU(idof,direction) + sys(sID)%tempU0(idof,direction) - &
+                                          2.d0*sys(sID)%tempU1(idof, direction))/sys(sID)%dt2
+      !!! Absolute acceleration AH
+      sys(sID)%tempA1(idof,direction) = sys(sID)%tempRA1(idof,direction) - gr_acc   
 
-  ! Updating displacement Values
-  sys(sID)%tempU0(1:ndof,direction)=sys(sID)%tempU1(1:ndof,direction)
-  sys(sID)%tempU1(1:ndof,direction)=sys(sID)%tempU(1:ndof,direction)
-  sys(sID)%tempU(1:ndof,direction)=0
+      ! Updating displacement Values
+      sys(sID)%tempU0(idof,direction)=sys(sID)%tempU1(idof,direction)
+      sys(sID)%tempU1(idof,direction)=sys(sID)%tempU(idof,direction)
+      sys(sID)%tempU(idof,direction)=0
+  enddo
 
   do idof=1,ndof
       e(idof) = sys(sID)%IDR(idof,direction)
@@ -116,7 +123,7 @@ subroutine SDOF_SHEAR_MODEL (sID, ndof, gr_acc, direction)
           endif
           call ksteel02(sys(sID)%props(idof,1:10,1), s(idof), e(idof), de(idof), sys(sID)%MDOFEt(idof,direction), &
                         sys(sID)%MDOFstatev(idof,1:11,direction), sys(sID)%MDOFspd(idof,direction), &
-                        sys(sID)%MDOFyield(idof,direction), sys(sID)%MDOFIDeath(idof,direction), sys(sID)%Ms(1:ndof,1:ndof), ndof)
+                        sys(sID)%MDOFyield(idof,direction), sys(sID)%MDOFIDeath(idof,direction) ) !sys(sID)%Ms(1:ndof,1:ndof), ndof
         endif
       endif
 
