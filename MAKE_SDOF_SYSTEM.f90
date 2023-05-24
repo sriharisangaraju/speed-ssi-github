@@ -104,10 +104,11 @@ subroutine MAKE_SDOF_SYSTEM(file_bldinfo,dtsite,id)
         read(SDOFunit,"(5E15.7)") sys(i)%Ms, sys(i)%Ks, sys(i)%CSI, sys(i)%FY, sys(i)%TN
 
       elseif (sys(i)%const_law.eq.3) then
+        ! Mass, Initial Stiffness, post-yield stiffness, Softening stiffness, dampingfactor, yield strength, displacement at peak strength, ultimate displacement, natural time period
         read(SDOFunit,"(9E15.7)") sys(i)%Ms, sys(i)%Ks, sys(i)%Hs, sys(i)%Ss, sys(i)%CSI, sys(i)%FY, sys(i)%EH, sys(i)%EU, sys(i)%TN
-        sys(i)%EY = sys(i)%FY/sys(i)%Ks(1,1)
-        sys(i)%FH = sys(i)%FY + sys(i)%Hs*(sys(i)%EH - sys(i)%EY)
-        sys(i)%FU = sys(i)%FH + sys(i)%Ss*(sys(i)%EU - sys(i)%EH)
+        sys(i)%EY = sys(i)%FY/sys(i)%Ks(1,1)          !Yield Displacement
+        sys(i)%FH = sys(i)%FY + sys(i)%Hs*(sys(i)%EH - sys(i)%EY)         !Max. Peak strength
+        sys(i)%FU = sys(i)%FH + sys(i)%Ss*(sys(i)%EU - sys(i)%EH)         !Ultimate failure strength after softening
         sys(i)%branch = 1
         sys(i)%damage = 0
 
