@@ -81,7 +81,7 @@
 
      !!!----------   METIS-4.0.3  ------------------------------------!!!
       eind = eind +1
-      call METIS_PartMeshDual(n_elem,nnode,eind,3,1,nparts,edgecutt,&
+      call METIS_PartMeshDual(nelem,nnode,eind,3,1,nparts,edgecut,&
                              epart,npart)
       epart = epart - 1
 
