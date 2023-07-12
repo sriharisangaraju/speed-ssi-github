@@ -62,7 +62,8 @@ subroutine READ_SDOF_INPUT_FILES
 
     allocate(sys(n_bld))  !!! SDOF system
     allocate(SDOFag(n_bld,3),SDOFgd(n_bld,3))
-    SDOFag = 0; SDOFgd = 0;
+    allocate(ndt2_sys(n_bld))
+    SDOFag = 0; SDOFgd = 0; ndt2_sys = 0;
     call MAKE_SDOF_SYSTEM(BLDinfo, deltat, mpi_id)
 
   endif

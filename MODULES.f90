@@ -775,6 +775,7 @@ module SPEED_SCI      !!! AH, SS
       integer*4 :: MaxDOF_glob, MaxDOF_loc
       integer*4, dimension(3) :: SDOFout      !< displ, acc, f_react
       integer*4 :: flag_outAtAllDOFs
+      integer*4, dimension(:), allocatable :: ndt2_sys
       real*8 :: MasspArea, kclose, configtmp 
       logical :: isConfigPresent
       real*8, dimension(:), allocatable :: ug1, ug2, ug3

@@ -2330,7 +2330,7 @@
                                con_spx_loc, con_nnz_loc, sdeg_mat, nmat, &
                                u2, nnod_loc, &
                                xr_system_lst, yr_system_lst, zr_system_lst, &
-                               deltat2, &
+                               deltat2, its, ndt2_sys, &
                                SDOFinput, SDOFinputD, mpi_np, &
                                ug1, ug2, ug3)
   

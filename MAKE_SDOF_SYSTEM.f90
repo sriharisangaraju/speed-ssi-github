@@ -205,7 +205,19 @@ subroutine MAKE_SDOF_SYSTEM(file_bldinfo,dtsite,id)
   do i=1, n_bld
     sys(i)%dt=sys(i)%TN/(datan(1.d0)*4.d0)    !- Stable time step for explicit central difference method for SDOF
     sys(i)%ndt=ceiling(dtsite/sys(i)%dt)
-    sys(i)%dt=dtsite/sys(i)%ndt
+
+    ! If the dtside is too low, then doing the system response calculations, considering a higher dt (eliminates some high frequency errors in central different scheme)
+    ! Considering Maximum structural modal frequency upto 310Hz; dt_sys ~= 0.001sec
+    if ((sys(i)%ndt.eq.1) .and. (sys(i)%dt.le.0.001d0)) then
+      ndt2_sys(i) = floor(0.001d0/sys(i)%dt)
+    endif
+
+    if (ndt2_sys(i).eq.0) then
+      sys(i)%dt=dtsite/sys(i)%ndt
+    else
+      sys(i)%dt=dtsite*ndt2_sys(i)
+    endif
+
     sys(i)%dt2=sys(i)%dt*sys(i)%dt
 
     !!!!!!!!!!!MassMatrix!!!!!!!!!!!!

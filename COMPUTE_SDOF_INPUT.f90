@@ -42,7 +42,7 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
                               cs_loc, cs_nnz_loc, sdeg_mat, nmat, &
                               u2, nnod_loc, &
                               xr_mlst, yr_mlst, zr_mlst, &
-                              dt2, &
+                              dt2, its, ndt2, &
                               SDOFinputab, SDOFinputdispl, mpi_np, &
                               ub1, ub2, ub3)
 
@@ -50,9 +50,9 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
 
   integer*4 :: imon, ielem, ie, im, nn, k, j, i, is, in, iaz, sdof_num, ishift
   integer*4 :: mpi_id, ne_loc, nmat, nnod_loc, cs_nnz_loc, mpi_np
-  integer*4 :: nmpi
+  integer*4 :: nmpi, its, iaz2
   integer*4, dimension(0:cs_nnz_loc) :: cs_loc
-  integer*4, dimension(sdof_num) :: elem_mlst
+  integer*4, dimension(sdof_num) :: elem_mlst, ndt2
   integer*4, dimension(nmat) :: sdeg_mat
   integer*4, dimension(ne_loc) :: local_el_num
   real*8 :: dt2
@@ -71,6 +71,16 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
   ishift = 0
 
   do imon = 1,sdof_num     !!! loop over the oscillators
+
+    iaz2 = (imon-1)*3
+    if (ndt2(imon).gt.1) then
+      if ( mod(its,ndt2(imon)) .eq. 0 ) then
+        cycle
+      endif
+    endif
+
+    ub3((iaz2+1):(iaz2+3))=ub2((iaz2+1):(iaz2+3))
+    ub2((iaz2+1):(iaz2+3))=ub1((iaz2+1):(iaz2+3))
 
     ielem = elem_mlst(imon)
     call GET_INDLOC_FROM_INDGLO(local_el_num, ne_loc, ielem, ie)
@@ -116,9 +126,15 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
       ub1(ishift+3) = uzm  !!! z displacement at the base of the structure at time n+1
 
       ! Central Difference Scheme
-      axm = (ub1(ishift+1) -2.0d0*ub2(ishift+1) +ub3(ishift+1)) / dt2
-      aym = (ub1(ishift+2) -2.0d0*ub2(ishift+2) +ub3(ishift+2)) / dt2
-      azm = (ub1(ishift+3) -2.0d0*ub2(ishift+3) +ub3(ishift+3)) / dt2
+      if (ndt2(imon).gt.1) then
+        axm = (ub1(ishift+1) -2.0d0*ub2(ishift+1) +ub3(ishift+1)) / (ndt2(imon)*ndt2(imon)*dt2)
+        aym = (ub1(ishift+2) -2.0d0*ub2(ishift+2) +ub3(ishift+2)) / (ndt2(imon)*ndt2(imon)*dt2)
+        azm = (ub1(ishift+3) -2.0d0*ub2(ishift+3) +ub3(ishift+3)) / (ndt2(imon)*ndt2(imon)*dt2)
+      else
+        axm = (ub1(ishift+1) -2.0d0*ub2(ishift+1) +ub3(ishift+1)) / dt2
+        aym = (ub1(ishift+2) -2.0d0*ub2(ishift+2) +ub3(ishift+2)) / dt2
+        azm = (ub1(ishift+3) -2.0d0*ub2(ishift+3) +ub3(ishift+3)) / dt2
+      endif
 
       if (dabs(axm).lt.1.0e-30) axm = 0.0e+00
       if (dabs(aym).lt.1.0e-30) aym = 0.0e+00
