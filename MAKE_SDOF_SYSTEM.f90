@@ -64,7 +64,7 @@ subroutine MAKE_SDOF_SYSTEM(file_bldinfo,dtsite,id)
         !read (SDOFunit,"(1I10)") sys(i)%SFS
         if (sys(i)%SFS.eq.0) then
           read(SDOFunit,*) sys(i)%Ms, sys(i)%Ks, sys(i)%CSI, sys(i)%TN
-          write(*,*) 'SDOF No: ', i, sys(i)%Ms, sys(i)%Ks, sys(i)%CSI, sys(i)%TN
+          !write(*,*) 'SDOF No: ', i, sys(i)%Ms, sys(i)%Ks, sys(i)%CSI, sys(i)%TN
         elseif (sys(i)%SFS.eq.1) then
           read(SDOFunit,*) sys(i)%Ms, sys(i)%Mf, sys(i)%J, sys(i)%height, &
                                     sys(i)%Ks, sys(i)%K0, sys(i)%Kr, sys(i)%Kv, sys(i)%CSI, &
@@ -112,7 +112,7 @@ subroutine MAKE_SDOF_SYSTEM(file_bldinfo,dtsite,id)
         sys(i)%branch = 1
         sys(i)%damage = 0
 
-        write(*,*) 'SDOF No: ', i, sys(i)%Ms, sys(i)%Ks, sys(i)%CSI, sys(i)%TN
+        !write(*,*) 'SDOF No: ', i, sys(i)%Ms, sys(i)%Ks, sys(i)%CSI, sys(i)%TN
 
       endif
 
@@ -217,6 +217,8 @@ subroutine MAKE_SDOF_SYSTEM(file_bldinfo,dtsite,id)
     else
       sys(i)%dt=dtsite*ndt2_sys(i)
     endif
+
+    write(*,*) 'SDOF No: ', i, sys(i)%Ms, sys(i)%Ks, sys(i)%CSI, sys(i)%TN, ndt2_sys(i)
 
     sys(i)%dt2=sys(i)%dt*sys(i)%dt
 
