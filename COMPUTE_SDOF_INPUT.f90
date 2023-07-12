@@ -71,13 +71,22 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
 
     iaz2 = (imon-1)*3
     if (ndt2(imon).gt.1) then
-      if ( mod(its,ndt2(imon)) .eq. 0 ) then
-        write(*,*) 'its = ', its
+      if ( mod(its,ndt2(imon)) .ne. 0 ) then
+        SDOFinputdispl(iaz2+1)=ub1(iaz2+1)
+        SDOFinputdispl(iaz2+2)=ub1(iaz2+2)
+        SDOFinputdispl(iaz2+3)=ub1(iaz2+3)
+
+        axm = (ub1(iaz2+1) -2.0d0*ub2(iaz2+1) +ub3(iaz2+1)) / (ndt2(imon)*ndt2(imon)*dt2)
+        aym = (ub1(iaz2+2) -2.0d0*ub2(iaz2+2) +ub3(iaz2+2)) / (ndt2(imon)*ndt2(imon)*dt2)
+        azm = (ub1(iaz2+3) -2.0d0*ub2(iaz2+3) +ub3(iaz2+3)) / (ndt2(imon)*ndt2(imon)*dt2)
+
+        SDOFinputab(iaz2+1)=axm
+        SDOFinputab(iaz2+2)=aym
+        SDOFinputab(iaz2+3)=azm
+
         cycle
       endif
     endif
-
-    write(*,*) 'its_2 = ', its
 
     ub3((iaz2+1):(iaz2+3))=ub2((iaz2+1):(iaz2+3))
     ub2((iaz2+1):(iaz2+3))=ub1((iaz2+1):(iaz2+3))

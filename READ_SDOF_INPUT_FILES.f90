@@ -28,7 +28,7 @@ subroutine READ_SDOF_INPUT_FILES
   use speed_par, only : filename, sdof_file
 
   implicit none
-  include 'SPEED.mpi'
+  include 'SPEED.MPI'
 
   integer*4 :: unit_file
 
@@ -75,7 +75,6 @@ subroutine READ_SDOF_INPUT_FILES
 
   endif
 
-  write(*,*) ' '
   call MPI_BARRIER(mpi_comm, mpi_ierr)
   if ((mpi_np.gt.0).and.(SDOFnum.gt.0)) call MPI_Bcast(ndt2_sys, SDOFnum, SPEED_INTEGER, 0, mpi_comm)
 
