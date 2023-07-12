@@ -60,9 +60,10 @@
       integer*4, parameter :: METIS_OPTION_PTYPE = 1, METIS_OPTION_OBJTYPE = 2, METIS_OPTION_CTYPE = 3, &
                               METIS_OPTION_IPTYPE = 4, METIS_OPTION_RTYPE = 5, METIS_OPTION_DBGLVL = 6, &
                               METIS_OPTION_NITER = 7, METIS_OPTION_NCUTS = 8, METIS_OPTION_SEED = 9, &
-                              METIS_OPTION_MINCONN = 10, METIS_OPTION_CONTIG = 11, METIS_OPTION_COMPRESS = 12, &
-                              METIS_OPTION_CCORDER = 13, METIS_OPTION_PFACTOR = 14, METIS_OPTION_NSEPS = 15, &
-                              METIS_OPTION_UFACTOR = 16, METIS_OPTION_NUMBERING = 17 !, METIS_OPTION_NO2HOP = 10
+                              METIS_OPTION_NO2HOP = 10, &
+                              METIS_OPTION_MINCONN = 11, METIS_OPTION_CONTIG = 12, METIS_OPTION_COMPRESS = 13, &
+                              METIS_OPTION_CCORDER = 14, METIS_OPTION_PFACTOR = 15, METIS_OPTION_NSEPS = 16, &
+                              METIS_OPTION_UFACTOR = 17, METIS_OPTION_NUMBERING = 18 !, METIS_OPTION_NO2HOP = 10
 
       real*8, pointer :: tpwgts(:) => NULL() 
 
@@ -80,42 +81,42 @@
      eind = eind - 1
 
      !!!----------   METIS-4.0.3  ------------------------------------!!!
-      eind = eind +1
-      call METIS_PartMeshDual(nelem,nnode,eind,3,1,nparts,edgecut,&
-                             epart,npart)
-      epart = epart - 1
+      ! eind = eind +1
+      ! call METIS_PartMeshDual(nelem,nnode,eind,3,1,nparts,edgecut,&
+      !                        epart,npart)
+      ! epart = epart - 1
 
      !!!----------   METIS-5.1.0  ------------------------------------!!!
-   !   ncommon = 4 
-   !   eptr = eptr + 1
-   !   eind = eind + 1
-   !   if(w_yn .eq. 0) then
-   !      vwgt = 1
-   !   else
-   !      u_name = 'element.wgt'
-   !      u_mpi = 40                                 
-   !      open(u_mpi,file=u_name)        
-   !      read(u_mpi,*) nelem
+     ncommon = 4 
+     eptr = eptr + 1
+     eind = eind + 1
+     if(w_yn .eq. 0) then
+        vwgt = 1
+     else
+        u_name = 'element.wgt'
+        u_mpi = 40                                 
+        open(u_mpi,file=u_name)        
+        read(u_mpi,*) nelem
         
-   !      do i = 1, nelem
-   !             read(u_mpi,*) trash, vwgt(i)
-   !      enddo
-   !      close(u_mpi)
-   !   endif     
+        do i = 1, nelem
+               read(u_mpi,*) trash, vwgt(i)
+        enddo
+        close(u_mpi)
+     endif     
 
-   !   ! Setting the Fortran numbering scheme
-   !   call METIS_SetDefaultOptions(options)  !INPUT
-   !   options(METIS_OPTION_NUMBERING) = 1
+     ! Setting the Fortran numbering scheme
+     call METIS_SetDefaultOptions(options)  !INPUT
+     options(METIS_OPTION_NUMBERING) = 1
                               
-   !   call METIS_PartMeshDual(nelem, nnode, eptr, eind, vwgt, vsize, &
-   !                            ncommon, nparts, tpwgts, options, objval, &
-   !                            epart, npart)                        
-   !    epart = epart - 1 
+     call METIS_PartMeshDual(nelem, nnode, eptr, eind, vwgt, vsize, &
+                              ncommon, nparts, tpwgts, options, objval, &
+                              epart, npart)                        
+      epart = epart - 1 
 
      !!!--------------------------------------------------------------------!!!
   
 
-      ! if(w_yn .eq. 0) then
+      if(w_yn .eq. 0) then
          if(len_trim(mpi_file) .ne. 70) then                                                                                  
             u_name = mpi_file(1:len_trim(mpi_file)) // '/elemdomain.mpi'
          else 
@@ -146,7 +147,7 @@
 !         enddo
 !         close(u_mpi)
 
-      !  endif       
+      endif       
       
       return
       

@@ -65,9 +65,6 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
   real*8, dimension(sdof_num) ::xr_mlst, yr_mlst, zr_mlst
   real*8, dimension(3*sdof_num) :: SDOFinputab, SDOFinputdispl, ub1, ub2, ub3
 
-  ub3(1:3*sdof_num)=ub2(1:3*sdof_num)
-  ub2(1:3*sdof_num)=ub1(1:3*sdof_num)
-
   ishift = 0
 
   do imon = 1,sdof_num     !!! loop over the oscillators
@@ -75,9 +72,12 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
     iaz2 = (imon-1)*3
     if (ndt2(imon).gt.1) then
       if ( mod(its,ndt2(imon)) .eq. 0 ) then
+        write(*,*) 'its = ', its
         cycle
       endif
     endif
+
+    write(*,*) 'its_2 = ', its
 
     ub3((iaz2+1):(iaz2+3))=ub2((iaz2+1):(iaz2+3))
     ub2((iaz2+1):(iaz2+3))=ub1((iaz2+1):(iaz2+3))
