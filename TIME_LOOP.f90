@@ -2406,10 +2406,11 @@
       if (SDOFnum.gt.0) then
   
          ! Shear Force in the Spring need to modify this MPI_ALLREDUCE, when Structural calculations are done in multiple MPI processors
-         SDOFrecv_temp = 0;
+         !SDOFrecv_temp = 0;
          call MPI_BARRIER(mpi_comm, mpi_ierr)
-         call MPI_ALLREDUCE(SDOFforceinput, SDOFrecv_temp, 3*SDOFnum, SPEED_DOUBLE, MPI_SUM, mpi_comm, mpi_ierr)
-         SDOFforceinput = SDOFrecv_temp;
+         call MPI_BCAST(SDOFforceinput, 3*SDOFnum, SPEED_DOUBLE, 0, mpi_comm, mpi_ierr)
+         !call MPI_ALLREDUCE(SDOFforceinput, SDOFrecv_temp, 3*SDOFnum, SPEED_DOUBLE, MPI_SUM, mpi_comm, mpi_ierr)
+         !SDOFforceinput = SDOFrecv_temp;
          
        endif
   

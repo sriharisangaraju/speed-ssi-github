@@ -76,7 +76,7 @@ subroutine READ_SDOF_INPUT_FILES
   endif
 
   call MPI_BARRIER(mpi_comm, mpi_ierr)
-  if ((mpi_np.gt.0).and.(SDOFnum.gt.0)) call MPI_Bcast(ndt2_sys, SDOFnum, SPEED_INTEGER, 0, mpi_comm)
+  if ((mpi_np.gt.0).and.(SDOFnum.gt.0)) call MPI_BCAST(ndt2_sys, SDOFnum, SPEED_INTEGER, 0, mpi_comm, mpi_ierr)
 
   return
 end subroutine READ_SDOF_INPUT_FILES
