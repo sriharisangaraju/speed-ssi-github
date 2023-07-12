@@ -76,6 +76,7 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
         SDOFinputdispl(iaz2+2)=ub1(iaz2+2)
         SDOFinputdispl(iaz2+3)=ub1(iaz2+3)
 
+        write(*,*) its,ndt2(imon),dt2
         axm = (ub1(iaz2+1) -2.0d0*ub2(iaz2+1) +ub3(iaz2+1)) / (ndt2(imon)*ndt2(imon)*dt2)
         aym = (ub1(iaz2+2) -2.0d0*ub2(iaz2+2) +ub3(iaz2+2)) / (ndt2(imon)*ndt2(imon)*dt2)
         azm = (ub1(iaz2+3) -2.0d0*ub2(iaz2+3) +ub3(iaz2+3)) / (ndt2(imon)*ndt2(imon)*dt2)
