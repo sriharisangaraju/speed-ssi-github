@@ -28,12 +28,20 @@ subroutine READ_SDOF_INPUT_FILES
   use speed_par, only : filename, sdof_file
 
   implicit none
+  include 'SPEED.mpi'
+
   integer*4 :: unit_file
 
   bldinfo_fp=701+mpi_id
 
   n_bld = 0
 
+  if (SDOFnum.gt.0) then
+    allocate(ndt2_sys(SDOFnum))
+    ndt2_sys = 0
+  endif
+
+    
   if ((SDOFnum.gt.0).and.(mpi_id.eq.0)) then
     
     ! Reading Config File - Damping Type, Unit Mass of building
@@ -62,12 +70,13 @@ subroutine READ_SDOF_INPUT_FILES
 
     allocate(sys(n_bld))  !!! SDOF system
     allocate(SDOFag(n_bld,3),SDOFgd(n_bld,3))
-    allocate(ndt2_sys(n_bld))
-    SDOFag = 0; SDOFgd = 0; ndt2_sys = 0;
-    write(*,*) 'SDOFnum = ', SDOFnum
+    SDOFag = 0; SDOFgd = 0;
     call MAKE_SDOF_SYSTEM(BLDinfo, deltat, mpi_id)
 
   endif
+
+  call MPI_BARRIER(mpi_comm, mpi_ierr)
+  if (SDOFnum.gt.0) call MPI_Bcast(ndt2_sys, SDOFnum, SPEED_INTEGER, 0, mpi_comm)
 
   return
 end subroutine READ_SDOF_INPUT_FILES
