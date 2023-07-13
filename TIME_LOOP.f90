@@ -2360,7 +2360,7 @@
             write(file_getval_name,'(A12,I4.4,A4)') 'GETVAL_SDOF_', isdof, '.txt'
             open(file_getval_id, file=file_getval_name, position='append')
             !dum_ind = 3*(isdof - 1) + 1
-            write(file_getval_id,*) tt_int, SDOFforceinput(1), SDOFinput(1), SDOFinputD(1)
+            write(file_getval_id,*) tt_int, SDOFforceinput(1), SDOFinput(1), SDOFinputD(1), sys(isdof)%IDR(1,1), sys(isdof)%IntForce(1,1)
             close(file_getval_id)
          enddo
         endif
@@ -2390,7 +2390,7 @@
             endif
           enddo
   
-          SDOFforceinput((3*(I-1)+1):(3*(I-1)+3))= sys(I)%IntForce(1,1:3)      !!! Interaction force (Ku)
+          SDOFforceinput((3*(I-1)+1):(3*(I-1)+3))= 0; !sys(I)%IntForce(1,1:3)      !!! Interaction force (Ku)
         enddo
   
         if(mod(its,ndt_mon_lst) .eq. 0) then
