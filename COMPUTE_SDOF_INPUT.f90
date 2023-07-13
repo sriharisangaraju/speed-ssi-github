@@ -40,19 +40,18 @@
 
 subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc, &
                               cs_loc, cs_nnz_loc, sdeg_mat, nmat, &
-                              u2, nnod_loc, &
+                              u2, u1, u0, nnod_loc, &
                               xr_mlst, yr_mlst, zr_mlst, &
-                              dt2, its, ndt2, &
-                              SDOFinputab, SDOFinputdispl, mpi_np, &
-                              ub1, ub2, ub3)
+                              dt2, &
+                              SDOFinputab, SDOFinputdispl, mpi_np)
 
   implicit none
 
-  integer*4 :: imon, ielem, ie, im, nn, k, j, i, is, in, iaz, sdof_num, ishift
+  integer*4 :: imon, ielem, ie, im, nn, k, j, i, is, in, iaz, sdof_num
   integer*4 :: mpi_id, ne_loc, nmat, nnod_loc, cs_nnz_loc, mpi_np
-  integer*4 :: nmpi, its, iaz2
+  integer*4 :: nmpi, iaz2
   integer*4, dimension(0:cs_nnz_loc) :: cs_loc
-  integer*4, dimension(sdof_num) :: elem_mlst, ndt2
+  integer*4, dimension(sdof_num) :: elem_mlst
   integer*4, dimension(nmat) :: sdeg_mat
   integer*4, dimension(ne_loc) :: local_el_num
   real*8 :: dt2
@@ -61,35 +60,14 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
   real*8, dimension(:), allocatable :: ct, ww
   real*8, dimension(:,:), allocatable :: dd
   real*8, dimension(:,:,:), allocatable :: ux_el, uy_el, uz_el
-  real*8, dimension(3*nnod_loc) :: u2
+  real*8, dimension(3*nnod_loc) :: u2, u1, u0
   real*8, dimension(sdof_num) ::xr_mlst, yr_mlst, zr_mlst
-  real*8, dimension(3*sdof_num) :: SDOFinputab, SDOFinputdispl, ub1, ub2, ub3
+  real*8, dimension(3*sdof_num) :: SDOFinputab, SDOFinputdispl
 
-  ishift = 0
 
   do imon = 1,sdof_num     !!! loop over the oscillators
 
     iaz2 = (imon-1)*3
-    if (ndt2(imon).gt.1) then
-      if ( mod(its,ndt2(imon)) .ne. 0 ) then
-        SDOFinputdispl(iaz2+1)=ub1(iaz2+1)
-        SDOFinputdispl(iaz2+2)=ub1(iaz2+2)
-        SDOFinputdispl(iaz2+3)=ub1(iaz2+3)
-
-        axm = (ub1(iaz2+1) -2.0d0*ub2(iaz2+1) +ub3(iaz2+1)) / (ndt2(imon)*ndt2(imon)*dt2)
-        aym = (ub1(iaz2+2) -2.0d0*ub2(iaz2+2) +ub3(iaz2+2)) / (ndt2(imon)*ndt2(imon)*dt2)
-        azm = (ub1(iaz2+3) -2.0d0*ub2(iaz2+3) +ub3(iaz2+3)) / (ndt2(imon)*ndt2(imon)*dt2)
-
-        SDOFinputab(iaz2+1)=axm
-        SDOFinputab(iaz2+2)=aym
-        SDOFinputab(iaz2+3)=azm
-
-        cycle
-      endif
-    endif
-
-    ub3((iaz2+1):(iaz2+3))=ub2((iaz2+1):(iaz2+3))
-    ub2((iaz2+1):(iaz2+3))=ub1((iaz2+1):(iaz2+3))
 
     ielem = elem_mlst(imon)
     call GET_INDLOC_FROM_INDGLO(local_el_num, ne_loc, ielem, ie)
@@ -102,6 +80,7 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
 
       call MAKE_LGL_NW(nn,ct,ww,dd)
 
+      ! Displacements
       do k = 1,nn
         do j = 1,nn
           do i = 1,nn
@@ -116,9 +95,7 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
         enddo
       enddo
 
-      !-------------------------------------------------------------
-      ! ACCELERATION AND SOIL FORCES
-      !-------------------------------------------------------------
+      
       call GET_MONITOR_VALUE(nn,ct,ux_el,&
                              xr_mlst(imon),yr_mlst(imon),zr_mlst(imon),uxm)
       call GET_MONITOR_VALUE(nn,ct,uy_el,&
@@ -130,41 +107,46 @@ subroutine COMPUTE_SDOF_INPUT(sdof_num, mpi_id, elem_mlst, local_el_num, ne_loc,
       if (dabs(uym).lt.1.0e-30) uym = 0.0e+00
       if (dabs(uzm).lt.1.0e-30) uzm = 0.0e+00
 
-      ub1(ishift+1) = uxm  !!! x displacement at the base of the structure at time n+1
-      ub1(ishift+2) = uym  !!! y displacement at the base of the structure at time n+1
-      ub1(ishift+3) = uzm  !!! z displacement at the base of the structure at time n+1
+      !-------------------------------------------------------------
+      ! ACCELERATION AND SOIL FORCES
+      !-------------------------------------------------------------
+      do k = 1,nn
+        do j = 1,nn
+          do i = 1,nn
+            is = nn*nn*(k -1) +nn*(j -1) +i
+            in = cs_loc(cs_loc(ie -1) + is)
 
-      ! Central Difference Scheme
-      if (ndt2(imon).gt.1) then
-        axm = (ub1(ishift+1) -2.0d0*ub2(ishift+1) +ub3(ishift+1)) / (ndt2(imon)*ndt2(imon)*dt2)
-        aym = (ub1(ishift+2) -2.0d0*ub2(ishift+2) +ub3(ishift+2)) / (ndt2(imon)*ndt2(imon)*dt2)
-        azm = (ub1(ishift+3) -2.0d0*ub2(ishift+3) +ub3(ishift+3)) / (ndt2(imon)*ndt2(imon)*dt2)
-      else
-        axm = (ub1(ishift+1) -2.0d0*ub2(ishift+1) +ub3(ishift+1)) / dt2
-        aym = (ub1(ishift+2) -2.0d0*ub2(ishift+2) +ub3(ishift+2)) / dt2
-        azm = (ub1(ishift+3) -2.0d0*ub2(ishift+3) +ub3(ishift+3)) / dt2
-      endif
-
+            iaz = 3*(in -1) +1
+            ux_el(i,j,k) = (u2(iaz) -2.0*u1(iaz) +u0(iaz)) / dt2
+            iaz = 3*(in -1) +2
+            uy_el(i,j,k) = (u2(iaz) -2.0*u1(iaz) +u0(iaz)) / dt2
+            iaz = 3*(in -1) +3
+            uz_el(i,j,k) = (u2(iaz) -2.0*u1(iaz) +u0(iaz)) / dt2
+          enddo
+        enddo
+      enddo
+      call GET_MONITOR_VALUE(nn,ct,ux_el,&
+                            xr_mlst(imon),yr_mlst(imon),zr_mlst(imon),axm)
+             
+      call GET_MONITOR_VALUE(nn,ct,uy_el,&
+                            xr_mlst(imon),yr_mlst(imon),zr_mlst(imon),aym)
+            
+      call GET_MONITOR_VALUE(nn,ct,uz_el,&
+                            xr_mlst(imon),yr_mlst(imon),zr_mlst(imon),azm)
+      
       if (dabs(axm).lt.1.0e-30) axm = 0.0e+00
       if (dabs(aym).lt.1.0e-30) aym = 0.0e+00
       if (dabs(azm).lt.1.0e-30) azm = 0.0e+00
 
-      do nmpi=1,mpi_np
-        if (mpi_id .eq. (nmpi-1)) then
-          SDOFinputab(3*imon-2)=axm
-          SDOFinputab(3*imon-1)=aym
-          SDOFinputab(3*imon)=azm
-          SDOFinputdispl(3*imon-2)=uxm
-          SDOFinputdispl(3*imon-1)=uym
-          SDOFinputdispl(3*imon)=uzm
-        endif
-      enddo
-      write(*,*) its, ub1(iaz2+1), ub2(iaz2+1), ub3(iaz2+1), axm
+      SDOFinputab(iaz2+1)=axm
+      SDOFinputab(iaz2+2)=aym
+      SDOFinputab(iaz2+3)=azm
+      SDOFinputdispl(iaz2+1)=uxm
+      SDOFinputdispl(iaz2+2)=uym
+      SDOFinputdispl(iaz2+3)=uzm
 
       deallocate(ct,ww,dd)
       deallocate(ux_el,uy_el,uz_el)
-
-      ishift = ishift + 3
     endif !(ie .ne. 0)
   enddo
 

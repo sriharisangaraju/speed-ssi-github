@@ -53,6 +53,7 @@ subroutine SDOF_SHEAR_MODEL (sID, ndof, gr_acc, direction)
     call CENTRAL_DIFFERENCE(ndof, sys(sID)%Ms(1,1), sys(sID)%Ms_inv(1,1), sys(sID)%Cs, sys(sID)%dt, &
                             sys(sID)%tempU(1,direction), sys(sID)%tempU1(1,direction), &
                             sys(sID)%tempU0(1,direction), sysPeff0, sys(sID)%flag_Minv )
+    !write(*,*) sysPeff(1), sys(sID)%IntForce(1,1), sys(sID)%tempU(1,1), sys(sID)%U1(1,1), sys(sID)%tempU0(1,1)
   else
     call CENTRAL_DIFFERENCE(ndof, sys(sID)%Ms(1:ndof,1:ndof), sys(sID)%Ms_inv(1:ndof,1:ndof), sys(sID)%SysC(1:ndof,1:ndof), &
                             sys(sID)%dt, sys(sID)%tempU(1:ndof,direction), sys(sID)%tempU1(1:ndof,direction), &

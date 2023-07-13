@@ -960,13 +960,13 @@
                   do i=1, locnode_buildID_map(id,1)
                      isdof = locnode_buildID_map(id,i+1)
                      fe(iaz+1) = fe(iaz+1) + (1 /(node_counter_sdof(isdof))) * &
-                                    SDOFforceinput(3*(isdof - 1) + 1)
+                                    SDOFforceinput(3*(isdof - 1) + 1) * 0.d0;
                      
                      fe(iaz+2) = fe(iaz+2) + (1 /node_counter_sdof(isdof)) * &
-                                    SDOFforceinput(3*(isdof - 1) + 2)
+                                    SDOFforceinput(3*(isdof - 1) + 2)  * 0.d0;
                      
                      fe(iaz+3) = fe(iaz+3) + (1 /node_counter_sdof(isdof)) * &
-                                    SDOFforceinput(3*(isdof - 1) + 3)
+                                    SDOFforceinput(3*(isdof - 1) + 3)  * 0.d0;
                   enddo
                endif
             
@@ -2328,11 +2328,10 @@
         SDOFinputD = 0
         call COMPUTE_SDOF_INPUT(SDOFnum, mpi_id, el_system_lst, local_el_num, nelem_loc, &
                                con_spx_loc, con_nnz_loc, sdeg_mat, nmat, &
-                               u2, nnod_loc, &
+                               u2, u1, u0, nnod_loc, &
                                xr_system_lst, yr_system_lst, zr_system_lst, &
-                               deltat2, its, ndt2_sys, &
-                               SDOFinput, SDOFinputD, mpi_np, &
-                               ug1, ug2, ug3)
+                               deltat2, &
+                               SDOFinput, SDOFinputD, mpi_np)
   
                                !!! ug1, ug2, ug3 : displacements at the base of the structure at times n+1(current), n and n-1 respectively;
                                !!! SDOFinput : base acceleration
@@ -2391,7 +2390,7 @@
             endif
           enddo
   
-          SDOFforceinput((3*(I-1)+1):(3*(I-1)+3))=sys(I)%IntForce(1,1:3)      !!! Interaction force (Ku)
+          SDOFforceinput((3*(I-1)+1):(3*(I-1)+3))= 0; !sys(I)%IntForce(1,1:3)      !!! Interaction force (Ku)
         enddo
   
         if(mod(its,ndt_mon_lst) .eq. 0) then
