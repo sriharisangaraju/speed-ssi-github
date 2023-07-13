@@ -960,13 +960,13 @@
                   do i=1, locnode_buildID_map(id,1)
                      isdof = locnode_buildID_map(id,i+1)
                      fe(iaz+1) = fe(iaz+1) + (1 /(node_counter_sdof(isdof))) * &
-                                    SDOFforceinput(3*(isdof - 1) + 1) * 0.d0;
+                                    SDOFforceinput(3*(isdof - 1) + 1);
                      
                      fe(iaz+2) = fe(iaz+2) + (1 /node_counter_sdof(isdof)) * &
-                                    SDOFforceinput(3*(isdof - 1) + 2)  * 0.d0;
+                                    SDOFforceinput(3*(isdof - 1) + 2);
                      
                      fe(iaz+3) = fe(iaz+3) + (1 /node_counter_sdof(isdof)) * &
-                                    SDOFforceinput(3*(isdof - 1) + 3)  * 0.d0;
+                                    SDOFforceinput(3*(isdof - 1) + 3);
                   enddo
                endif
             
@@ -2390,7 +2390,7 @@
             endif
           enddo
   
-          SDOFforceinput((3*(I-1)+1):(3*(I-1)+3))= 0; !sys(I)%IntForce(1,1:3)      !!! Interaction force (Ku)
+          SDOFforceinput((3*(I-1)+1):(3*(I-1)+3))= sys(I)%IntForce(1,1:3)      !!! Interaction force (Ku)
         enddo
   
         if(mod(its,ndt_mon_lst) .eq. 0) then
