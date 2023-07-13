@@ -225,7 +225,12 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFaccX,position='append')     !!! x acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempRA1(sys(i)%NDOF,1)
+        if (flag_outAtAllDOFs.eq.1) then
+          write(fmt_spec,'(A1, I0, A6)') '(', sys(i)%NDOF, 'E16.7)'
+          write(SDOFmon,fmt_spec,advance='NO') (sys(i)%tempRA1(jdof,1), jdof=1,sys(i)%NDOF)
+        else
+          write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempRA1(sys(i)%NDOF,1)
+        endif
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
@@ -233,7 +238,12 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFaccY,position='append')     !!! y acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempRA1(sys(i)%NDOF,2)
+        if (flag_outAtAllDOFs.eq.1) then
+          write(fmt_spec,'(A1, I0, A6)') '(', sys(i)%NDOF, 'E16.7)'
+          write(SDOFmon,fmt_spec,advance='NO') (sys(i)%tempRA1(jdof,2), jdof=1,sys(i)%NDOF)
+        else
+          write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempRA1(sys(i)%NDOF,2)
+        endif
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
@@ -241,7 +251,12 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFaccZ,position='append')     !!! z acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempRA1(sys(i)%NDOF,3)
+        if (flag_outAtAllDOFs.eq.1) then
+          write(fmt_spec,'(A1, I0, A6)') '(', sys(i)%NDOF, 'E16.7)'
+          write(SDOFmon,fmt_spec,advance='NO') (sys(i)%tempRA1(jdof,3), jdof=1,sys(i)%NDOF)
+        else
+          write(SDOFmon,"(E16.7)",advance='NO') sys(i)%tempRA1(sys(i)%NDOF,3)
+        endif
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)

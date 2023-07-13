@@ -57,11 +57,11 @@ subroutine SDOF_SHEAR_MODEL (sID, ndof, gr_acc, direction)
     call CENTRAL_DIFFERENCE(ndof, sys(sID)%Ms(1:ndof,1:ndof), sys(sID)%Ms_inv(1:ndof,1:ndof), sys(sID)%SysC(1:ndof,1:ndof), &
                             sys(sID)%dt, sys(sID)%tempU(1:ndof,direction), sys(sID)%tempU1(1:ndof,direction), &
                             sys(sID)%tempU0(1:ndof,direction), sysPeff0, sys(sID)%flag_Minv )
-    if (direction.eq.1) then
-      write(*,*) 'InputForces: Acc =', gr_acc, 'sysPeff = ', (sysPeff0(idof), idof = 1,sys(1)%NDOF)
-      write(*,*) 'Input Un-1 = ', (sys(1)%tempU0(idof,1), idof=1,sys(1)%NDOF), 'Un = ', (sys(1)%tempU1(idof,1), idof=1,sys(1)%NDOF)
-      write(*,*) 'Output Un+1 = ', (sys(1)%tempU(idof,1), idof=1,sys(1)%NDOF)
-    endif
+    ! if (direction.eq.1) then
+    !   write(*,*) 'InputForces: Acc =', gr_acc, 'sysPeff = ', (sysPeff0(idof), idof = 1,sys(1)%NDOF)
+    !   write(*,*) 'Input Un-1 = ', (sys(1)%tempU0(idof,1), idof=1,sys(1)%NDOF), 'Un = ', (sys(1)%tempU1(idof,1), idof=1,sys(1)%NDOF)
+    !   write(*,*) 'Output Un+1 = ', (sys(1)%tempU(idof,1), idof=1,sys(1)%NDOF)
+    ! endif
   endif
 
   ! Modify this for SSI - with MDOF (below code works for SSI-SDOF)
