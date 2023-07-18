@@ -160,29 +160,29 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
     !real*8 M(ndof,ndof)!
     real*8 props(10), statev(11)
 
-      E0  = props(1) 
-      sy0 = props(2) 
-      eta = props(3) 
-      mu  = props(4) 
-      gama= props(5) 
-      esoft=props(6) 
-      alpha= props(7) 
-      beta = props(8) 
-      a_k= props(9) 
-      Omega= props(10) 
-      emax  = statev(1) !maximum strain
-      emin  = statev(2) !minimum strain
-      ert   = statev(3) !stain at load reversal toward tension
-      srt   = statev(4)
-      erc   = statev(5) !stain at load reversal toward compression
-      src   = statev(6)
-      kon   = nint(statev(7)) !
-      Ehc   = statev(8) !effective cummulative hysteresis energy
-      Eh1   = statev(9) !hysteresis energy in a half cycle
-      dt    = statev(10) !damage index for tension
-      dc    = statev(11) !damage index for compression
+    E0  = props(1) 
+    sy0 = props(2) 
+    eta = props(3) 
+    mu  = props(4) 
+    gama= props(5) 
+    esoft=props(6) 
+    alpha= props(7) 
+    beta = 1; !props(8) 
+    a_k= props(9) 
+    Omega= props(10) 
+    emax  = statev(1) !maximum strain
+    emin  = statev(2) !minimum strain
+    ert   = statev(3) !strain at load reversal toward tension
+    srt   = statev(4)
+    erc   = statev(5) !strain at load reversal toward compression
+    src   = statev(6)
+    kon   = nint(statev(7)) !
+    Ehc   = statev(8) !effective cummulative hysteresis energy
+    Eh1   = statev(9) !hysteresis energy in a half cycle
+    dt    = statev(10) !damage index for tension
+    dc    = statev(11) !damage index for compression
       
-      eu    = mu * sy0/E0 !characteristic ultimate strain
+    eu    = mu * sy0/E0 !characteristic ultimate strain
 
 
     if(Omega<=0.) Omega=0.5  
@@ -190,7 +190,7 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
     if(eta<=0.) eta=1.d-6;      
     if(esoft>=0.) esoft=-1.d-6  
       
-      if (kon.eq.0) then
+    if (kon.eq.0) then
         emax =  sy0/E0
         emin = -beta*sy0/E0
         if (de.ge.0.0) then
@@ -198,7 +198,7 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
         else
             kon = 2
         end if
-      else if ((kon.eq.1).and.(de.lt.0.0)) then !Load reversal
+    else if ((kon.eq.1).and.(de.lt.0.0)) then !Load reversal
             kon = 2
             if (s.gt.0.0) then
                 erc = e
@@ -207,7 +207,7 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
             Ehc = Ehc + Eh1 * (erc / eu ) ** 2.0
             Eh1 = 0.0 !a new half cycle is to begin
             if (e.gt.emax) emax = e
-      else if ((kon.eq.2).and.(de.gt.0.0)) then !Load reversal
+    else if ((kon.eq.2).and.(de.gt.0.0)) then !Load reversal
             kon = 1
             if (s.lt.0.0) then
                 ert = e
@@ -216,7 +216,7 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
             Ehc = Ehc + Eh1 * (ert / eu ) ** 2.0
             Eh1 = 0.0 !a new half cycle is to begin
             if (e.lt.emin) emin = e
-      end if
+    end if
 !
     s0=s
     s = s + E0 * de
@@ -241,9 +241,9 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
     end if
 
         
-      if ( de .ge. 0.0 .and. s0>=0.) then
-          sy = (1.0 - dt) * sy0
-          !loading envelope
+    if ( de .ge. 0.0 .and. s0>=0.) then
+        sy = (1.0 - dt) * sy0
+        !loading envelope
         ! Hardening
         if(e+de>sy/E0) then
             evs = max( sy + ( e + de - sy/E0) * eta * E0, 0.)
@@ -251,7 +251,7 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
            if (s .ge. evs) then
               s = evs
               Et = evE
-                yield=1
+              yield=1
            end if
         end if
         ! Softening
@@ -264,16 +264,16 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
                s = evs
                Et = evE
                yield=1
-          end if
+            end if
         end if
 
-          !reloading envelope
-          smax = max(sy, sy + (emax - sy/E0) * eta * E0)  
-        if(emax>epeak)	then
+        !reloading envelope
+        smax = max(sy, sy + (emax - sy/E0) * eta * E0)  
+        if(emax>epeak) then
             smax=max(sy*alpha+esoft*E0*(emax-epeak),0.0*sy)
-        end if	
-          sres = 0.02 * smax                         
-          eres = ert - (srt - sres) / E_unload                 
+        end if
+        sres = 0.02 * smax                         
+        eres = ert - (srt - sres) / E_unload                 
 
         x=emax-smax/E0  
         e_slip=gama*emax+(1.-gama)*x
@@ -281,7 +281,7 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
         e_close=e_slip*Omega 
         s_close=(e_close-eres)/(e_slip-eres) * (s_slip-sres) + sres
 
-          if (eres .le. emax - smax / E0) then   
+        if (eres .le. emax - smax / E0) then   
             if(e+0.5*de<e_close)  then  
                 srel = (e+de-eres)/(e_slip-eres) * (s_slip-sres) + sres
                 Et1=(s_slip-sres)/(e_slip-eres)
@@ -293,11 +293,11 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
                s = max( srel, 0.)
                Et = Et1
             end if
-          end if
+        end if
 
-      elseif ( de .lt. 0.0 .and. s0<0. ) then
-          sy = (1.0 - dc) * sy0 *beta
-          !loading envelope
+    elseif ( de .lt. 0.0 .and. s0<0. ) then
+        sy = (1.0 - dc) * sy0 *beta
+        !loading envelope
         ! Hardening
         if(e+de<-sy/E0) then
             evs =  min(-sy + ( e + de + sy/E0) * eta * E0,-0.0*sy)
@@ -321,13 +321,13 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
           end if
         end if
 
-          !reloading envelope
-          smin = min(-sy, -sy + (emin + sy/E0) * eta * E0)
-         if(emin<epeak)	then 
+        !reloading envelope
+        smin = min(-sy, -sy + (emin + sy/E0) * eta * E0)
+        if(emin<epeak)	then 
             smin=min(-sy*alpha+esoft*E0*(emin-epeak),0.)
         end if	
-          sres = 0.02 * smin 
-          eres = erc - (src - sres) /  E_unload
+        sres = 0.02 * smin 
+        eres = erc - (src - sres) /  E_unload
 
         x=emin-smin/E0 
         e_slip=gama*emin+(1.-gama)*x 
@@ -335,7 +335,7 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
         e_close=e_slip*Omega 
         s_close=(e_close-eres)/(e_slip-eres) * (s_slip-sres) + sres
 
-          if (eres .ge. emin - smin / E0) then    
+        if (eres .ge. emin - smin / E0) then    
             if(e+0.5*de>e_close) then 
                 srel = (e+de-eres)/(e_slip-eres) * (s_slip-sres) + sres
                 Et1=(s_slip-sres)/(e_slip-eres)
@@ -347,21 +347,21 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
                 s = min (srel, 0.)
                 Et = Et1
             end if
-          end if
-      end if
+        end if
+    end if
 
 
-      if (Et.ne.E0 .and. Et.ne. E_unload) then 
-            spd = spd + s * de
-            Eh1 = Eh1 + s * de
-            if ( s .ge. 0.0 ) then
-                dc = min(Ehc /(3.0 * beta* sy0 * eu), 0.7)
-            else
-                dt = min(Ehc /(3.0 * sy0 * eu), 0.7)
-            end if
-      end if
+    if (Et.ne.E0 .and. Et.ne. E_unload) then 
+        spd = spd + s * de
+        Eh1 = Eh1 + s * de
+        if ( s .ge. 0.0 ) then
+            dc = min(Ehc /(3.0 * beta* sy0 * eu), 0.7)
+        else
+            dt = min(Ehc /(3.0 * sy0 * eu), 0.7)
+        end if
+    end if
 
-          x=max(sy0, beta*sy0)
+    x=max(sy0, beta*sy0)
     epeak=x/E0+(alpha-1.)*x/E0/eta
     Strain_End=epeak+abs(x/(esoft*E0))
     x=max(abs(emax),abs(emin),abs(e+de))
@@ -370,7 +370,7 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
         s=0; 
         Et=1E-6*E0
     end if
-!
+    !
     statev(1)   = emax
     statev(2)   = emin
     statev(3)   = ert

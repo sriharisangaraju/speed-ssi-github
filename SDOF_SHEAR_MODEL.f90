@@ -100,9 +100,9 @@ subroutine SDOF_SHEAR_MODEL (sID, ndof, gr_acc, direction)
   enddo
 
   do idof=1,ndof
-      e(idof) = sys(sID)%IDR(idof,direction)
-      de(idof)= sys(sID)%variIDR(idof,direction)
-      s(idof) = sys(sID)%IntForce(idof,direction)
+      e(idof) = sys(sID)%IDR(idof,direction) - sys(sID)%variIDR(idof,direction)       ! IDR at (n)th time step
+      de(idof)= sys(sID)%variIDR(idof,direction)    ! change in IDR at (n+1)th timestep
+      s(idof) = sys(sID)%IntForce(idof,direction)   ! Shear Force at (n)th timestep
 
       if (sys(sID)%StructType.eq.1) then
           if (sys(sID)%const_law.eq.1) then

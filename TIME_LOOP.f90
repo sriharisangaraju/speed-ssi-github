@@ -2513,28 +2513,28 @@
 !---------------------------------------------------------------------------
 !     VTK FILES
 !---------------------------------------------------------------------------
-      if (its.eq.0) then
-         ! For Now, this only doesnot work for DG, or mesh with different Spectral Degree
-         nn = sdeg_mat(con_spx_loc(con_spx_loc(0))) + 1
-         allocate(vtk_numbering(nn*nn*nn))
+      ! if (its.eq.0) then
+      !    ! For Now, this only doesnot work for DG, or mesh with different Spectral Degree
+      !    nn = sdeg_mat(con_spx_loc(con_spx_loc(0))) + 1
+      !    allocate(vtk_numbering(nn*nn*nn))
 
-         call VTK_NODE_NUMBERING_MAP(nn, vtk_numbering)
+         ! call VTK_NODE_NUMBERING_MAP(nn, vtk_numbering)
 
-         if (mpi_id.eq.0) call WRITE_PVD_TIMEDATA(mpi_np, nts, 13*ndt_mon_lst,deltat)
+         ! if (mpi_id.eq.0) call WRITE_PVD_TIMEDATA(mpi_np, nts, 13*ndt_mon_lst,deltat)
 
          ! call WRITE_VTK_MECH_PROP(nnod_loc, con_nnz_loc, con_spx_loc, nmat, sdeg_mat, &
          !                      prop_mat,tag_mat, nmat_nlp, tag_mat_nlp, &
          !                      xx_spx_loc, yy_spx_loc, zz_spx_loc, mpi_id , nn, vtk_numbering)
          ! call EXIT()
-      endif
+      ! endif
 
-      if (mod(its,13*ndt_mon_lst) .eq. 0) then
-         call WRITE_VTU_TIMEDATA(nnod_loc, con_nnz_loc, con_spx_loc, &
-                           nmat, sdeg_mat, prop_mat,tag_mat, &
-                           xx_spx_loc, yy_spx_loc, zz_spx_loc, mpi_id, mpi_np, &
-                           nn, vtk_numbering, &
-                           its, strain, stress, u1)
-      endif       
+      ! if (mod(its,13*ndt_mon_lst) .eq. 0) then
+      !    call WRITE_VTU_TIMEDATA(nnod_loc, con_nnz_loc, con_spx_loc, &
+      !                      nmat, sdeg_mat, prop_mat,tag_mat, &
+      !                      xx_spx_loc, yy_spx_loc, zz_spx_loc, mpi_id, mpi_np, &
+      !                      nn, vtk_numbering, &
+      !                      its, strain, stress, u1)
+      ! endif       
 
 !---------------------------------------------------------------------------
 !     COMPUTE ERROR

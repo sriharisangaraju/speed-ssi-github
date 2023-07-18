@@ -36,7 +36,7 @@ subroutine TRILINEAR(K, H, S, f, de, e, fy, fh, fu, ey, eh, eu, branch, damage)
 
 
 	f0 = f
-	e0 = e - de;
+	! e0 = e - de;
 	if (e.ge.0.0) sgn = 1
 	if (e.lt.0.0) sgn = -1
 
