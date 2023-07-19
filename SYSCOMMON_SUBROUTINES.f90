@@ -167,7 +167,7 @@ subroutine ksteel02(props,s,e,de,Et,statev,spd, yield, IDeath) !M, ndof
     gama= props(5) 
     esoft=props(6) 
     alpha= props(7) 
-    beta = 1; !props(8) 
+    beta = props(8)
     a_k= props(9) 
     Omega= props(10) 
     emax  = statev(1) !maximum strain
