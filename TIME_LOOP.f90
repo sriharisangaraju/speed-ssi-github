@@ -955,19 +955,21 @@
                enddo
 
                !! SSI
-               if ((SDOFnum.gt.0).and.(locnode_buildID_map(id,1).gt.0)) then
-                  iaz = 3*(id -1); 
-                  do i=1, locnode_buildID_map(id,1)
-                     isdof = locnode_buildID_map(id,i+1)
-                     fe(iaz+1) = fe(iaz+1) + (1 /(node_counter_sdof(isdof))) * &
-                                    SDOFforceinput(3*(isdof - 1) + 1)
-                     
-                     fe(iaz+2) = fe(iaz+2) + (1 /node_counter_sdof(isdof)) * &
-                                    SDOFforceinput(3*(isdof - 1) + 2)
-                     
-                     fe(iaz+3) = fe(iaz+3) + (1 /node_counter_sdof(isdof)) * &
-                                    SDOFforceinput(3*(isdof - 1) + 3)
-                  enddo
+               if (SDOFnum.gt.0) then
+                  if (locnode_buildID_map(id,1).gt.0) then
+                     iaz = 3*(id -1); 
+                     do i=1, locnode_buildID_map(id,1)
+                        isdof = locnode_buildID_map(id,i+1)
+                        fe(iaz+1) = fe(iaz+1) + (1 /(node_counter_sdof(isdof))) * &
+                                       SDOFforceinput(3*(isdof - 1) + 1)
+                        
+                        fe(iaz+2) = fe(iaz+2) + (1 /node_counter_sdof(isdof)) * &
+                                       SDOFforceinput(3*(isdof - 1) + 2)
+                        
+                        fe(iaz+3) = fe(iaz+3) + (1 /node_counter_sdof(isdof)) * &
+                                       SDOFforceinput(3*(isdof - 1) + 3)
+                     enddo
+                  endif
                endif
             
             enddo
@@ -2373,7 +2375,7 @@
      !---------------------------------------------------------------------------
      !     COMPUTE OUTPUT OF SDOF/MDOF SYSTEM (distribute this calculations among mpi_processess in next versions)
      !---------------------------------------------------------------------------
-      SDOFforceinput=0
+      if (SDOFnum.gt.0) SDOFforceinput=0
       ! This is only performed in process with mpi_id = 0
       if(n_bld .gt. 0) then
         do I=1,n_bld     !!! number of oscillators
@@ -2427,7 +2429,6 @@
   
 
 !---------------------- EXIT Incase of Instability -----------------------------------------------------------
-
       if (b_instabilitycontrol) then
         if (b_instability_abort) then
           write(*,*) 'Worker ', mpi_id, ': instability detected. Signalling to other workers.'
@@ -2649,10 +2650,10 @@
          deallocate(sys)
          deallocate(SDOFag,SDOFgd)
       endif
-      deallocate(SDOFinput, SDOFinputD, SDOFforceinput)
-      deallocate(SDOFinputbuffer, SDOFforceinputbuffer)
 
       if(SDOFnum.gt.0) then
+         deallocate(SDOFinput, SDOFinputD, SDOFforceinput)
+         deallocate(SDOFinputbuffer, SDOFforceinputbuffer)
          deallocate(ug1, ug2, ug3, SDOFrecv_temp)
       endif
       !!! AH
