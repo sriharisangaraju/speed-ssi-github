@@ -17,7 +17,7 @@
 !    along with SPEED.  If not, see <http://www.gnu.org/licenses/>.
 
 !> @brief Reads SYS.input file
-!! @author Aline Herlin
+!! @author Aline Herlin, Srihari Sangaraju
 !> @date February, 2021
 !> @version 1.0
 !> @param[in] filec       file name
@@ -25,15 +25,18 @@
 !> @param[out] label      system ID
 !> @param[out] x, y, z    coord. of the structure
 
-subroutine READ_FILESYS(filec, num_nodes, label, x, y, z)
+subroutine READ_FILESYS(filec, num_nodes, label, x, y, z, axis_rot)
 
   implicit none
 
   character*70 :: filec
   character*100000 :: input_line
   integer*4 :: i, num_nodes, ileft, iright, status
-  real*8, dimension(num_nodes) :: x, y, z
+  real*8, dimension(num_nodes) :: x, y, z, axis_rot
   integer*4, dimension(num_nodes) :: label
+  real*8 :: dummy, pi
+
+  pi = 4.0*atan(1.d0);
 
   open(20,file=filec)
   read(20,'(A)',IOSTAT = status) input_line
@@ -46,7 +49,8 @@ subroutine READ_FILESYS(filec, num_nodes, label, x, y, z)
     if (status.ne.0) exit
     ileft = 1
     iright = len(input_line)
-    read(input_line(ileft:iright),*) label(i), x(i), y(i), z(i)
+    read(input_line(ileft:iright),*) label(i), x(i), y(i), z(i), dummy
+    axis_rot(i) = dummy*pi/180.d0
   enddo
 
   close(20)

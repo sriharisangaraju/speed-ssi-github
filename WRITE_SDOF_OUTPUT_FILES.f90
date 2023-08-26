@@ -266,7 +266,7 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFgraccX,position='append')     !!! x ground acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        write(SDOFmon,"(E16.7)",advance='NO') -SDOFag(i,1)
+        write(SDOFmon,"(E16.7)",advance='NO') SDOFag(i,1)
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
@@ -274,7 +274,7 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFgraccY,position='append')     !!! y ground acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        write(SDOFmon,"(E16.7)",advance='NO') -SDOFag(i,2)
+        write(SDOFmon,"(E16.7)",advance='NO') SDOFag(i,2)
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
@@ -282,7 +282,7 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=SDOFgraccZ,position='append')     !!! y ground acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        write(SDOFmon,"(E16.7)",advance='NO') -SDOFag(i,3)
+        write(SDOFmon,"(E16.7)",advance='NO') SDOFag(i,3)
       enddo
       write(SDOFmon,"(A1)") " "
       close(SDOFmon)
@@ -309,7 +309,7 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=GRDaccX,position='append')      !!! soil x acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') -SDOFag(i,1)
+        if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') SDOFag(i,1)
       enddo
 
       write(SDOFmon,"(A1)") " "
@@ -318,7 +318,7 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=GRDaccY,position='append')      !!! soil y acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') -SDOFag(i,2)
+        if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') SDOFag(i,2)
       enddo
 
       write(SDOFmon,"(A1)") " "
@@ -327,7 +327,7 @@ subroutine WRITE_SDOF_OUTPUT_FILES(tt1tmp)
       open(SDOFmon,file=GRDaccZ,position='append')      !!! soil z acceleration
       write(SDOFmon,"(E16.7)",advance='NO') tt1tmp
       do i=1,n_bld
-        if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') -SDOFag(i,3)
+        if(sys(i)%SFS.eq.1) write(SDOFmon,"(E16.7)",advance='NO') SDOFag(i,3)
       enddo
 
       write(SDOFmon,"(A1)") " "

@@ -30,6 +30,9 @@ subroutine READ_SDOF_INPUT_FILES
   implicit none
   integer*4 :: unit_file
 
+  ! Allocating some common variable which are needed for SPEEDSCI module
+  allocate(gr_acc_rot(3), gr_intF(3))
+
   bldinfo_fp=701+mpi_id
 
   n_bld = 0

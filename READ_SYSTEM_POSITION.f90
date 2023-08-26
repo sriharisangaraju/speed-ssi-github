@@ -24,11 +24,13 @@
 subroutine READ_SYSTEM_POSITION()
 
   use speed_par
-  use SPEED_SCI, only : SDOFnum
+  use SPEED_SCI, only : SDOFnum, rot_sin, rot_cos
 
   implicit none
 
   include 'SPEED.MPI'
+
+  real*8, dimension(:), allocatable :: rot_theta
 
   if (sys_lst.eq.1) then
      if (nelem_loc .gt. 0) then
@@ -61,9 +63,10 @@ subroutine READ_SYSTEM_POSITION()
 
       allocate(n_system_lst(SDOFnum),el_system_lst(SDOFnum),dist_system_lst(SDOFnum))
   	  allocate(system_label(SDOFnum),x_system_lst(SDOFnum),y_system_lst(SDOFnum),z_system_lst(SDOFnum))
+      allocate(rot_sin(SDOFnum), rot_cos(SDOFnum), rot_theta(SDOFnum))
   	  allocate(xr_system_lst(SDOFnum),yr_system_lst(SDOFnum),zr_system_lst(SDOFnum))
 
-      call READ_FILESYS(file_SYS,SDOFnum,system_label,x_system_lst,y_system_lst,z_system_lst)
+      call READ_FILESYS(file_SYS,SDOFnum,system_label,x_system_lst,y_system_lst,z_system_lst,rot_theta)
 
       !Modified, so that In a simulation both types of Point sources (usual point sources and  SDOF Oscillators) can be used (-SS)
       ! do i=1,SDOFnum
@@ -153,12 +156,12 @@ subroutine READ_SYSTEM_POSITION()
         if(mpi_id.eq. 0) then
 
           file_SYSLST = 'SLST.input'
-  			  call WRITE_FILE_MPGM(file_SYSLST, SDOFnum, n_system_lst, el_system_lst, &
-                               xr_system_lst, yr_system_lst, zr_system_lst)
+  			  call WRITE_FILE_MPGM_SYS(file_SYSLST, SDOFnum, n_system_lst, el_system_lst, &
+                               xr_system_lst, yr_system_lst, zr_system_lst,rot_theta)
 
           sys_filename  = 'SLST.position'
-  			  call WRITE_FILE_MPGM(sys_filename, SDOFnum, n_system_lst, el_system_lst, &
-                                                x_system_real, y_system_real, z_system_real)
+  			  call WRITE_FILE_MPGM_SYS(sys_filename, SDOFnum, n_system_lst, el_system_lst, &
+                                                x_system_real, y_system_real, z_system_real,rot_theta)
 
         endif
 
@@ -167,8 +170,8 @@ subroutine READ_SYSTEM_POSITION()
   	  else ! YES, it exists an input file with the position of LST monitors
 
   		  file_SYSLST = 'SLST.input'
-  		  call READ_FILE_MPGM(file_SYSLST, SDOFnum, n_system_lst, el_system_lst, &
-  				                  xr_system_lst, yr_system_lst, zr_system_lst)
+  		  call READ_FILE_MPGM_SYS(file_SYSLST, SDOFnum, n_system_lst, el_system_lst, &
+  				                  xr_system_lst, yr_system_lst, zr_system_lst,rot_theta)
 
   	  endif
 
@@ -188,6 +191,12 @@ subroutine READ_SYSTEM_POSITION()
 
   call MPI_BARRIER(mpi_comm, mpi_ierr)
 
+  do i=1,SDOFnum
+      rot_sin(i) = dsin(rot_theta(i))
+      rot_cos(i) = dcos(rot_theta(i))
+  enddo
+  deallocate(rot_theta)
+
   !-----------------------------------------------------------------------------------
   ! Mapping SDOF oscillators to nearest LGL nodes
   !------------------------------------------------------------------------------------
@@ -195,7 +204,7 @@ subroutine READ_SYSTEM_POSITION()
   call MAKE_SYSTEM_POSITION_LGLNODES(nnod_loc , local_node_num, con_nnz_loc, con_spx_loc, &
                                             xx_spx_loc, yy_spx_loc, zz_spx_loc, SDOFnum, system_label, &
                                             x_system_lst, y_system_lst, z_system_lst, &
-                                            mpi_id, mpi_comm, mpi_np, node_counter_sdof)
+                                            mpi_id, mpi_comm, mpi_np)
 
   !----------------------------------------------------------------------------------
   !	WRITING SDOF_SYSTEM.INFO

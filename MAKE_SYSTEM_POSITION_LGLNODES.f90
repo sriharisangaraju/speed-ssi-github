@@ -103,8 +103,8 @@ subroutine MAKE_SYSTEM_POSITION_LGLNODES(nn_loc , local_node_num, cs_nnz_loc, cs
     if (nearestnode_locnum(i).ne.0) then
       locnode_buildID_map(nearestnode_locnum(i), 1) = locnode_buildID_map(nearestnode_locnum(i), 1) + 1
       locnode_buildID_map(nearestnode_locnum(i), locnode_buildID_map(nearestnode_locnum(i), 1)+1 ) = sys_label(i)
-      write(*,*) mpi_id, i, sys_label(i),'; node_counter = ', node_counter_sdof, '; coords = ', xs_loc(nearestnode_locnum(i)), &
-      ys_loc(nearestnode_locnum(i)), zs_loc(nearestnode_locnum(i)) 
+      ! write(*,*) mpi_id, i, sys_label(i),'; node_counter = ', node_counter_sdof, '; coords = ', xs_loc(nearestnode_locnum(i)), &
+      ! ys_loc(nearestnode_locnum(i)), zs_loc(nearestnode_locnum(i)) 
     endif
   enddo
 

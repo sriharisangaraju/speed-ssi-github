@@ -116,7 +116,7 @@
      !!!--------------------------------------------------------------------!!!
   
 
-      if(w_yn .eq. 0) then
+      ! if(w_yn .eq. 0) then
          if(len_trim(mpi_file) .ne. 70) then                                                                                  
             u_name = mpi_file(1:len_trim(mpi_file)) // '/elemdomain.mpi'
          else 
@@ -147,7 +147,7 @@
 !         enddo
 !         close(u_mpi)
 
-       endif       
+      !  endif       
       
       return
       

@@ -58,7 +58,7 @@
            if(filefound .eqv. .TRUE.) then
       
               if (mpi_id.eq.0)  write(*,'(A)') 'Reading existing partitioning...'
-                       unit_part = 400                                 
+                  unit_part = 400                                 
                  open(unit_part,file=file_part)        
                  read(unit_part,*) trash
                  do i = 1, nelem

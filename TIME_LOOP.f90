@@ -197,14 +197,14 @@
          call MAKE_SDOF_OUTPUT_FILES
 
          !Debug - Writing files with values of Interaction forces at each time step - SS
-         if (mpi_id.eq.0) then
-            do isdof=1,SDOFnum
-               file_getval_id = 2433 + isdof 
-               write(file_getval_name,'(A12,I4.4,A4)') 'GETVAL_SDOF_', isdof, '.txt'
-               open(file_getval_id, file=file_getval_name, status='replace')
-               close(file_getval_id)
-            enddo
-         endif
+         ! if (mpi_id.eq.0) then
+         !    do isdof=1,SDOFnum
+         !       file_getval_id = 2433 + isdof 
+         !       write(file_getval_name,'(A12,I4.4,A4)') 'GETVAL_SDOF_', isdof, '.txt'
+         !       open(file_getval_id, file=file_getval_name, status='replace')
+         !       close(file_getval_id)
+         !    enddo
+         ! endif
 
       endif
 !---------------------------------------------------------------------------
@@ -2355,16 +2355,16 @@
         SDOFinputD = SDOFrecv_temp;
         
       !   !Debug - SSI - SS
-        if (mpi_id.eq.0) then
-         do isdof=1,SDOFnum
-            file_getval_id = 2433 + isdof 
-            write(file_getval_name,'(A12,I4.4,A4)') 'GETVAL_SDOF_', isdof, '.txt'
-            open(file_getval_id, file=file_getval_name, position='append')
-            !dum_ind = 3*(isdof - 1) + 1
-            write(file_getval_id,*) tt_int, SDOFforceinput(1), SDOFinput(1), SDOFinputD(1)
-            close(file_getval_id)
-         enddo
-        endif
+      !   if (mpi_id.eq.0) then
+      !    do isdof=1,SDOFnum
+      !       file_getval_id = 2433 + isdof 
+      !       write(file_getval_name,'(A12,I4.4,A4)') 'GETVAL_SDOF_', isdof, '.txt'
+      !       open(file_getval_id, file=file_getval_name, position='append')
+      !       !dum_ind = 3*(isdof - 1) + 1
+      !       write(file_getval_id,*) tt_int, SDOFforceinput(1), SDOFinput(1), SDOFinputD(1)
+      !       close(file_getval_id)
+      !    enddo
+      !   endif
       endif
   
   
@@ -2377,21 +2377,33 @@
       ! This is only performed in process with mpi_id = 0
       if(n_bld .gt. 0) then
         do I=1,n_bld     !!! number of oscillators
-          SDOFag(I,1:3)=(-1.d0)*SDOFinput((3*(I-1)+1):(3*(I-1)+3))    !!! base acceleration
-          SDOFgd(I,1:3)=SDOFinputD((3*(I-1)+1):(3*(I-1)+3))   !!! base displacement
-          
+
+          ! Rotating the input ground acceleration into principal coordinates of the building
+          SDOFag(I,1) =  rot_cos(I)*SDOFinput(3*(I-1)+1) + rot_sin(I)*SDOFinput(3*(I-1)+2)
+          SDOFag(I,2) = -rot_sin(I)*SDOFinput(3*(I-1)+1) + rot_cos(I)*SDOFinput(3*(I-1)+2)
+          SDOFag(I,3) =  SDOFinput(3*(I-1)+3)
+          gr_acc_rot = -1*SDOFag(I,1:3)
+         
+          SDOFgd(I,1) =  rot_cos(I)*SDOFinputD(3*(I-1)+1) + rot_sin(I)*SDOFinputD(3*(I-1)+2)
+          SDOFgd(I,2) = -rot_sin(I)*SDOFinputD(3*(I-1)+1) + rot_cos(I)*SDOFinputD(3*(I-1)+2)
+          SDOFgd(I,3) =  SDOFinputD(3*(I-1)+3)
+
           do j=1,sys(I)%ndt
             if(sys(I)%SFS.eq.0) then
-              call SDOF_SHEAR_MODEL(I, sys(I)%NDOF, SDOFag(I,1),1)     !!! direction x
-              call SDOF_SHEAR_MODEL(I, sys(I)%NDOF, SDOFag(I,2),2)     !!! direction y
-              !call SDOF_SHEAR_MODEL(I,SDOFag(I,3),3)     !!! direction z
+              call SDOF_SHEAR_MODEL(I, sys(I)%NDOF, gr_acc_rot(1),1)     !!! direction x
+              call SDOF_SHEAR_MODEL(I, sys(I)%NDOF, gr_acc_rot(2),2)     !!! direction y
+              !call SDOF_SHEAR_MODEL(I,gr_acc_rot(3),3)     !!! direction z
             elseif (sys(I)%SFS.eq.1) then
-              call SDOF_SFS_MODEL(I,SDOFag(I,:),1)      !!! direction x
-              call SDOF_SFS_MODEL(I,SDOFag(I,:),2)      !!! direction y
+              call SDOF_SFS_MODEL(I,gr_acc_rot(:),1)      !!! direction x
+              call SDOF_SFS_MODEL(I,gr_acc_rot(:),2)      !!! direction y
             endif
           enddo
-  
-          SDOFforceinput((3*(I-1)+1):(3*(I-1)+3))=sys(I)%IntForce(1,1:3)      !!! Interaction force (Ku)
+          
+          !Rotating the base reactions from building axes on to the global X,Y axes
+          gr_intF(1) = rot_cos(I)*sys(I)%IntForce(1,1) - rot_sin(I)*sys(I)%IntForce(1,2)
+          gr_intF(2) = rot_sin(I)*sys(I)%IntForce(1,1) + rot_cos(I)*sys(I)%IntForce(1,2)
+          gr_intF(3) = sys(I)%IntForce(1,3)
+          SDOFforceinput((3*(I-1)+1):(3*(I-1)+3))=gr_intF(1:3)      !!! Interaction force (Ku)
         enddo
   
         if(mod(its,ndt_mon_lst) .eq. 0) then

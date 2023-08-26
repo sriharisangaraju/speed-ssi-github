@@ -777,6 +777,8 @@ module SPEED_SCI      !!! AH, SS
       integer*4 :: flag_outAtAllDOFs
       real*8 :: MasspArea, kclose, configtmp 
       logical :: isConfigPresent
+      real*8, dimension(:), allocatable :: gr_acc_rot, gr_intF
+      real*8, dimension(:), allocatable :: rot_sin, rot_cos
       real*8, dimension(:), allocatable :: ug1, ug2, ug3
       real*8, dimension(:,:), allocatable :: SDOFag, SDOFgd    !!! ground acc and displ
       real*8,dimension(:), allocatable :: SDOFinput, SDOFinputD, SDOFforceinput
